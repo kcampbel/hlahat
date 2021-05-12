@@ -1,4 +1,5 @@
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 library(Biostrings)
 library(seqinr)
 library(msa)

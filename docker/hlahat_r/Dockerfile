@@ -6,6 +6,6 @@ RUN mkdir -p /code/
 COPY r_scripts /code/
 
 ## install R-packages
-RUN R -e "install.packages(c('tidyverse','data.table','seqinr','BiocManager'), repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('dplyr','tidyr','data.table','seqinr','BiocManager'), repos = 'https://cloud.r-project.org/')"
 RUN R -e "BiocManager::install('msa')"
 RUN R -e "BiocManager::install('Biostrings')"
