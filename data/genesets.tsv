@@ -1,0 +1,447 @@
+gene_set	gene	description	ref	doi
+LIexpression_score	CCL5	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD19	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD37	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD3D	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD3E	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD3G	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD3Z	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD79A	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD79B	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD8A	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD8B1	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	IGHG3	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	IGJ	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	IGLC1	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	CD14	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	LCK	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	LTB	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+LIexpression_score	MS4A1	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CORO1A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	MNDA	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CCRL2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SLC7A7	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	HLA-DMA	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FYB	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	RNASE6	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	TLR2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CTSC	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LILRB4	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	PSCDBP	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CTSS	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	RASSF4	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	MSN	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CYBB	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LAPTM5	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	DOCK2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FCGR1A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	EVI2B	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	ADCY7	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD48	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	ARHGAP15	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	ARRB2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SYK	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	BTK	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	TNFAIP3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FCGR2A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	VSIG4	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FPRL2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IL10RA	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IFI16	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	ITGB2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IL7R	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	TBXAS1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FMNL1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FLI1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	RASSF2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LYZ	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD163	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD97	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CCL2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FCGR2B	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	MERTK	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD84	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD53	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD86	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	HMHA1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CTSL	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	EVI2A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	TNFRSF1B	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CXCR4	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LCP1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SAMHD1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CPVL	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	HLA-DRB1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	C13orf18	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	GIMAP4	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SAMSN1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	PLCG2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	OSBPL3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD8A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	RUNX3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FCGR3A	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	AMPD3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	MYO1F	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CECR1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LYN	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	MPP1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LRMP	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FGL2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	NCKAP1L	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	HCLS1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SELL	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CASP1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SELPLG	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD33	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	GPNMB	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	NCF2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FNBP1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IL18	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	B2M	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SP140	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FCER1G	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LCP2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LY86	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LAIR1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IFI30	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	TNFSF13B	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LST1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	FGR	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	NPL	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	PLEK	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CCL5	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	PTPRC	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	GNPTAB	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SLC1A3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	HCK	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	NPC2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	C3AR1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	PIK3CG	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	DAPK1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	ALOX5AP	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CSF1R	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CUGBP2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	APOE	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	APOC1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	CD52	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	LHFPL2	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	C1orf54	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	IKZF1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	SH2B3	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CSF1_response	WIPF1	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFI44	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFI44L	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	DDX58	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFI6	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFI27	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFIT2	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFIT1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFIT3	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	CXCL10	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	MX1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	OAS1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	OAS2	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	OAS3	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	HERC5	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	SAMD9	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	HERC6	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	DDX60	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	RTP4	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	IFIH1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	STAT1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	TAP1	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	OASL	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	RSAD2	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+Module3_IFN_score	ISG15	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MARCKSL1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	IGF2R	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	LAMB1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	SPARC	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	FN1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGA4	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	SMO	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP19	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGB8	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGA5	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	NID1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	TIMP1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	SEMA3F	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RHOQ	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CTNNB1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	SERPINE1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	EPHB2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL16A1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	EPHA2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	TNC	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	JUP	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGA3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	TCF7L2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL3A1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CDH6	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	WNT2B	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ADAM9	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	DSP	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	HSPG2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ARHGAP1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGB5	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	IGFBP5	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ARHGDIA	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	LRP1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	IGFBP2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CTNNA1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	LRRC17	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP14	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	NEO1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	EFNA5	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGB3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	EPHB3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CD44	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	IGFBP4	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	TNFRSF1A	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RAC1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	PXN	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	PLAT	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL8A1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	WNT8B	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	IGFBP3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RHOA	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	EPHB4	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	PAK1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MTA1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	THBS2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CSPG2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP17	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	CD59	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	DVL3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RHOB	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL6A3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	NOTCH2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	BSG	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	MMP11	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL1A2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ZYX	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RND3	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	THBS1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	RHOG	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ICAM1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	LAMA4	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	DVL1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	PAK2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	ITGB2	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	COL6A1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+TGFB_score_21050467	FGD1	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CEP78	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LSM3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LRRC40	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	STK17A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RPN1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	JUNB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUP85	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FLNC	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HMGN2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RPP40	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	UQCR10	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	AIMP2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CHEK1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	VTA1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EXOSC8	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CENPO	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PNO1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SLC16A1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	WDR77	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	UBE2J1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NOP16	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUDT1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SMC2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SLC25A5	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUPL1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DLEU2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PDAP1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CCBL2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	COX17	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	BCCIP	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PLG	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RGS8	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPC	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PLK4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUTF2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LSM4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SMS	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EBNA1BP2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C13orf27	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	VDAC1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PSMD14	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MYCBP	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SMURF2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	GNG11	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	F3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	IL7R	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	BRIP1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HNRNPA2B1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DCK	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ALKBH7	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HN1L	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MSN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TPM1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HYLS1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HAUS1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUP93	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPE	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ITGA6	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CENPN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C11orf24	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	GGH	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PFKP	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FARSA	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EIF2AK1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CENPW	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TUBA4A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TRA2B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	UMPS	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MRTO4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUDT15	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PGM2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DBNDD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MNAT1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUP35	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TCEB1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HSPB11	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C19orf48	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ID3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	IPO4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FARSB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EIF4G1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SKA1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MFSD11	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PLAUR	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MARVELD2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MCM3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DHFR	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RNF41	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ID2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	H2AFZ	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CDK2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NCLN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ZWILCH	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DYNLT1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C16orf61	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SLC25A40	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RHOC	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CCT5	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PDIA4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPA	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RBM14	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PDLIM7	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PITPNC1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TPM3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CORO1C	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ERLIN1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PAICS	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TPRKB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SKA2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MYBL1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SH3BP5L	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	BRCA2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SAR1A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	POLR3K	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MRPS28	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NUP107	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TUBG1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PNN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FAM167A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RFC3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MYL6	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MCM7	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MAGOHB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FAM89B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TOMM40	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CDCA4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MT3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MTHFD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PSMD12	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MYBL2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CKLF	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NRIP3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EZR	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C12orf24	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	GPLD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SRM	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RAB3B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NLN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MT1F	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TNFRSF12A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TPI1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HAS2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	APOO	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	FBXO41	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MRPL37	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	GSTCD	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SDC1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	WDR54	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RNF138	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	APITD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RMND5B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ENO1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MAP3K8	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TMEM130	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNX17	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	KRR1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TAGLN	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PA2G4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	RUVBL1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LOXL2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	POLE2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MAPRE1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	IMP4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EMP2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PSMD2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MET	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	IFRD2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LMNB2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PLOD2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NCEH1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	NME1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	STRA13	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ACTL6A	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DLEU1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SNRPA1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CBX1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	LYAR	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PTPLB	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PFN1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CENPJ	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	COTL1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SPRYD7	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	USPL1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MRPL12	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	ADAMTS1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	GLRX3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	WSB2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MRPS16	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DCLRE1B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MKKS	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	C3orf26	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	CPEB4	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SPAG17	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MLF1IP	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	UAP1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	COQ2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	WDHD1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DCBLD2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	KIAA0090	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	SAR1B	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PSMA7	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PSMC3	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	COPS6	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	DUT	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PPIH	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	PHF19	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	TPM2	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	MCTS1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	EIF4EBP1	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
+CHANG_CORE_SERUM_RESPONSE_UP	HNRNPR	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023
