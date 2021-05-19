@@ -1,0 +1,8 @@
+gene_set	description	ref	doi	link
+CHANG_CORE_SERUM_RESPONSE_UP	Wound healing	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023	
+CSF1_response	macrophages	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023	
+LIexpression_score	leukocyte infiltration	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023	
+Module3_IFN_score	IFN-gamma	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023	
+TGFB_score_21050467	TGF-beta	thorsson_et_al_2018	doi: 10.1016/j.immuni.2018.03.023	
+tcell_inflamed_GEP	inflamed T-cell	Cristescu_et_al_2018	doi: 10.1126/science.aar3593	
+KEGG_ANTIGEN_PROCESSING_AND_PRESENTATION	Antigen processing and presentation	KEGG		http://software.broadinstitute.org/gsea/msigdb/cards/KEGG_ANTIGEN_PROCESSING_AND_PRESENTATION
