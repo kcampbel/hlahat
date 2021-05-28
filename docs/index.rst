@@ -10,6 +10,11 @@ Welcome to hlahat's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   usage/docker
+   usage/terra
+   usage/r
+
+
 
 
 Indices and tables
