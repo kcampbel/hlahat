@@ -5,7 +5,7 @@
 
 HLA-HAT: HLA Haplotype Analysis Toolkit
 ==================================
-The HLA Haplotype Analysis Toolkit (**HLA-HAT**) was designed to support analysis of the human leukocyte antigen (HLA) genes in the allele-specific context. The polymorphic nature of these genes makes it especially difficult to analyze and visualize allele-specific information in the context of the linear, haploid reference genome. Thus, HLA-HAT implements `HISAT2`_ and `HISAT-genotype`_ for the extraction and typing from HLA reads and constructs and **custom reference HLA genome** for downstream variant calling, allelic imbalance quantitation, and additional analysis.
+The HLA Haplotype Analysis Toolkit (**HLA-HAT**) was designed to support analysis of the human leukocyte antigen (HLA) genes in the allele-specific context. The polymorphic nature of these genes makes it especially difficult to analyze and visualize allele-specific information in the context of the linear, haploid reference genome. Thus, HLA-HAT implements `HISAT2`_ and `HISAT-genotype`_ for the extraction and typing from HLA reads and constructs a custom reference HLA genome for downstream variant calling, allelic imbalance quantitation, and additional analysis.
 
 The User Guide
 ==================================
