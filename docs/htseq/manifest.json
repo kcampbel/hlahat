@@ -1,0 +1,7 @@
+{
+  "repositoryName":"hisat",
+  "wdl":"methods/htseq/htseq.wdl",
+  "tracked_in_firecloud":true,
+  "synopsis":"HTSeq-counts: Perform gene expression quantification",
+  "namespace":"pici-master"
+}
