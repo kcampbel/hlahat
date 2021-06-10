@@ -4,14 +4,13 @@ Data processing using HISAT2 and HISAT-genotype
 HLA read extraction
 --------------
 
-::
-    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-    export PATH=$PATH:/opt/samtools/bin
+export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+export PATH=$PATH:/opt/samtools/bin
 
-    /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-      -1 ${fq1} -2 ${fq2} ${true='--is-rna' false='' is_rna}\
-      --database-list hla
+/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -1 ${fq1} -2 ${fq2} ${true='--is-rna' false='' is_rna}\
+  --database-list hla
 
 
 HLA typing
@@ -28,6 +27,25 @@ Docker Commands (kcampbel/rnaseq_methods:v3)::
 
 Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 ${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
+
+.. list-table:: Frozen Delights!
+   :widths: 15 10 30
+   :header-rows: 1
+
+   * - Treat
+     - Quantity
+     - Description
+   * - Albatross
+     - 2.99
+     - On a stick!
+   * - Crunchy Frog
+     - 1.49
+     - If we took the bones out, it wouldn't be
+       crunchy, now would it?
+   * - Gannet Ripple
+     - 1.99
+     - On a stick!
+
 .. rubric::all_types File Format
 .. list-table::
   :widths: 20 10 70
