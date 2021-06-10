@@ -28,25 +28,6 @@ Docker Commands (kcampbel/rnaseq_methods:v3)::
 Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 ${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
 
-.. list-table:: Frozen Delights!
-   :widths: 15 10 30
-   :header-rows: 1
-
-   * - Treat
-     - Quantity
-     - Description
-   * - Albatross
-     - 2.99
-     - On a stick!
-   * - Crunchy Frog
-     - 1.49
-     - If we took the bones out, it wouldn't be
-       crunchy, now would it?
-   * - Gannet Ripple
-     - 1.99
-     - On a stick!
-
-.. rubric::all_types File Format
 .. list-table::
   :widths: 20 10 70
   :align: center
@@ -77,21 +58,21 @@ By default, all alleles are reduced to their fullest resolution or up the third 
     :align: center
     :widths: 10 60 10 20
 
-    ===== ===== ===== ===== =====
-    ranks alleles gene  perc_abundance
-    ===== ===== ===== ===== =====
-    1 A*02:01:01:01 A 40.85
-    2 A*33:01:01  A 31.63
-    3 A*33:03:23  A 13.97
-    4 A*34:01:01  A 4.52
-    5 A*34:05 A 4.52
-    6 A*34:14 A 4.52
-    1 B*14:02:01:01 B 50.79
-    2 B*15:01:01:01 B 37.33
-    3 B*15:01:01:03 B 11.87
-    1 C*08:02:01:01 C 51.18
-    2 C*03:03:01:01 C 48.82
-    ===== ===== ===== ===== =====
+    ===== =====           ===== =====
+    ranks alleles         gene  perc_abundance
+    ===== =====           ===== =====
+    1     A*02:01:01:01   A     40.85
+    2     A*33:01:01      A     31.63
+    3     A*33:03:23      A     13.97
+    4     A*34:01:01      A     4.52
+    5     A*34:05         A     4.52
+    6     A*34:14         A     4.52
+    1     B*14:02:01:01   B     50.79
+    2     B*15:01:01:01   B     37.33
+    3     B*15:01:01:03   B     11.87
+    1     C*08:02:01:01   C     51.18
+    2     C*03:03:01:01   C     48.82
+    ===== =====           ===== =====
 
 First, alleles are summarized to the third field of resolution:
 ..  table::
