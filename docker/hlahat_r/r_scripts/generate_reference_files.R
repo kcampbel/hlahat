@@ -9,8 +9,9 @@ library(data.table)
 args <- commandArgs(TRUE)
 name <- args[1]
 hlatypes_file <- args[2]
-gen_msf_list <- args[3] # comma delimited list of gen_msf files
-nuc_msf_list <- args[4] # comma delimited list of nuc_msf files
+n_fields <- args[3] # Number of fields to resolve to
+gen_msf_list <- args[4] # comma delimited list of gen_msf files
+nuc_msf_list <- args[5] # comma delimited list of nuc_msf files
 
 ##### Read in reference files
 list_gen <- unlist(strsplit(as.character(gen_msf_list), split = ','))
@@ -34,7 +35,22 @@ summarize_hlatypes <- function(hlatypes_file, name) {
 read_hlatypes <- summarize_hlatypes(hlatypes_file, name)
 write.table(read_hlatypes, paste0(name, ".all_hlatypes.tsv"), row.names = F, quote = F, sep = '\t')
 # Use percent abundance/rank to retrieve top 2 HLA types
-top_hlatypes <- filter(read_hlatypes, ranks %in% 1:2) %>% mutate(ranks = NULL, perc_abundance = NULL)
+if(n_fields == 3) {
+  top_hlatypes <- read_hlatypes %>% 
+    mutate(allele = ifelse(grepl("\\w+.*\\*\\d+:\\d+:\\d+:\\d+.*", alleles), gsub("(\\w+.*\\*\\d+:\\d+:\\d+):\\d+.*", "\\1", alleles), alleles)) %>%
+    group_by(gene, allele) %>% 
+    filter(perc_abundance == max(perc_abundance, na.rm = T)) %>% ungroup %>% 
+    filter(perc_abundance > 5) %>%
+    filter(ranks %in% c(1,2))
+} else {
+  top_hlatypes <- read_hlatypes %>% 
+    mutate(allele = ifelse(grepl("\\w+.*\\*\\d+:\\d+:\\d+:\\d+.*", alleles) , gsub("(\\w+.*\\*\\d+:\\d+):\\d+:\\d+.*", "\\1", alleles),
+                           ifelse(grepl("\\w+.*\\*\\d+:\\d+:\\d+.*", alleles) , gsub("(\\w+.*\\*\\d+:\\d+.*):\\d+.*", "\\1", alleles), alleles))) %>%
+    group_by(gene, allele) %>% 
+    filter(perc_abundance == max(perc_abundance, na.rm = T)) %>% ungroup %>% 
+    filter(perc_abundance > 5) %>%
+    filter(ranks %in% c(1,2))
+}
 write.table(top_hlatypes, paste0(name, ".top_hlatypes.tsv"), row.names = F, quote = F, sep = '\t')
 
 # Generate reference files
