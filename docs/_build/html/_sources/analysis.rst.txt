@@ -58,9 +58,9 @@ By default, all alleles are reduced to their fullest resolution or up the third 
     :align: center
     :widths: 10 60 10 20
 
-    ===== =====           ===== =====
+    ===== =============== ===== ===============
     ranks alleles         gene  perc_abundance
-    ===== =====           ===== =====
+    ===== =============== ===== ===============
     1     A*02:01:01:01   A     40.85
     2     A*33:01:01      A     31.63
     3     A*33:03:23      A     13.97
@@ -72,7 +72,7 @@ By default, all alleles are reduced to their fullest resolution or up the third 
     3     B*15:01:01:03   B     11.87
     1     C*08:02:01:01   C     51.18
     2     C*03:03:01:01   C     48.82
-    ===== =====           ===== =====
+    ===== =============== ===== ===============
 
 First, alleles are summarized to the third field of resolution:
 ..  table::
