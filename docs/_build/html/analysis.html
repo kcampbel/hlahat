@@ -173,27 +173,27 @@
 <h1>Data processing using HISAT2 and HISAT-genotype<a class="headerlink" href="#data-processing-using-hisat2-and-hisat-genotype" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="hla-read-extraction">
 <h2>HLA read extraction<a class="headerlink" href="#hla-read-extraction" title="Permalink to this headline">¶</a></h2>
-<p>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+<p>Extract HLA-associated reads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-export PATH=$PATH:/opt/samtools/bin</p>
-<dl class="docutils">
-<dt>/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py –base ${hisat_prefix} </dt>
-<dd>-1 ${fq1} -2 ${fq2} ${true=’–is-rna’ false=’’ is_rna}–database-list hla</dd>
-</dl>
+export PATH=$PATH:/opt/samtools/bin
+/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -1 ${fq1} -2 ${fq2} ${true=&#39;--is-rna&#39; false=&#39;&#39; is_rna}\
+  --database-list hla
+</pre></div>
+</div>
 </div>
 <div class="section" id="hla-typing">
 <h2>HLA typing<a class="headerlink" href="#hla-typing" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Docker Commands (kcampbel/rnaseq_methods:v3)::</dt>
-<dd><p class="first">export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+<p>Docker Commands (kcampbel/rnaseq_methods:v3):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-export PATH=$PATH:/opt/samtools/bin</p>
-<dl class="last docutils">
-<dt>/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py –genotype-genome ${hisat_prefix} </dt>
-<dd>-U ${fq1} ${true=’–is-rna’ false=’’ is_rna}–base hla –locus-list ${locus} –output-base ${name}.${locus} –keep-low-abundance-alleles</dd>
-</dl>
-</dd>
-</dl>
+export PATH=$PATH:/opt/samtools/bin
+/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
+  -U ${fq1} ${true=&#39;--is-rna&#39; false=&#39;&#39; is_rna}\
+  --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
+</pre></div>
+</div>
 <p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 ${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:</p>
 <table border="1" class="colwidths-given docutils align-center">

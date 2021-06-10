@@ -3,24 +3,24 @@ Data processing using HISAT2 and HISAT-genotype
 
 HLA read extraction
 --------------
+Extract HLA-associated reads::
 
-export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-export PATH=$PATH:/opt/samtools/bin
-
-/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-  -1 ${fq1} -2 ${fq2} ${true='--is-rna' false='' is_rna}\
-  --database-list hla
+    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+    export PATH=$PATH:/opt/samtools/bin
+    /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+      -1 ${fq1} -2 ${fq2} ${true='--is-rna' false='' is_rna}\
+      --database-list hla
 
 
 HLA typing
 --------------
 
 Docker Commands (kcampbel/rnaseq_methods:v3)::
+
     export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
     export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
     export PATH=$PATH:/opt/samtools/bin
-
     /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
       -U ${fq1} ${true='--is-rna' false='' is_rna}\
       --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
