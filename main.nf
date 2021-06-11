@@ -47,14 +47,9 @@ process foo {
       """
 }
 
-//include { foo } from './workflow/foo'
 include { GENOTYPER } from './workflow/genotyper'
+
 workflow HLA_HAT {
-    //
-    // WORKFLOW: Get SRA run information for public database ids, download and md5sum check FastQ files, auto-create samplesheet
-    //
-    //foo()
-    //foo.out.verbiage.view()
     GENOTYPER ()
 }
 
