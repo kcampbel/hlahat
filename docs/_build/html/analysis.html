@@ -174,13 +174,13 @@
 <h1>Data processing using HISAT2 and HISAT-genotype<a class="headerlink" href="#data-processing-using-hisat2-and-hisat-genotype" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="hla-read-extraction">
 <h2>HLA read extraction<a class="headerlink" href="#hla-read-extraction" title="Permalink to this headline">¶</a></h2>
-<p>Reads associated with the HLA gene loci are extracted using HISAT-genotype. The <code class="docutils literal notranslate"><span class="pre">hisatgenotype_extract_reads</span></code> file has been modified to work with either DNA or RNA sequencing reads (enabling split-read sequence alignment through HISAT2).
-Extract HLA-associated reads from DNA sequencing data:</p>
+<p>Reads associated with the HLA gene loci are extracted using HISAT-genotype. The <code class="docutils literal notranslate"><span class="pre">hisatgenotype_extract_reads</span></code> file has been modified to work with either DNA or RNA sequencing reads (enabling split-read sequence alignment through HISAT2).</p>
+<p>Extract HLA-associated reads from DNA sequencing data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-        -1 ${fq1} -2 ${fq2} --database-list hla
+-1 ${fq1} -2 ${fq2} --database-list hla
 </pre></div>
 </div>
 <p>To extract HLA-associated reads from RNA sequencing data, just add the <code class="docutils literal notranslate"><span class="pre">--is-rna</span></code> flag to the command:</p>
@@ -188,7 +188,7 @@ export PATH=$PATH:/opt/samtools/bin
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-        -1 ${fq1} -2 ${fq2} --is-rna --database-list hla
+-1 ${fq1} -2 ${fq2} --is-rna --database-list hla
 </pre></div>
 </div>
 <p>Reads may also be extracted from single reads, using the <code class="docutils literal notranslate"><span class="pre">-U</span></code> option instead of paired <code class="docutils literal notranslate"><span class="pre">-1</span></code> and <code class="docutils literal notranslate"><span class="pre">-2</span></code> reads:</p>
@@ -196,7 +196,7 @@ export PATH=$PATH:/opt/samtools/bin
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-        -U ${fq1} --is-rna --database-list hla
+-U ${fq1} --is-rna --database-list hla
 </pre></div>
 </div>
 </div>
@@ -208,7 +208,7 @@ export PATH=$PATH:/opt/samtools/bin
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
-        -1 ${fq1} -- ${fq2} --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
+-1 ${fq1} -- ${fq2} --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
 </pre></div>
 </div>
 <p>Options for single-read sequencing (<code class="docutils literal notranslate"><span class="pre">U</span></code>) and RNA sequencing (<code class="docutils literal notranslate"><span class="pre">--is-rna</span></code>) can also be used for HLA typing.</p>
@@ -253,8 +253,8 @@ export PATH=$PATH:/opt/samtools/bin
 <p>First, alleles are summarized to the third field of resolution:
 .. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
 <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
 <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
@@ -272,8 +272,8 @@ export PATH=$PATH:/opt/samtools/bin
 <p>Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:
 .. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
 <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
 <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
@@ -290,8 +290,8 @@ export PATH=$PATH:/opt/samtools/bin
 <p>Alleles with less than 5% abundance are removed:
 .. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
 <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
 <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
@@ -305,8 +305,8 @@ export PATH=$PATH:/opt/samtools/bin
 <p>Finally, the top 1-2 ranked alleles are identified as the patient HLA type:
 .. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
 <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
 <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>

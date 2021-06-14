@@ -4,29 +4,30 @@ Data processing using HISAT2 and HISAT-genotype
 HLA read extraction
 --------------------
 Reads associated with the HLA gene loci are extracted using HISAT-genotype. The ``hisatgenotype_extract_reads`` file has been modified to work with either DNA or RNA sequencing reads (enabling split-read sequence alignment through HISAT2).
+
 Extract HLA-associated reads from DNA sequencing data::
 
-		export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-		export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-		export PATH=$PATH:/opt/samtools/bin
-		/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-			-1 ${fq1} -2 ${fq2} --database-list hla
+  export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+  export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+  export PATH=$PATH:/opt/samtools/bin
+  /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -1 ${fq1} -2 ${fq2} --database-list hla
 
 To extract HLA-associated reads from RNA sequencing data, just add the ``--is-rna`` flag to the command::
 
-		export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-		export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-		export PATH=$PATH:/opt/samtools/bin
-		/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-			-1 ${fq1} -2 ${fq2} --is-rna --database-list hla
+  export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+  export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+  export PATH=$PATH:/opt/samtools/bin
+  /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -1 ${fq1} -2 ${fq2} --is-rna --database-list hla
 
 Reads may also be extracted from single reads, using the ``-U`` option instead of paired ``-1`` and ``-2`` reads::
 
-		export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-		export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-		export PATH=$PATH:/opt/samtools/bin
-		/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-			-U ${fq1} --is-rna --database-list hla
+  export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+  export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+  export PATH=$PATH:/opt/samtools/bin
+  /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -U ${fq1} --is-rna --database-list hla
 
 HLA typing
 -----------
@@ -34,11 +35,11 @@ HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, includ
 
 Docker Commands (kcampbel/rnaseq_methods:v3)::
 
-		export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
-		export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-		export PATH=$PATH:/opt/samtools/bin
-		/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
-			-1 ${fq1} -- ${fq2} --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
+  export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+  export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+  export PATH=$PATH:/opt/samtools/bin
+  /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
+  -1 ${fq1} -- ${fq2} --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
 
 Options for single-read sequencing (``U``) and RNA sequencing (``--is-rna``) can also be used for HLA typing.
 
@@ -51,14 +52,14 @@ Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from 
 
 *${id}.all_types.tsv* file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
 ..	csv-table::
-		:widths: auto
-		:align: center
-		:header: "Field", "Type", "Description"
+  :widths: auto
+  :align: center
+  :header: "Field", "Type", "Description"
 
-		"ranks", "Integer", "Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type"
-		"alleles", "String", "Full resolution of ranked allele identified by HISAT-genotype"
-		"gene", "String", "HLA gene"
-		"perc_abundance", "Float", "Relative abundance of reads corresponding to allele"
+  "ranks", "Integer", "Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type"
+  "alleles", "String", "Full resolution of ranked allele identified by HISAT-genotype"
+  "gene", "String", "HLA gene"
+  "perc_abundance", "Float", "Relative abundance of reads corresponding to allele"
 
 By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
 
@@ -85,8 +86,8 @@ By default, all alleles are reduced to their fullest resolution or up the third 
 First, alleles are summarized to the third field of resolution:
 .. csv-table::
    :widths: auto
-	 :align: center
-	 :header: "ranks", "alleles", "gene", "perc_abundance"
+   :align: center
+   :header: "ranks", "alleles", "gene", "perc_abundance"
 
    "1", "A*02:01:01", "A", "40.85"
    "2", "A*33:01:01", "A", "31.63"
@@ -103,8 +104,8 @@ First, alleles are summarized to the third field of resolution:
 Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:
 .. csv-table::
    :widths: auto
-	 :align: center
-	 :header: "ranks", "alleles", "gene", "perc_abundance"
+   :align: center
+   :header: "ranks", "alleles", "gene", "perc_abundance"
 
    "1", "A*02:01:01", "A", "40.85"
    "2", "A*33:01:01", "A", "31.63"
@@ -120,8 +121,8 @@ Alleles are summarized by the maximum percent abundance corresponding to each un
 Alleles with less than 5% abundance are removed:
 .. csv-table::
    :widths: auto
-	 :align: center
-	 :header: "ranks", "alleles", "gene", "perc_abundance"
+   :align: center
+   :header: "ranks", "alleles", "gene", "perc_abundance"
 
    "1", "A*02:01:01", "A", "40.85"
    "2", "A*33:01:01", "A", "31.63"
@@ -134,8 +135,8 @@ Alleles with less than 5% abundance are removed:
 Finally, the top 1-2 ranked alleles are identified as the patient HLA type:
 .. csv-table::
    :widths: auto
-	 :align: center
-	 :header: "ranks", "alleles", "gene", "perc_abundance"
+   :align: center
+   :header: "ranks", "alleles", "gene", "perc_abundance"
 
    "1", "A*02:01:01", "A", "40.85"
    "2", "A*33:01:01", "A", "31.63"
@@ -160,8 +161,8 @@ Constructing a custom HLA reference
 
 docker: kcampbel/hlahat_r:v1::
 
-		grep "ranked" ${sep=" " hla_report_files} > ${name}.hla_types.txt
-		Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
+  grep "ranked" ${sep=" " hla_report_files} > ${name}.hla_types.txt
+  Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
 
 Variant detection
 ------------------
