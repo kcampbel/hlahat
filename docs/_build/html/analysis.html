@@ -196,59 +196,30 @@ export PATH=$PATH:/opt/samtools/bin
 </div>
 <p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 ${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:</p>
-<table border="1" class="colwidths-auto docutils align-center">
+<table border="1" class="colwidths-auto docutils align-center" id="id1">
+<caption><span class="caption-text">all_types</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head"><dl class="first last docutils">
-<dt>Field</dt>
-<dd><ul class="first last simple">
-<li>Type</li>
-<li>Description</li>
-</ul>
-</dd>
-</dl>
-</th>
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><dl class="first last docutils">
-<dt>ranks</dt>
-<dd><ul class="first last simple">
-<li>Integer</li>
-<li>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</li>
-</ul>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td>ranks</td>
+<td>Integer</td>
+<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
 </tr>
-<tr class="row-odd"><td><dl class="first last docutils">
-<dt>alleles</dt>
-<dd><ul class="first last simple">
-<li>String</li>
-<li>Full resolution of ranked allele identified by HISAT-genotype</li>
-</ul>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td>alleles</td>
+<td>String</td>
+<td>Full resolution of ranked allele identified by HISAT-genotype</td>
 </tr>
-<tr class="row-even"><td><dl class="first last docutils">
-<dt>gene</dt>
-<dd><ul class="first last simple">
-<li>String</li>
-<li>HLA gene</li>
-</ul>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td>gene</td>
+<td>String</td>
+<td>HLA gene</td>
 </tr>
-<tr class="row-odd"><td><dl class="first last docutils">
-<dt>perc_abundance</dt>
-<dd><ul class="first last simple">
-<li>Float</li>
-<li>Relative abundance of reads corresponding to allele</li>
-</ul>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td>perc_abundance</td>
+<td>Float</td>
+<td>Relative abundance of reads corresponding to allele</td>
 </tr>
 </tbody>
 </table>

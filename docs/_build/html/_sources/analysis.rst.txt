@@ -28,26 +28,15 @@ Docker Commands (kcampbel/rnaseq_methods:v3)::
 Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 ${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
 
-.. list-table::
-	:widths: auto
-	:align: center
-	:header-rows: 1
+.. csv-table:: all_types
+  :widths: auto
+  :align: center
+  :header: "Field", "Type", "Description"
 
-	* - Field
-		- Type
-		- Description
-	* - ranks
-		- Integer
-		- Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type
-	* - alleles
-		- String
-		- Full resolution of ranked allele identified by HISAT-genotype
-	* - gene
-		- String
-		- HLA gene
-	* - perc_abundance
-		- Float
-		- Relative abundance of reads corresponding to allele
+  "ranks", "Integer", "Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type"
+  "alleles", "String", "Full resolution of ranked allele identified by HISAT-genotype"
+  "gene", "String", "HLA gene"
+  "perc_abundance", "Float", "Relative abundance of reads corresponding to allele"
 
 By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
 
