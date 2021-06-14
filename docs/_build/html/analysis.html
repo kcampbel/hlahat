@@ -173,178 +173,150 @@
 <h1>Data processing using HISAT2 and HISAT-genotype<a class="headerlink" href="#data-processing-using-hisat2-and-hisat-genotype" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="hla-read-extraction">
 <h2>HLA read extraction<a class="headerlink" href="#hla-read-extraction" title="Permalink to this headline">¶</a></h2>
-<p>Extract HLA-associated reads:</p>
+<p>Extract HLA-associated reads from DNA sequencing data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
-        -1 ${fq1} -2 ${fq2} ${true=&#39;--is-rna&#39; false=&#39;&#39; is_rna}\
-        --database-list hla
+        -1 ${fq1} -2 ${fq2} --database-list hla
 </pre></div>
 </div>
+<p>To extract HLA-associated reads from RNA sequencing data, just add the <code class="docutils literal notranslate"><span class="pre">--is-rna</span></code> flag to the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+export PATH=$PATH:/opt/samtools/bin
+/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
+  -1 ${fq1} -2 ${fq2} --is-rna --database-list hla
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Reads may also be extracted from single reads, using the <code class="docutils literal notranslate"><span class="pre">-U</span></code> option instead of paired <code class="docutils literal notranslate"><span class="pre">-1</span></code> and <code class="docutils literal notranslate"><span class="pre">-2</span></code> reads::</dt>
+<dd>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
+export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
+export PATH=$PATH:/opt/samtools/bin
+/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py –base ${hisat_prefix} -U ${fq1} –is-rna –database-list hla</dd>
+</dl>
 </div>
 <div class="section" id="hla-typing">
 <h2>HLA typing<a class="headerlink" href="#hla-typing" title="Permalink to this headline">¶</a></h2>
+<p>HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2, and HLA-V. These are specified as a comma-delimited list in the following HLA typing command by the <cite>–locus-list</cite> option. Note: Do not include “HLA-” when specifying HLA genes (e.g. use <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">A</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">HLA-A</span></code>). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).</p>
 <p>Docker Commands (kcampbel/rnaseq_methods:v3):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 export PATH=$PATH:/opt/samtools/bin
 /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix} \
-        -U ${fq1} ${true=&#39;--is-rna&#39; false=&#39;&#39; is_rna}\
-        --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
+        -1 ${fq1} -- ${fq2} --base hla --locus-list ${locus} --output-base ${name}.${locus} --keep-low-abundance-alleles
 </pre></div>
 </div>
-<p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the ${id}.all_types.tsv file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
-${id}.all_types.tsv file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:</p>
-<table border="1" class="colwidths-auto docutils align-center" id="id1">
-<caption><span class="caption-text">all_types</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Field</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>ranks</td>
-<td>Integer</td>
-<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
-</tr>
-<tr class="row-odd"><td>alleles</td>
-<td>String</td>
-<td>Full resolution of ranked allele identified by HISAT-genotype</td>
-</tr>
-<tr class="row-even"><td>gene</td>
-<td>String</td>
-<td>HLA gene</td>
-</tr>
-<tr class="row-odd"><td>perc_abundance</td>
-<td>Float</td>
-<td>Relative abundance of reads corresponding to allele</td>
-</tr>
-</tbody>
-</table>
+<p>Options for single-read sequencing (<code class="docutils literal notranslate"><span class="pre">U</span></code>) and RNA sequencing (<code class="docutils literal notranslate"><span class="pre">--is-rna</span></code>) can also be used for HLA typing.</p>
+<p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
+<p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span>
+
+<span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;Integer&quot;</span><span class="p">,</span> <span class="s2">&quot;Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type&quot;</span>
+<span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;Full resolution of ranked allele identified by HISAT-genotype&quot;</span>
+<span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;HLA gene&quot;</span>
+<span class="s2">&quot;perc_abundance&quot;</span><span class="p">,</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;Relative abundance of reads corresponding to allele&quot;</span>
+</pre></div>
+</div>
 <p>By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
 <p><em>Optional</em>: To summarize at the second field of resolution, the flag –field_of_resolution 2 can be used. If this parameter is set, the top two alleles at the second field of resolution are chosen.</p>
 <p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:
-.. table:</p>
+.. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
       <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-      <span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
-             <span class="o">=====</span>  <span class="o">===============</span>  <span class="o">=====</span>  <span class="o">===============</span>
-             <span class="n">ranks</span>  <span class="n">alleles</span>          <span class="n">gene</span>   <span class="n">perc_abundance</span>
-             <span class="o">=====</span>  <span class="o">===============</span>  <span class="o">=====</span>  <span class="o">===============</span>
-             <span class="mi">1</span>      <span class="n">A</span><span class="o">*</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>    <span class="n">A</span>      <span class="mf">40.85</span>
-             <span class="mi">2</span>      <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>       <span class="n">A</span>      <span class="mf">31.63</span>
-             <span class="mi">3</span>      <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">23</span>       <span class="n">A</span>      <span class="mf">13.97</span>
-             <span class="mi">4</span>      <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>       <span class="n">A</span>      <span class="mf">4.52</span>
-             <span class="mi">5</span>      <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">05</span>          <span class="n">A</span>      <span class="mf">4.52</span>
-             <span class="mi">6</span>      <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">14</span>          <span class="n">A</span>      <span class="mf">4.52</span>
-             <span class="mi">1</span>      <span class="n">B</span><span class="o">*</span><span class="mi">14</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>    <span class="n">B</span>      <span class="mf">50.79</span>
-             <span class="mi">2</span>      <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>    <span class="n">B</span>      <span class="mf">37.33</span>
-             <span class="mi">3</span>      <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">03</span>    <span class="n">B</span>      <span class="mf">11.87</span>
-             <span class="mi">1</span>      <span class="n">C</span><span class="o">*</span><span class="mi">08</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>    <span class="n">C</span>      <span class="mf">51.18</span>
-             <span class="mi">2</span>      <span class="n">C</span><span class="o">*</span><span class="mi">03</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>    <span class="n">C</span>      <span class="mf">48.82</span>
-             <span class="o">=====</span> <span class="o">===============</span>   <span class="o">=====</span>  <span class="o">===============</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
+<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01:03&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;11.87&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
 </pre></div>
 </div>
 <p>First, alleles are summarized to the third field of resolution:
-..  table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="n">ranks</span> <span class="n">alleles</span> <span class="n">gene</span>  <span class="n">perc_abundance</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="mi">1</span> <span class="n">A</span><span class="o">*</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">A</span> <span class="mf">40.85</span>
-<span class="mi">2</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">31.63</span>
-<span class="mi">3</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">23</span>  <span class="n">A</span> <span class="mf">13.97</span>
-<span class="mi">4</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">5</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">05</span> <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">6</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">14</span> <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">1</span> <span class="n">B</span><span class="o">*</span><span class="mi">14</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">50.79</span>
-<span class="mi">2</span> <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">37.33</span>
-<span class="mi">3</span> <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">11.87</span>
-<span class="mi">1</span> <span class="n">C</span><span class="o">*</span><span class="mi">08</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">51.18</span>
-<span class="mi">2</span> <span class="n">C</span><span class="o">*</span><span class="mi">03</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">48.82</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
+<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;11.87&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
 </pre></div>
 </div>
 <p>Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:
-..  table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="n">ranks</span> <span class="n">alleles</span> <span class="n">gene</span>  <span class="n">perc_abundance</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="mi">1</span> <span class="n">A</span><span class="o">*</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">A</span> <span class="mf">40.85</span>
-<span class="mi">2</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">31.63</span>
-<span class="mi">3</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">23</span>  <span class="n">A</span> <span class="mf">13.97</span>
-<span class="mi">4</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">5</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">05</span> <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">6</span> <span class="n">A</span><span class="o">*</span><span class="mi">34</span><span class="p">:</span><span class="mi">14</span> <span class="n">A</span> <span class="mf">4.52</span>
-<span class="mi">1</span> <span class="n">B</span><span class="o">*</span><span class="mi">14</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">50.79</span>
-<span class="mi">2</span> <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">37.33</span>
-<span class="mi">1</span> <span class="n">C</span><span class="o">*</span><span class="mi">08</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">51.18</span>
-<span class="mi">2</span> <span class="n">C</span><span class="o">*</span><span class="mi">03</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">48.82</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
+<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
 </pre></div>
 </div>
 <p>Alleles with less than 5% abundance are removed:
-..  table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="n">ranks</span> <span class="n">alleles</span> <span class="n">gene</span>  <span class="n">perc_abundance</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="mi">1</span> <span class="n">A</span><span class="o">*</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">A</span> <span class="mf">40.85</span>
-<span class="mi">2</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">31.63</span>
-<span class="mi">3</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">23</span>  <span class="n">A</span> <span class="mf">13.97</span>
-<span class="mi">1</span> <span class="n">B</span><span class="o">*</span><span class="mi">14</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">50.79</span>
-<span class="mi">2</span> <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">37.33</span>
-<span class="mi">1</span> <span class="n">C</span><span class="o">*</span><span class="mi">08</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">51.18</span>
-<span class="mi">2</span> <span class="n">C</span><span class="o">*</span><span class="mi">03</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">48.82</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
+<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
 </pre></div>
 </div>
 <p>Finally, the top 1-2 ranked alleles are identified as the patient HLA type:
-..  table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
-<span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+      <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+      <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
 
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="n">ranks</span> <span class="n">alleles</span> <span class="n">gene</span>  <span class="n">perc_abundance</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
-<span class="mi">1</span> <span class="n">A</span><span class="o">*</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">A</span> <span class="mf">40.85</span>
-<span class="mi">2</span> <span class="n">A</span><span class="o">*</span><span class="mi">33</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span>  <span class="n">A</span> <span class="mf">31.63</span>
-<span class="mi">1</span> <span class="n">B</span><span class="o">*</span><span class="mi">14</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">50.79</span>
-<span class="mi">2</span> <span class="n">B</span><span class="o">*</span><span class="mi">15</span><span class="p">:</span><span class="mi">01</span><span class="p">:</span><span class="mi">01</span> <span class="n">B</span> <span class="mf">37.33</span>
-<span class="mi">1</span> <span class="n">C</span><span class="o">*</span><span class="mi">08</span><span class="p">:</span><span class="mi">02</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">51.18</span>
-<span class="mi">2</span> <span class="n">C</span><span class="o">*</span><span class="mi">03</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">01</span> <span class="n">C</span> <span class="mf">48.82</span>
-<span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span> <span class="o">=====</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
+<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
+<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
 </pre></div>
 </div>
-<p>The final list of HLA types is summarized by ${id}.top_hlatypes.tsv, a tab-delimited file containing the filtered allele calls:
-.. rubric::top_hlatypes File Format
-.. list-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
+<p>The final list of HLA types is summarized by <em>${id}.top_hlatypes.tsv</em>, a tab-delimited file containing the filtered allele calls:
+.. csv-table:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span>
 
-<span class="o">*</span> <span class="o">-</span> <span class="n">Field</span>
-        <span class="o">-</span> <span class="n">Type</span>
-        <span class="o">-</span> <span class="n">Description</span>
-<span class="o">*</span> <span class="o">-</span> <span class="n">gene</span>
-        <span class="o">-</span> <span class="n">String</span>
-        <span class="o">-</span> <span class="n">HLA</span> <span class="n">gene</span>
-<span class="o">*</span> <span class="o">-</span> <span class="n">allele</span>
-        <span class="o">-</span> <span class="n">String</span>
-        <span class="o">-</span> <span class="n">Filtered</span> <span class="n">allele</span> <span class="n">call</span>
+<span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;HLA gene&quot;</span>
+<span class="s2">&quot;allele&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;Filtered allele call&quot;</span>
 </pre></div>
 </div>
 </div>
