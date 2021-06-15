@@ -1,8 +1,14 @@
-Data processing using HISAT2 and HISAT-genotype
-================================================
+Analysis
+=========
+.. image:: img/workflow.jpg
+  :width: 400
 
+Module 1. Preparation and assignment
+-------------------------------------
+
+#####################
 HLA read extraction
---------------------
+#####################
 Reads associated with the HLA gene loci are extracted using HISAT-genotype. The ``hisatgenotype_extract_reads`` file has been modified to work with either DNA or RNA sequencing reads (enabling split-read sequence alignment through HISAT2).
 
 Extract HLA-associated reads from DNA sequencing data::
@@ -29,8 +35,9 @@ Reads may also be extracted from single reads, using the ``-U`` option instead o
   /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix} \
   -U ${fq1} --is-rna --database-list hla
 
+#####################
 HLA typing
------------
+#####################
 HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2, and HLA-V. These are specified as a comma-delimited list in the following HLA typing command by the `--locus-list` option. Note: Do not include "HLA-" when specifying HLA genes (e.g. use ``--locus-list A`` instead of ``--locus-list HLA-A``). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).
 
 Docker Commands (kcampbel/rnaseq_methods:v3)::
@@ -43,8 +50,17 @@ Docker Commands (kcampbel/rnaseq_methods:v3)::
 
 Options for single-read sequencing (``U``) and RNA sequencing (``--is-rna``) can also be used for HLA typing.
 
+Module 2. Reference Generation
+====================================
+
+docker: kcampbel/hlahat_r:v1::
+
+  grep "ranked" ${sep=" " hla_report_files} > ${name}.hla_types.txt
+  Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
+
+########################
 HLA haplotype reporting
-------------------------
+########################
 
 The R script ``docker/hlahat_r/r_scripts/generate_reference_files.R`` is provided for
 
@@ -154,27 +170,30 @@ The final list of HLA types is summarized by *${id}.top_hlatypes.tsv*, a tab-del
   "gene", "String", "HLA gene"
   "allele", "String", "Filtered allele call"
 
+Module 3. Downstream Analysis
+===============================
 
-
-Constructing a custom HLA reference
-====================================
-
-docker: kcampbel/hlahat_r:v1::
-
-  grep "ranked" ${sep=" " hla_report_files} > ${name}.hla_types.txt
-  Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
-
-Variant detection
-------------------
-
-
-Quantifying allelic imbalance
-------------------------------
-
-
+##########################################
 Paired tumor-normal data
+##########################################
+
+#####################
+Tumor-only datasets
+#####################
+
+##########################################
+Quantifying allelic imbalance
+##########################################
+
+#####################
+Variant detection
+#####################
+
+
+
+
 -------------------------
 
 
-Tumor-only datasets
+
 ---------------------
