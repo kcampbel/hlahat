@@ -94,10 +94,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#hla-typing">HLA typing</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-2-reference-generation">Module 2. Reference Generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hla-haplotype-reporting">HLA haplotype reporting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#module-2-reference-generation">Module 2. Reference Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#module-3-downstream-analysis">Module 3. Downstream Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-3-downstream-analysis">Module 3. Downstream Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paired-tumor-normal-data">Paired tumor-normal data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tumor-only-datasets">Tumor-only datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quantifying-allelic-imbalance">Quantifying allelic imbalance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variant-detection">Variant detection</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
@@ -169,7 +178,7 @@
             
   <div class="section" id="analysis">
 <h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="_images/workflow.jpg"><img alt="_images/workflow.jpg" src="_images/workflow.jpg" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/workflow.jpg"><img alt="_images/workflow.jpg" class="align-center" src="_images/workflow.jpg" style="width: 800px;" /></a>
 <div class="section" id="module-1-preparation-and-assignment">
 <h2>Module 1. Preparation and assignment<a class="headerlink" href="#module-1-preparation-and-assignment" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="hla-read-extraction">
@@ -202,7 +211,11 @@ export PATH=$PATH:/opt/samtools/bin
 </div>
 <div class="section" id="hla-typing">
 <h3>HLA typing<a class="headerlink" href="#hla-typing" title="Permalink to this headline">¶</a></h3>
-<p>HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2, and HLA-V. These are specified as a comma-delimited list in the following HLA typing command by the <cite>–locus-list</cite> option. Note: Do not include “HLA-” when specifying HLA genes (e.g. use <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">A</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">HLA-A</span></code>). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).</p>
+<p>HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: <em>HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2,</em> and <em>HLA-V</em>. These are specified as a comma-delimited list in the following HLA typing command by the <cite>–locus-list</cite> option.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Do not include “HLA-” when specifying HLA genes (e.g. use <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">A</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">HLA-A</span></code>). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).</p>
+</div>
 <p>Docker Commands (kcampbel/rnaseq_methods:v3):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
 export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
@@ -214,14 +227,15 @@ export PATH=$PATH:/opt/samtools/bin
 <p>Options for single-read sequencing (<code class="docutils literal notranslate"><span class="pre">U</span></code>) and RNA sequencing (<code class="docutils literal notranslate"><span class="pre">--is-rna</span></code>) can also be used for HLA typing.</p>
 </div>
 </div>
-</div>
 <div class="section" id="module-2-reference-generation">
-<h1>Module 2. Reference Generation<a class="headerlink" href="#module-2-reference-generation" title="Permalink to this headline">¶</a></h1>
+<h2>Module 2. Reference Generation<a class="headerlink" href="#module-2-reference-generation" title="Permalink to this headline">¶</a></h2>
 <p>docker: kcampbel/hlahat_r:v1:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>grep &quot;ranked&quot; ${sep=&quot; &quot; hla_report_files} &gt; ${name}.hla_types.txt
 Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
 </pre></div>
 </div>
+<div class="section" id="hla-haplotype-reporting">
+<h3>HLA haplotype reporting<a class="headerlink" href="#hla-haplotype-reporting" title="Permalink to this headline">¶</a></h3>
 <p>The R script <code class="docutils literal notranslate"><span class="pre">docker/hlahat_r/r_scripts/generate_reference_files.R</span></code> is provided for</p>
 <p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
 <p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
@@ -334,10 +348,22 @@ Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep=&quot;,&quot;
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="module-3-downstream-analysis">
-<h1>Module 3. Downstream Analysis<a class="headerlink" href="#module-3-downstream-analysis" title="Permalink to this headline">¶</a></h1>
-<hr class="docutils" />
-<hr class="docutils" />
+<h2>Module 3. Downstream Analysis<a class="headerlink" href="#module-3-downstream-analysis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="paired-tumor-normal-data">
+<h3>Paired tumor-normal data<a class="headerlink" href="#paired-tumor-normal-data" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="tumor-only-datasets">
+<h3>Tumor-only datasets<a class="headerlink" href="#tumor-only-datasets" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="quantifying-allelic-imbalance">
+<h3>Quantifying allelic imbalance<a class="headerlink" href="#quantifying-allelic-imbalance" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="variant-detection">
+<h3>Variant detection<a class="headerlink" href="#variant-detection" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
 </div>
 
 
