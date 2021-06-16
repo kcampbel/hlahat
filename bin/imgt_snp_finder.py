@@ -11,15 +11,15 @@ import pickle
 import argparse
 import re
 import os
-import warnings
+import logging
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='IMGT allele to SNP finder')
     parser.add_argument('alleles', nargs='+', help='Query alleles or file')
-    parser.add_argument('--imgt_alignments', required=True,
-        help='IMGT alignments to reference pickle input')
+    parser.add_argument('-i', '--imgt_alignments', required=True,
+        help='IMGT alignments pickle input')
     parser.add_argument('-g', '--ref_hla_genotypes', required=True, help='Reference HLA genotypes')
     parser.add_argument('-b', '--ref_hla_bed', required=True, help='Reference HLA bed')
     parser.add_argument('-o', '--outfile', required=True, help='Output filename')
@@ -91,21 +91,27 @@ def hla_nearest(query:list, imgt:dict):
             nearest_longer = [x for x in imgt_alleles if jj in x]
             if nearest_longer:
                 result = nearest_longer[0]
-                warnings.warn(f'WARNING: {jj} -> {result} nearest match')
+                #warnings.warn(f'{jj} -> {result} nearest match')
+                logging.info(f'{jj} -> {result} nearest match')
             else:
-                # Reduce the number of fields until a match is found
-                fields = jj.split(':')
-                for nfields in range(1,len(fields)):
-                    pattern = jj.rsplit(':', nfields)[0]
-                    nearest_same = [x for x in imgt_alleles if pattern in x]
-                    if any(nearest_same):
-                        result = nearest_same[0]
-                        warnings.warn(f'WARNING: {jj} -> {result} nearest match')
-                        break
-                    else:
-                        result = None
+                # Reduce to two-field resolution until a match is found
+                field_range = range(1, len(jj.split(':')) - 1)
+                if len(field_range) == 0:
+                    result = None
+                else:
+                    for nfields in field_range:
+                        pattern = jj.rsplit(':', nfields)[0]
+                        nearest_same = [x for x in imgt_alleles if pattern in x]
+                        if any(nearest_same):
+                            result = nearest_same[0]
+                            #warnings.warn(f'{jj} -> {result} nearest match')
+                            logging.info(f'{jj} -> {result} nearest match')
+                            break
+                        else:
+                            result = None
         if not result:
-            print(f'ERROR: {jj} not found in IMGT. Skipping...')
+            #warnings.warn(f'{jj} not found. Skipping...')
+            logging.warning(f'{jj} not found in reference. Skipping...')
             continue
         else:
             out.append(result)
@@ -123,11 +129,15 @@ def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
     Returns:
         pandas of SNPs and HLA types
     """
-    if alleles:
-        loci = {x[0] for x in alleles}
-        for k in imgt_aln_gen.keys():
-            if k not in loci:
-                imgt_aln_gen.pop(k) 
+    # Remove loci from imgt alignments not in query
+    loci = {x[0] for x in alleles}
+    #for k in imgt_aln_gen.keys():
+    #    if k not in loci:
+    #        imgt_aln_gen.pop(k) 
+    for k in loci: 
+        if k not in imgt_aln_gen.keys():
+            del imgt_aln_gen[k]
+            
     
     out = pd.DataFrame()
     for k,v in imgt_aln_gen.items():
@@ -163,7 +173,15 @@ def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
 
 def main(args=None):
     args = parse_args(args)
-    print(args)
+#    args = parse_args(['--imgt_alignments', 'data/imgt_aln_gen.p',
+#                       '-g', 'data/hla_genotypes_hs37d5.tsv',
+#                       '-b', 'data/hla_hs37d5.bed',
+#                       '-o', 'test/snps.tsv',
+#                       'A*02:01']
+#    )
+    #formatter = '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - %(message)s'
+    #logging.basicConfig(filename=logFile, filemode='w', format=formatter, level=logging.DEBUG)
+
     ref_bed_df = pd.read_csv(args.ref_hla_bed, header=None, sep='\t', 
         names=['chrom', 'start', 'end', 'score', 'strand'], index_col=3)
     ref_gt_df = pd.read_csv(args.ref_hla_genotypes, header=None, sep='\t', names=['genotype'], index_col=0)

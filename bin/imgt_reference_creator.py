@@ -17,11 +17,22 @@ def parse_args(args=None):
         help='Path to IMGTHLA git repository (https://github.com/ANHIG/IMGTHLA)')
     parser.add_argument('-g', '--ref_hla_genotypes', required=True, help='Reference HLA genotypes')
     parser.add_argument('-b', '--ref_hla_bed', required=True, help='Reference HLA bed')
-    parser.add_argument('-o', '--outfile', default='imgt_aln_gen.p', help='Output filename')
+    parser.add_argument('-o', '--outfile', default='imgt_aln_gen.p', help='Output pickle')
     
     return parser.parse_args(args)
 
 def imgt_align(imgt_path, ref_bed_df, ref_gt_df):
+    """ IMGT to reference creator 
+    Reorders a Biopython MSA so that the reference allele is the first entry
+    
+    Args:
+        imgt_path(str): Path to IMGT git repository
+        ref_bed_df(pandas): Index:gene, chromosome, start, end, score, strand
+        ref_gt_df(pandas): Index:gene, allele
+
+    Returns:
+        Dictionary of {gene}: [alignments]
+    """
     imgt_aln_gen = dict()
     for ii in ref_bed_df.index:
         ref_aln = None
