@@ -237,27 +237,28 @@ export PATH=$PATH:/opt/samtools/bin
 </pre></div>
 </div>
 <p>The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${n_fields} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
 </pre></div>
 </div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This</p>
-</div>
-<p>The R script <code class="docutils literal notranslate"><span class="pre">docker/hlahat_r/r_scripts/generate_reference_files.R</span></code> is provided for</p>
+<p>The R script <code class="docutils literal notranslate"><span class="pre">generate_reference_files.R</span></code> is provided for summarizing the HLA typing performed by HISAT-genotype, and takes the following arguments:</p>
 <p>HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
 <p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
-..      csv-table:</p>
+..      list-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
 <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span>
 
-<span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;Integer&quot;</span><span class="p">,</span> <span class="s2">&quot;Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type&quot;</span>
-<span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;Full resolution of ranked allele identified by HISAT-genotype&quot;</span>
-<span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;HLA gene&quot;</span>
-<span class="s2">&quot;perc_abundance&quot;</span><span class="p">,</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;Relative abundance of reads corresponding to allele&quot;</span>
+<span class="o">*</span> <span class="o">-</span> <span class="n">Column</span> <span class="n">Name</span>
+  <span class="o">-</span> <span class="n">Type</span>
+  <span class="o">-</span> <span class="n">Description</span>
+<span class="o">*</span> <span class="o">-</span> <span class="n">ranks</span>
+  <span class="o">-</span> <span class="n">Integer</span>
+  <span class="o">-</span> <span class="n">Gene</span> <span class="n">rank</span> <span class="n">of</span> <span class="n">allele</span><span class="p">,</span> <span class="n">based</span> <span class="n">upon</span> <span class="n">percent</span> <span class="n">abundance</span> <span class="n">of</span> <span class="n">reads</span> <span class="n">assigned</span> <span class="n">to</span> <span class="n">corresponding</span> <span class="n">HLA</span> <span class="nb">type</span>
 </pre></div>
 </div>
+<p>“ranks”, “Integer”, “Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type”
+“alleles”, “String”, “Full resolution of ranked allele identified by HISAT-genotype”
+“gene”, “String”, “HLA gene”
+“perc_abundance”, “Float”, “Relative abundance of reads corresponding to allele”</p>
 <p>By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
 <p><em>Optional</em>: To summarize at the second field of resolution, the flag <code class="docutils literal notranslate"><span class="pre">--field_of_resolution</span> <span class="pre">2</span></code> can be used. If this parameter is set, the top two alleles at the second field of resolution are chosen.</p>
 <p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:

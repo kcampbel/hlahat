@@ -68,25 +68,28 @@ Aggregate all report files using the following command::
 
 The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3::
 
-    Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
+    Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${n_fields} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
 
-.. warning::
-    This
-
-The R script ``docker/hlahat_r/r_scripts/generate_reference_files.R`` is provided for
+The R script ``generate_reference_files.R`` is provided for summarizing the HLA typing performed by HISAT-genotype, and takes the following arguments:
 
 HLA-HAT outputs the *${id}.all_types.tsv* file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 
 *${id}.all_types.tsv* file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
-..	csv-table::
-  :widths: auto
-  :align: center
-  :header: "Field", "Type", "Description"
+..	list-table::
+	:widths: auto
+	:align: center
 
-  "ranks", "Integer", "Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type"
-  "alleles", "String", "Full resolution of ranked allele identified by HISAT-genotype"
-  "gene", "String", "HLA gene"
-  "perc_abundance", "Float", "Relative abundance of reads corresponding to allele"
+	* - Column Name
+	  - Type
+	  - Description
+	* - ranks
+	  - Integer
+	  - Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type
+ 
+"ranks", "Integer", "Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type"
+"alleles", "String", "Full resolution of ranked allele identified by HISAT-genotype"
+"gene", "String", "HLA gene"
+"perc_abundance", "Float", "Relative abundance of reads corresponding to allele"
 
 By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
 
