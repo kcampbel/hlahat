@@ -237,55 +237,116 @@ export PATH=$PATH:/opt/samtools/bin
 </pre></div>
 </div>
 <p>The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${n_fields} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${name}.hla_types.txt ${n_fields} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
 </pre></div>
 </div>
-<p>The R script <code class="docutils literal notranslate"><span class="pre">generate_reference_files.R</span></code> is provided for summarizing the HLA typing performed by HISAT-genotype, and takes the following arguments:</p>
-<p>HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
-<p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:</p>
 <table border="1" class="colwidths-auto docutils align-center">
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">Column Name</th>
+<tr class="row-odd"><th class="head">Parameter</th>
 <th class="head">Type</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>ranks</td>
-<td>Integer</td>
-<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
-</tr>
-<tr class="row-odd"><td>gene</td>
+<tr class="row-even"><td>name</td>
 <td>String</td>
-<td>HLA gene</td>
+<td>Identifier (prefix) for output files</td>
 </tr>
-<tr class="row-even"><td>perc_abundance</td>
-<td>Float</td>
-<td>Relative abundance of reads corresponding to allele</td>
+<tr class="row-odd"><td>hlatypes_file</td>
+<td>File</td>
+<td>Path to file containing the ranked text output from HISAT-genotype (Called <code class="docutils literal notranslate"><span class="pre">${name}.hlatypes.txt</span></code> from previous <code class="docutils literal notranslate"><span class="pre">grep</span></code> command)</td>
+</tr>
+<tr class="row-even"><td>n_fields</td>
+<td>Int</td>
+<td>Number of fields to include in HLA type output (current options: 2 or 3)</td>
+</tr>
+<tr class="row-odd"><td>gen_msf_list</td>
+<td>File list</td>
+<td>Comma-delimited list of file paths for gen.msf files from IMGT-HLA</td>
+</tr>
+<tr class="row-even"><td>nuc_msf_list</td>
+<td>File list</td>
+<td>Comma-delimited list of file paths for nuc.msf files from IMGT-HLA</td>
 </tr>
 </tbody>
 </table>
-<p>By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
-<p><em>Optional</em>: To summarize at the second field of resolution, the flag <code class="docutils literal notranslate"><span class="pre">--field_of_resolution</span> <span class="pre">2</span></code> can be used. If this parameter is set, the top two alleles at the second field of resolution are chosen.</p>
-<p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
- <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
- <span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
-
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
-<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01:03&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;11.87&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
-</pre></div>
-</div>
+<p>The R script <code class="docutils literal notranslate"><span class="pre">generate_reference_files.R</span></code> is provided for summarizing the HLA typing performed by HISAT-genotype, and outputs the following files:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">all_hlatypes.tsv</span></code> Includes <strong>all</strong> ranked types outputted by HISAT-genotype.</li>
+<li><code class="docutils literal notranslate"><span class="pre">top_hlatypes.tsv</span></code> Summarizes the top ranked 1-2 alleles, which are used for subsequent custom reference genome generation.</li>
+<li><code class="docutils literal notranslate"><span class="pre">find_hlatypes.tsv</span></code> Summarizes the individual-specific HLA reference, including which genomic DNA and CDS are aclosest and available for the HLA haplotype of the patient. Note that the genomic DNA sequence is not available for all HLA types.</li>
+<li><code class="docutils literal notranslate"><span class="pre">custom_hla.fasta</span></code> Reference file containing the genomic DNA sequences of the Individual reference alleles</li>
+<li><code class="docutils literal notranslate"><span class="pre">custom_hla.allelic_differences.bed</span></code> Includes a bed file of all SNP differences between alleles in heterozygous genes, mapped to <code class="docutils literal notranslate"><span class="pre">custom_hla.fasta</span></code> reference</li>
+</ul>
+<p>The <em>${id}.all_types.tsv</em> file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, <code class="docutils literal notranslate"><span class="pre">all_hlatypes</span></code> is reduced to <code class="docutils literal notranslate"><span class="pre">top_hlatypes</span></code> based upon the percentage abundance quantitation, and annotated by <code class="docutils literal notranslate"><span class="pre">find_hlatypes</span></code> based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.</p>
+<p>By default, all alleles are reduced to their fullest up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
+<p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ranks</th>
+<th class="head">alleles</th>
+<th class="head">gene</th>
+<th class="head">perc_abundance</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>A*0201:01:01</td>
+<td>A</td>
+<td>40.85</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>A*33:01:01</td>
+<td>A</td>
+<td>31.63</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>A*33:03:23</td>
+<td>A</td>
+<td>13.97</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>A*34:01:01</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>A*34:05</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>A*34:14</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>B*14:02:01:01</td>
+<td>B</td>
+<td>50.79</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>B*15:01:01:01</td>
+<td>B</td>
+<td>37.33</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>B*15:01:01:03</td>
+<td>B</td>
+<td>11.87</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>C*08:02:01:01</td>
+<td>C</td>
+<td>51.18</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>C*03:03:01:01</td>
+<td>C</td>
+<td>48.82</td>
+</tr>
+</tbody>
+</table>
 <p>First, alleles are summarized to the third field of resolution:
 .. csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>

@@ -68,54 +68,100 @@ Aggregate all report files using the following command::
 
 The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3::
 
-    Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${n_fields} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
-
-The R script ``generate_reference_files.R`` is provided for summarizing the HLA typing performed by HISAT-genotype, and takes the following arguments:
-
-HLA-HAT outputs the *${id}.all_types.tsv* file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
-
-*${id}.all_types.tsv* file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
+    Rscript /code/generate_reference_files.R ${name} ${name}.hla_types.txt ${n_fields} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
 
 .. list-table::
    :header-rows: 1
    :align: center
    :widths: auto
 
-   * - Column Name
+   * - Parameter
      - Type
      - Description
-   * - ranks
-     - Integer
-     - Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type
-   * - gene
+   * - name
      - String
-     - HLA gene
-   * - perc_abundance
-     - Float
-     - Relative abundance of reads corresponding to allele
+     - Identifier (prefix) for output files
+   * - hlatypes_file
+     - File
+     - Path to file containing the ranked text output from HISAT-genotype (Called ``${name}.hlatypes.txt`` from previous ``grep`` command)
+   * - n_fields
+     - Int
+     - Number of fields to include in HLA type output (current options: 2 or 3)
+   * - gen_msf_list
+     - File list
+     - Comma-delimited list of file paths for gen.msf files from IMGT-HLA
+   * - nuc_msf_list
+     - File list
+     - Comma-delimited list of file paths for nuc.msf files from IMGT-HLA
 
+The R script ``generate_reference_files.R`` is provided for summarizing the HLA typing performed by HISAT-genotype, and outputs the following files:
 
-By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
+- ``all_hlatypes.tsv`` Includes **all** ranked types outputted by HISAT-genotype.
+- ``top_hlatypes.tsv`` Summarizes the top ranked 1-2 alleles, which are used for subsequent custom reference genome generation.
+- ``find_hlatypes.tsv`` Summarizes the individual-specific HLA reference, including which genomic DNA and CDS are aclosest and available for the HLA haplotype of the patient. Note that the genomic DNA sequence is not available for all HLA types.
+- ``custom_hla.fasta`` Reference file containing the genomic DNA sequences of the Individual reference alleles
+- ``custom_hla.allelic_differences.bed`` Includes a bed file of all SNP differences between alleles in heterozygous genes, mapped to ``custom_hla.fasta`` reference
 
-*Optional*: To summarize at the second field of resolution, the flag ``--field_of_resolution 2`` can be used. If this parameter is set, the top two alleles at the second field of resolution are chosen.
+The *${id}.all_types.tsv* file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, ``all_hlatypes`` is reduced to ``top_hlatypes`` based upon the percentage abundance quantitation, and annotated by ``find_hlatypes`` based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.
+
+By default, all alleles are reduced to their fullest up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
 
 *Example*: If the following Class I alleles are ranked in the report from HISAT-genotype:
-.. csv-table::
-    :widths: auto
-    :align: center
-    :header: "ranks", "alleles", "gene", "perc_abundance"
 
-   "1", "A*02:01:01:01", "A", "40.85"
-   "2", "A*33:01:01", "A", "31.63"
-   "3", "A*33:03:23", "A", "13.97"
-   "4", "A*34:01:01", "A", "4.52"
-   "5", "A*34:05", "A", "4.52"
-   "6", "A*34:14", "A", "4.52"
-   "1", "B*14:02:01:01", "B", "50.79"
-   "2", "B*15:01:01:01", "B", "37.33"
-   "3", "B*15:01:01:03", "B", "11.87"
-   "1", "C*08:02:01:01", "C", "51.18"
-   "2", "C*03:03:01:01", "C", "48.82"
+.. list-table::
+   :widths: auto
+   :align: center
+   :header-rows: 1
+
+   * - ranks
+     - alleles
+     - gene
+     - perc_abundance
+   * - 1
+     - A*0201:01:01
+     - A
+     - 40.85
+   * - 2
+     - A*33:01:01
+     - A
+     - 31.63
+   * - 3
+     - A*33:03:23
+     - A
+     - 13.97
+   * - 4
+     - A*34:01:01
+     - A
+     - 4.52
+   * - 5
+     - A*34:05
+     - A
+     - 4.52
+   * - 6
+     - A*34:14
+     - A
+     - 4.52
+   * - 1
+     - B*14:02:01:01
+     - B
+     - 50.79
+   * - 2
+     - B*15:01:01:01
+     - B
+     - 37.33
+   * - 3
+     - B*15:01:01:03
+     - B
+     - 11.87
+   * - 1
+     - C*08:02:01:01
+     - C
+     - 51.18
+   * - 2
+     - C*03:03:01:01
+     - C
+     - 48.82
+
 
 First, alleles are summarized to the third field of resolution:
 .. csv-table::
