@@ -56,19 +56,26 @@ Options for single-read sequencing (``U``) and RNA sequencing (``--is-rna``) can
 
 Module 2. Reference Generation
 -------------------------------------
-
-docker: kcampbel/hlahat_r:v1::
-
-  grep "ranked" ${sep=" " hla_report_files} > ${name}.hla_types.txt
-  Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
+HISAT-genotype will output a ranked list of HLA types for each locus, based upon those that meet the expectation maximization algorithm. Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT provides an R script to summarize the HLA typing reports from HISAT-genotype.
 
 ########################
 HLA haplotype reporting
 ########################
 
+Aggregate all report files using the following command::
+
+    grep "ranked" *report > ${name}.hla_types.txt
+
+The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3::
+
+    Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
+
+.. warning::
+    This
+
 The R script ``docker/hlahat_r/r_scripts/generate_reference_files.R`` is provided for
 
-Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the *${id}.all_types.tsv* file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
+HLA-HAT outputs the *${id}.all_types.tsv* file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 
 *${id}.all_types.tsv* file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
 ..	csv-table::

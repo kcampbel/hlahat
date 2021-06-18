@@ -229,15 +229,23 @@ export PATH=$PATH:/opt/samtools/bin
 </div>
 <div class="section" id="module-2-reference-generation">
 <h2>Module 2. Reference Generation<a class="headerlink" href="#module-2-reference-generation" title="Permalink to this headline">¶</a></h2>
-<p>docker: kcampbel/hlahat_r:v1:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>grep &quot;ranked&quot; ${sep=&quot; &quot; hla_report_files} &gt; ${name}.hla_types.txt
-Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
-</pre></div>
-</div>
+<p>HISAT-genotype will output a ranked list of HLA types for each locus, based upon those that meet the expectation maximization algorithm. Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT provides an R script to summarize the HLA typing reports from HISAT-genotype.</p>
 <div class="section" id="hla-haplotype-reporting">
 <h3>HLA haplotype reporting<a class="headerlink" href="#hla-haplotype-reporting" title="Permalink to this headline">¶</a></h3>
+<p>Aggregate all report files using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>grep &quot;ranked&quot; *report &gt; ${name}.hla_types.txt
+</pre></div>
+</div>
+<p>The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${hlatypes} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This</p>
+</div>
 <p>The R script <code class="docutils literal notranslate"><span class="pre">docker/hlahat_r/r_scripts/generate_reference_files.R</span></code> is provided for</p>
-<p>Documentation for HISAT-genotype suggests using the alleles ranked 1 or 2, from hisatgenotype_locus.py for each gene, and the alleles may be reported up to the 4th field of resolution, which describes genomic differences in alleles outside of the coding regions. However, WES may not have sufficient sequencing coverage and RNAseq data would not be appropriate for detecting this level of information. HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
+<p>HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
 <p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
 ..      csv-table:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
