@@ -255,24 +255,16 @@ export PATH=$PATH:/opt/samtools/bin
 <td>Integer</td>
 <td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
 </tr>
-</tbody>
-</table>
-<table border="1" class="colwidths-auto docutils align-center">
-<tbody valign="top">
-<tr class="row-odd"><td>Column Name</td>
-<td>Type</td>
-<td>Description</td>
+<tr class="row-odd"><td>gene</td>
+<td>String</td>
+<td>HLA gene</td>
 </tr>
-<tr class="row-even"><td>ranks</td>
-<td>Integer</td>
-<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
+<tr class="row-even"><td>perc_abundance</td>
+<td>Float</td>
+<td>Relative abundance of reads corresponding to allele</td>
 </tr>
 </tbody>
 </table>
-<p>“ranks”, “Integer”, “Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type”
-“alleles”, “String”, “Full resolution of ranked allele identified by HISAT-genotype”
-“gene”, “String”, “HLA gene”
-“perc_abundance”, “Float”, “Relative abundance of reads corresponding to allele”</p>
 <p>By default, all alleles are reduced to their fullest resolution or up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
 <p><em>Optional</em>: To summarize at the second field of resolution, the flag <code class="docutils literal notranslate"><span class="pre">--field_of_resolution</span> <span class="pre">2</span></code> can be used. If this parameter is set, the top two alleles at the second field of resolution are chosen.</p>
 <p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:
