@@ -75,6 +75,20 @@ The R script ``generate_reference_files.R`` is provided for summarizing the HLA 
 HLA-HAT outputs the *${id}.all_types.tsv* file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.
 
 *${id}.all_types.tsv* file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
+
+.. list-table::
+   :header-rows: 1
+   :align: center
+   :widths: auto
+
+   * - Column Name
+     - Type
+     - Description
+   * - ranks
+     - Integer
+     - Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type
+
+
 ..	list-table::
 	:widths: auto
 	:align: center

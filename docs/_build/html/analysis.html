@@ -242,19 +242,33 @@ export PATH=$PATH:/opt/samtools/bin
 </div>
 <p>The R script <code class="docutils literal notranslate"><span class="pre">generate_reference_files.R</span></code> is provided for summarizing the HLA typing performed by HISAT-genotype, and takes the following arguments:</p>
 <p>HLA-HAT outputs the <em>${id}.all_types.tsv</em> file, indicating the ranked alleles, by abundance, to include the most comprehensive output from HISAT-genotype.</p>
-<p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:
-..      list-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-
-<span class="o">*</span> <span class="o">-</span> <span class="n">Column</span> <span class="n">Name</span>
-  <span class="o">-</span> <span class="n">Type</span>
-  <span class="o">-</span> <span class="n">Description</span>
-<span class="o">*</span> <span class="o">-</span> <span class="n">ranks</span>
-  <span class="o">-</span> <span class="n">Integer</span>
-  <span class="o">-</span> <span class="n">Gene</span> <span class="n">rank</span> <span class="n">of</span> <span class="n">allele</span><span class="p">,</span> <span class="n">based</span> <span class="n">upon</span> <span class="n">percent</span> <span class="n">abundance</span> <span class="n">of</span> <span class="n">reads</span> <span class="n">assigned</span> <span class="n">to</span> <span class="n">corresponding</span> <span class="n">HLA</span> <span class="nb">type</span>
-</pre></div>
-</div>
+<p><em>${id}.all_types.tsv</em> file is a tab-delimited file derived from the report outputted by hisatgenotype_locus.py:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column Name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ranks</td>
+<td>Integer</td>
+<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-auto docutils align-center">
+<tbody valign="top">
+<tr class="row-odd"><td>Column Name</td>
+<td>Type</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td>ranks</td>
+<td>Integer</td>
+<td>Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type</td>
+</tr>
+</tbody>
+</table>
 <p>“ranks”, “Integer”, “Gene rank of allele, based upon percent abundance of reads assigned to corresponding HLA type”
 “alleles”, “String”, “Full resolution of ranked allele identified by HISAT-genotype”
 “gene”, “String”, “HLA gene”
