@@ -96,6 +96,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-2-reference-generation">Module 2. Reference Generation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hla-haplotype-reporting">HLA haplotype reporting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-hla-reference-fasta">Create HLA reference FASTA</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-3-downstream-analysis">Module 3. Downstream Analysis</a><ul>
@@ -214,7 +215,7 @@ export PATH=$PATH:/opt/samtools/bin
 <p>HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: <em>HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2,</em> and <em>HLA-V</em>. These are specified as a comma-delimited list in the following HLA typing command by the <cite>–locus-list</cite> option.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Do not include “HLA-” when specifying HLA genes (e.g. use <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">A</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">HLA-A</span></code>). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).</p>
+<p class="last">Do not include “HLA-” when specifying HLA genes (e.g. use <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">A</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--locus-list</span> <span class="pre">HLA-A</span></code>). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See Analysis &gt; Suggested Workflow).</p>
 </div>
 <p>Docker Commands (kcampbel/rnaseq_methods:v3):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:$PATH
@@ -236,7 +237,7 @@ export PATH=$PATH:/opt/samtools/bin
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>grep &quot;ranked&quot; *report &gt; ${name}.hla_types.txt
 </pre></div>
 </div>
-<p>The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">generate_reference_files.R</span></code> script is used to generate the reference fasta, and can be specified in the Docker container kcampbel/hlahat_r:v3:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/generate_reference_files.R ${name} ${name}.hla_types.txt ${n_fields} ${sep=&quot;,&quot; gen_msf_list} ${sep=&quot;,&quot; nuc_msf_list}
 </pre></div>
 </div>
@@ -278,9 +279,9 @@ export PATH=$PATH:/opt/samtools/bin
 <li><code class="docutils literal notranslate"><span class="pre">custom_hla.fasta</span></code> Reference file containing the genomic DNA sequences of the Individual reference alleles</li>
 <li><code class="docutils literal notranslate"><span class="pre">custom_hla.allelic_differences.bed</span></code> Includes a bed file of all SNP differences between alleles in heterozygous genes, mapped to <code class="docutils literal notranslate"><span class="pre">custom_hla.fasta</span></code> reference</li>
 </ul>
-<p>The <em>${id}.all_types.tsv</em> file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, <code class="docutils literal notranslate"><span class="pre">all_hlatypes</span></code> is reduced to <code class="docutils literal notranslate"><span class="pre">top_hlatypes</span></code> based upon the percentage abundance quantitation, and annotated by <code class="docutils literal notranslate"><span class="pre">find_hlatypes</span></code> based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">${id}.all_types.tsv</span></code> file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, <code class="docutils literal notranslate"><span class="pre">all_hlatypes</span></code> is reduced to <code class="docutils literal notranslate"><span class="pre">top_hlatypes</span></code> based upon the percentage abundance quantitation, and annotated by <code class="docutils literal notranslate"><span class="pre">find_hlatypes</span></code> based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.</p>
 <p>By default, all alleles are reduced to their fullest up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.</p>
-<p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype:</p>
+<p><em>Example</em>: If the following Class I alleles are ranked in the report from HISAT-genotype, <code class="docutils literal notranslate"><span class="pre">{id}.all_types.tsv</span></code> file would be outputted:</p>
 <table border="1" class="colwidths-auto docutils align-center">
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">ranks</th>
@@ -291,7 +292,7 @@ export PATH=$PATH:/opt/samtools/bin
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
-<td>A*0201:01:01</td>
+<td>A*02:01:01:01</td>
 <td>A</td>
 <td>40.85</td>
 </tr>
@@ -347,82 +348,228 @@ export PATH=$PATH:/opt/samtools/bin
 </tr>
 </tbody>
 </table>
-<p>First, alleles are summarized to the third field of resolution:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
-
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
-<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;11.87&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
-</pre></div>
+<p><code class="docutils literal notranslate"><span class="pre">generate_reference_files</span></code> performs the following filtering, to report the HLA haplotypes. First, alleles are summarized to the third field of resolution:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ranks</th>
+<th class="head">alleles</th>
+<th class="head">gene</th>
+<th class="head">perc_abundance</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>A*02:01:01</td>
+<td>A</td>
+<td>40.85</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>A*33:01:01</td>
+<td>A</td>
+<td>31.63</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>A*33:03:23</td>
+<td>A</td>
+<td>13.97</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>A*34:01:01</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>A*34:05</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>A*34:14</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>B*14:02:01</td>
+<td>B</td>
+<td>50.79</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>B*15:01:01</td>
+<td>B</td>
+<td>37.33</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>B*15:01:01</td>
+<td>B</td>
+<td>11.87</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>C*08:02:01</td>
+<td>C</td>
+<td>51.18</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>C*03:03:01</td>
+<td>C</td>
+<td>48.82</td>
+</tr>
+</tbody>
+</table>
+<p>Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ranks</th>
+<th class="head">alleles</th>
+<th class="head">gene</th>
+<th class="head">perc_abundance</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>A*02:01:01</td>
+<td>A</td>
+<td>40.85</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>A*33:01:01</td>
+<td>A</td>
+<td>31.63</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>A*33:03:23</td>
+<td>A</td>
+<td>13.97</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>A*34:01:01</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>A*34:05</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>A*34:14</td>
+<td>A</td>
+<td>4.52</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>B*14:02:01</td>
+<td>B</td>
+<td>50.79</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>B*15:01:01</td>
+<td>B</td>
+<td>37.33</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>C*08:02:01</td>
+<td>C</td>
+<td>51.18</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>C*03:03:01</td>
+<td>C</td>
+<td>48.82</td>
+</tr>
+</tbody>
+</table>
+<p>Alleles with less than 5% abundance are removed:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ranks</th>
+<th class="head">alleles</th>
+<th class="head">gene</th>
+<th class="head">perc_abundance</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>A*02:01:01</td>
+<td>A</td>
+<td>40.85</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>A*33:01:01</td>
+<td>A</td>
+<td>31.63</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>A*33:03:23</td>
+<td>A</td>
+<td>13.97</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>B*14:02:01</td>
+<td>B</td>
+<td>50.79</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>B*15:01:01</td>
+<td>B</td>
+<td>37.33</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>C*08:02:01</td>
+<td>C</td>
+<td>51.18</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>C*03:03:01</td>
+<td>C</td>
+<td>48.82</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the top 1-2 ranked alleles are identified as the patient HLA type, and summarized in the <code class="docutils literal notranslate"><span class="pre">{id}.top_haplotypes.tsv</span></code> file:</p>
+<table border="1" class="colwidths-auto docutils align-center">
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ranks</th>
+<th class="head">alleles</th>
+<th class="head">gene</th>
+<th class="head">perc_abundance</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>A*02:01:01</td>
+<td>A</td>
+<td>40.85</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>A*33:01:01</td>
+<td>A</td>
+<td>31.63</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>B*14:02:01</td>
+<td>B</td>
+<td>50.79</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>B*15:01:01</td>
+<td>B</td>
+<td>37.33</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>C*08:02:01</td>
+<td>C</td>
+<td>51.18</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>C*03:03:01</td>
+<td>C</td>
+<td>48.82</td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
-
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
-<span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:05&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;A*34:14&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;4.52&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
-</pre></div>
-</div>
-<p>Alleles with less than 5% abundance are removed:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
-
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
-<span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:03:23&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;13.97&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
-</pre></div>
-</div>
-<p>Finally, the top 1-2 ranked alleles are identified as the patient HLA type:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;ranks&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_abundance&quot;</span>
-
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;A*02:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;40.85&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;A*33:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;31.63&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;B*14:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;50.79&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;B*15:01:01&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;37.33&quot;</span>
-<span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;C*08:02:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;51.18&quot;</span>
-<span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;C*03:03:01&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;48.82&quot;</span>
-</pre></div>
-</div>
-<p>The final list of HLA types is summarized by <em>${id}.top_hlatypes.tsv</em>, a tab-delimited file containing the filtered allele calls:
-.. csv-table:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
-<span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
-<span class="p">:</span><span class="n">header</span><span class="p">:</span> <span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span>
-
-<span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;HLA gene&quot;</span>
-<span class="s2">&quot;allele&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="s2">&quot;Filtered allele call&quot;</span>
-</pre></div>
-</div>
+<div class="section" id="create-hla-reference-fasta">
+<h3>Create HLA reference FASTA<a class="headerlink" href="#create-hla-reference-fasta" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">generate_reference_files</span></code> takes the HLA alleles typed in the <code class="docutils literal notranslate"><span class="pre">top_haplotypes</span></code> file and by cross-referencing the multiple sequence files (msf) obtained from IMGT-HLA, generates a genomic DNA reference fasta, with contigs associated with each allele.</p>
 </div>
 </div>
 <div class="section" id="module-3-downstream-analysis">

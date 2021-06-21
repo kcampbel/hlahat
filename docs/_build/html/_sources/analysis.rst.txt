@@ -42,7 +42,7 @@ HLA typing
 HLA typing can be applied to 26 genes, spanning 7Mb in chromosome 6p21.3, including classical and non-classical Class I/II HLA genes, non-expressed Class I HLA pseudogenes, ATP binding cassette transporter genes, Class I chain-related and Class I-like genes: *HLA-A, HLA-B, HLA-C, HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB, HLA-DPA1, HLA-DPB1, HLA-DPB2, HLA-DQA1, HLA-DQB1, HLA-DRA, HLA-DRB1, HLA-E, HLA-F, HLA-G, HLA-H, HFE, HLA-K, HLA-L, MICA, MICB, TAP1, TAP2,* and *HLA-V*. These are specified as a comma-delimited list in the following HLA typing command by the `--locus-list` option.
 
 .. note::
-    Do not include "HLA-" when specifying HLA genes (e.g. use ``--locus-list A`` instead of ``--locus-list HLA-A``). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See suggested workflow).
+    Do not include "HLA-" when specifying HLA genes (e.g. use ``--locus-list A`` instead of ``--locus-list HLA-A``). Typing generally takes the longest on the HLA-A locus, and this command can be scattered across each loci individually, followed by report aggregation and summary (See Analysis > Suggested Workflow).
 
 Docker Commands (kcampbel/rnaseq_methods:v3)::
 
@@ -66,7 +66,7 @@ Aggregate all report files using the following command::
 
     grep "ranked" *report > ${name}.hla_types.txt
 
-The generate_reference_files.R script is used to generate the reference fasta, docker: kcampbel/hlahat_r:v3::
+The ``generate_reference_files.R`` script is used to generate the reference fasta, and can be specified in the Docker container kcampbel/hlahat_r:v3::
 
     Rscript /code/generate_reference_files.R ${name} ${name}.hla_types.txt ${n_fields} ${sep="," gen_msf_list} ${sep="," nuc_msf_list}
 
@@ -102,11 +102,11 @@ The R script ``generate_reference_files.R`` is provided for summarizing the HLA 
 - ``custom_hla.fasta`` Reference file containing the genomic DNA sequences of the Individual reference alleles
 - ``custom_hla.allelic_differences.bed`` Includes a bed file of all SNP differences between alleles in heterozygous genes, mapped to ``custom_hla.fasta`` reference
 
-The *${id}.all_types.tsv* file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, ``all_hlatypes`` is reduced to ``top_hlatypes`` based upon the percentage abundance quantitation, and annotated by ``find_hlatypes`` based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.
+The ``${id}.all_types.tsv`` file includes all alleles ranked by HISAT-genotype; however, sometimes this list includes more than two ranked HLA alleles (Based upon the shared sequence homology across alleles). Thus, ``all_hlatypes`` is reduced to ``top_hlatypes`` based upon the percentage abundance quantitation, and annotated by ``find_hlatypes`` based upon the genomic DNA and CDS sequences available. Note that IMGT-HLA does not provide genomic DNA sequences for all HLA alleles, but many common types are accounted for.
 
 By default, all alleles are reduced to their fullest up the third field of resolution (e.g. A*02:89 would remain A*02:89, while A*03:01:01:01 is reduced to A*03:01:01). Then, alleles up to the third field of resolution are summarized by the maximum percent abundance across those that are shared. Any alleles with less than 5% abundance are removed, and then the remaining one or top two alleles (at the third field of resolution) are chosen as the HLA types.
 
-*Example*: If the following Class I alleles are ranked in the report from HISAT-genotype:
+*Example*: If the following Class I alleles are ranked in the report from HISAT-genotype, ``{id}.all_types.tsv`` file would be outputted: 
 
 .. list-table::
    :widths: auto
@@ -118,7 +118,7 @@ By default, all alleles are reduced to their fullest up the third field of resol
      - gene
      - perc_abundance
    * - 1
-     - A*0201:01:01
+     - A*02:01:01:01
      - A
      - 40.85
    * - 2
@@ -163,76 +163,195 @@ By default, all alleles are reduced to their fullest up the third field of resol
      - 48.82
 
 
-First, alleles are summarized to the third field of resolution:
-.. csv-table::
+``generate_reference_files`` performs the following filtering, to report the HLA haplotypes. First, alleles are summarized to the third field of resolution:
+
+.. list-table::
    :widths: auto
    :align: center
-   :header: "ranks", "alleles", "gene", "perc_abundance"
+   :header-rows: 1
 
-   "1", "A*02:01:01", "A", "40.85"
-   "2", "A*33:01:01", "A", "31.63"
-   "3", "A*33:03:23", "A", "13.97"
-   "4", "A*34:01:01", "A", "4.52"
-   "5", "A*34:05", "A", "4.52"
-   "6", "A*34:14", "A", "4.52"
-   "1", "B*14:02:01", "B", "50.79"
-   "2", "B*15:01:01", "B", "37.33"
-   "3", "B*15:01:01", "B", "11.87"
-   "1", "C*08:02:01", "C", "51.18"
-   "2", "C*03:03:01", "C", "48.82"
+   * - ranks
+     - alleles
+     - gene
+     - perc_abundance
+   * - 1
+     - A*02:01:01
+     - A
+     - 40.85
+   * - 2
+     - A*33:01:01
+     - A
+     - 31.63
+   * - 3
+     - A*33:03:23
+     - A
+     - 13.97
+   * - 4
+     - A*34:01:01
+     - A
+     - 4.52
+   * - 5
+     - A*34:05
+     - A
+     - 4.52
+   * - 6
+     - A*34:14
+     - A
+     - 4.52
+   * - 1
+     - B*14:02:01
+     - B
+     - 50.79
+   * - 2
+     - B*15:01:01
+     - B
+     - 37.33
+   * - 3
+     - B*15:01:01
+     - B
+     - 11.87
+   * - 1
+     - C*08:02:01
+     - C
+     - 51.18
+   * - 2
+     - C*03:03:01
+     - C
+     - 48.82
 
 Alleles are summarized by the maximum percent abundance corresponding to each unique allele at the third field of resolution:
-.. csv-table::
+
+.. list-table::
    :widths: auto
    :align: center
-   :header: "ranks", "alleles", "gene", "perc_abundance"
+   :header-rows: 1
 
-   "1", "A*02:01:01", "A", "40.85"
-   "2", "A*33:01:01", "A", "31.63"
-   "3", "A*33:03:23", "A", "13.97"
-   "4", "A*34:01:01", "A", "4.52"
-   "5", "A*34:05", "A", "4.52"
-   "6", "A*34:14", "A", "4.52"
-   "1", "B*14:02:01", "B", "50.79"
-   "2", "B*15:01:01", "B", "37.33"
-   "1", "C*08:02:01", "C", "51.18"
-   "2", "C*03:03:01", "C", "48.82"
+   * - ranks
+     - alleles
+     - gene
+     - perc_abundance
+   * - 1
+     - A*02:01:01
+     - A
+     - 40.85
+   * - 2
+     - A*33:01:01
+     - A
+     - 31.63
+   * - 3
+     - A*33:03:23
+     - A
+     - 13.97
+   * - 4
+     - A*34:01:01
+     - A
+     - 4.52
+   * - 5
+     - A*34:05
+     - A
+     - 4.52
+   * - 6
+     - A*34:14
+     - A
+     - 4.52
+   * - 1
+     - B*14:02:01
+     - B
+     - 50.79
+   * - 2
+     - B*15:01:01
+     - B
+     - 37.33
+   * - 1
+     - C*08:02:01
+     - C
+     - 51.18
+   * - 2
+     - C*03:03:01
+     - C
+     - 48.82
 
 Alleles with less than 5% abundance are removed:
-.. csv-table::
+
+.. list-table::
    :widths: auto
    :align: center
-   :header: "ranks", "alleles", "gene", "perc_abundance"
+   :header-rows: 1
 
-   "1", "A*02:01:01", "A", "40.85"
-   "2", "A*33:01:01", "A", "31.63"
-   "3", "A*33:03:23", "A", "13.97"
-   "1", "B*14:02:01", "B", "50.79"
-   "2", "B*15:01:01", "B", "37.33"
-   "1", "C*08:02:01", "C", "51.18"
-   "2", "C*03:03:01", "C", "48.82"
+   * - ranks
+     - alleles
+     - gene
+     - perc_abundance
+   * - 1
+     - A*02:01:01
+     - A
+     - 40.85
+   * - 2
+     - A*33:01:01
+     - A
+     - 31.63
+   * - 3
+     - A*33:03:23
+     - A
+     - 13.97
+   * - 1
+     - B*14:02:01
+     - B
+     - 50.79
+   * - 2
+     - B*15:01:01
+     - B
+     - 37.33
+   * - 1
+     - C*08:02:01
+     - C
+     - 51.18
+   * - 2
+     - C*03:03:01
+     - C
+     - 48.82
 
-Finally, the top 1-2 ranked alleles are identified as the patient HLA type:
-.. csv-table::
+Finally, the top 1-2 ranked alleles are identified as the patient HLA type, and summarized in the ``{id}.top_haplotypes.tsv`` file:
+
+.. list-table::
    :widths: auto
    :align: center
-   :header: "ranks", "alleles", "gene", "perc_abundance"
+   :header-rows: 1
 
-   "1", "A*02:01:01", "A", "40.85"
-   "2", "A*33:01:01", "A", "31.63"
-   "1", "B*14:02:01", "B", "50.79"
-   "2", "B*15:01:01", "B", "37.33"
-   "1", "C*08:02:01", "C", "51.18"
-   "2", "C*03:03:01", "C", "48.82"
+   * - ranks
+     - alleles
+     - gene
+     - perc_abundance
+   * - 1
+     - A*02:01:01
+     - A  
+     - 40.85
+   * - 2
+     - A*33:01:01
+     - A
+     - 31.63
+   * - 1
+     - B*14:02:01
+     - B
+     - 50.79
+   * - 2
+     - B*15:01:01
+     - B
+     - 37.33
+   * - 1
+     - C*08:02:01
+     - C
+     - 51.18
+   * - 2
+     - C*03:03:01
+     - C
+     - 48.82
 
-The final list of HLA types is summarized by *${id}.top_hlatypes.tsv*, a tab-delimited file containing the filtered allele calls:
-.. csv-table::
-  :widths: auto
-  :align: center
-  :header: "Field", "Type", "Description"
+###########################
+Create HLA reference FASTA
+###########################
 
-  "gene", "String", "HLA gene"
-  "allele", "String", "Filtered allele call"
+``generate_reference_files`` takes the HLA alleles typed in the ``top_haplotypes`` file and by cross-referencing the multiple sequence files (msf) obtained from IMGT-HLA, generates a genomic DNA reference fasta, with contigs associated with each allele. 
 
 Module 3. Downstream Analysis
 -------------------------------------
