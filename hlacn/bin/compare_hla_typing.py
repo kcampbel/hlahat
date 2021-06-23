@@ -6,6 +6,7 @@ import pandas as pd
 import argparse
 import re
 import os
+import csv
 from collections import defaultdict, namedtuple, Counter
 from imgt_snp_finder import hla_nearest
 
@@ -52,8 +53,9 @@ def hla_compare(query:dict, reference:dict):
     return(out)
 
 def main():
-    #args = parse_args()
-    args = parse_args(['test/hla-final.tsv', 'test/hisat_genotype.txt'])
+    args = parse_args()
+    #args = parse_args(['hlacn/test/hla-final.tsv', 'hlacn/test/hisatgenotype_normal_dna.report.tsv'])
+    # Expected: A*02:01:01, A*03:01:01:05
 
     epic_df = pd.read_table(args.query,
         usecols = ['A1','A2','B1','B2','C1','C2'])
@@ -62,11 +64,14 @@ def main():
     hisat_d = defaultdict(list)
     al = namedtuple('Alleles', 'name')
     with open(args.reference) as fh:
-        for line in fh:
-            gene = line.split('*')[0]
-            allele = line.strip()
-            tup = al(allele)
-            hisat_d[gene].append(tup)
+        reader = csv.DictReader(fh, delimiter='\t')
+        for row in reader:
+            if int(row['rank']) > 2: #or not re.search('A|B|C', row['gene']):
+                continue
+            tup = al(row['allele'])
+            hisat_d[row['gene']].append(tup)
+            #gene = line.split('*')[0]
+            #allele = line.strip()
 
     # Unit testing
 #    epic_alleles = ['A*01:01', 'A*03:99', 'B*38:01', 'B*57:01']
@@ -76,10 +81,7 @@ def main():
 #        'C': [al('C*01:01:01'), al('C*02:01:01')]
 #    }
     out = pd.Series(hla_compare(epic_alleles, hisat_d))
-    out.to_csv(sys.stdout, index=False, header=False)
-#    with open(args.outfile, 'wt') as fh:
-#        for line in out:
-#            fh.write(f'{line}\n')
+    out.to_csv(args.outfile, index=False, header=False)
 
 if __name__ == "__main__":
     main()

@@ -36,6 +36,19 @@ WorkflowMain.initialise(workflow, params, log)
     NAMED WORKFLOW FOR PIPELINE
 ========================================================================================
 */
+
+//params.input_hlahat = false
+params.email = null
+
+include { HLA_HAT } from './hlahat/workflow/hla_hat'
+include { HLA_CN } from './hlacn/workflow/hla_cn'
+workflow IMMUNE_ESCAPE {
+    HLA_HAT ()
+    HLA_CN (
+        hisatgt_hlatypes = HLA_HAT.out.hisatgt_hlatypes
+    )
+}
+
 process foo {
     output:
       path 'foo.txt'
@@ -47,10 +60,18 @@ process foo {
       """
 }
 
-include { GENOTYPER } from './workflow/genotyper'
+workflow.onComplete {
+    log.info("=======================================")
+    status="${ workflow.success ? 'OK' : 'FAILED' }"
+    message="Pipeline completed at: ${workflow.complete}\nExecution status: ${status}\nWorkdir: ${workflow.workDir}\nPublish dir: ${params.outdir}"
+    log.info(message)
 
-workflow HLA_HAT {
-    GENOTYPER ()
+    // Email 
+    if ( params.email ) {
+        log.info("Emailing ${params.email}")
+        subject="Immune Escape ${status}"
+        ['aws', 'sns', 'publish', '--topic-arn', 'arn:aws:sns:us-west-2:757652839166:scrnaseq-nextflow-pipeline', '--subject', subject, '--message', message, '--region', 'us-west-2'].execute()
+    }
 }
 
 //include { foo } from './workflow/foo'
@@ -66,7 +87,7 @@ workflow HLA_HAT {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-    HLA_HAT ()
+    IMMUNE_ESCAPE ()
 }
 
 /*

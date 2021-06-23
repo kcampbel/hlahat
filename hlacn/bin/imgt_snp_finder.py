@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 ''' Generates snps from IMGT 
-requires biopython 1.78
 '''
 import sys
 from Bio import SeqIO, AlignIO
@@ -22,7 +21,7 @@ def parse_args(args=None):
         help='IMGT alignments pickle input')
     parser.add_argument('-g', '--ref_hla_genotypes', required=True, help='Reference HLA genotypes')
     parser.add_argument('-b', '--ref_hla_bed', required=True, help='Reference HLA bed')
-    parser.add_argument('-o', '--outfile', required=True, help='Output filename')
+    parser.add_argument('-o', '--outfile', default=sys.stdout)
     
     return parser.parse_args(args)
 
