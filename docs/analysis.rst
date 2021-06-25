@@ -353,8 +353,46 @@ Create HLA reference FASTA
 
 ``generate_reference_files`` takes the HLA alleles typed in the ``top_haplotypes`` file and by cross-referencing the multiple sequence files (msf) obtained from IMGT-HLA, generates a genomic DNA reference fasta, with contigs associated with each allele. 
 
+Index the HLA reference fasta (in docker container kcampbel/rnaseq_methods:v3)::
+
+  /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisat2-build ${hla_fasta} custom_hla.hisat
+
+#################
+Align HLA reads
+#################
+
+Align HLA-associated reads (in docker container kcampbel/rnaseq_methods:v3)::
+
+  mv ${sep=" " hisat} /tmp/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisat2 --no-discordant ${true='' false='--no-spliced-alignment' is_rna}\
+      ${true='-U' false='-1' single} ${fq1} ${true='' false='-2 ' single}${fq2}\
+      -S ${name}.sam -x /tmp/custom_hla.hisat
+  /opt/samtools/bin/samtools sort -o ${name}.bam ${name}.sam
+  /opt/samtools/bin/samtools index ${name}.bam
+
+For DNA sequencing, mark duplicate reads (in docker container broadinstitute/genomes-in-the-cloud:2.3.1-1512499786)::
+
+  java -Xmx4g -jar /usr/gitc/picard.jar MarkDuplicates I=${bam_in} O=${name}.md.bam ASSUME_SORT_ORDER=coordinate METRICS_FILE=${name}.md.txt QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT /usr/local/bin/samtools index ${name}.md.bam
+
+
 Module 3. Downstream Analysis
 -------------------------------------
+
+###########################################
+Generate HLA-associated alignment metrics
+###########################################
+
+Global alignment metrics (in docker container broadinstitute/genomes-in-the-cloud:2.3.1-1512499786)::
+
+  /usr/local/bin/samtools flagstat ${bam_in} > ${name}.flagstat.txt
+
+Allele-specific alignment numbers::
+
+  /usr/local/bin/samtools idxstats ${bam_in} > ${name}.idxstats.txt
+
+SNP coverage metrics::
+
+  /usr/local/bin/samtools mpileup ${bam_in} -l ${bed} -q ${mq} -Q ${bq} -a > ${name}.pileups.txt
+
 
 ##########################################
 Paired tumor-normal data

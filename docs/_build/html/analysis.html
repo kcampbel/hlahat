@@ -97,9 +97,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-2-reference-generation">Module 2. Reference Generation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hla-haplotype-reporting">HLA haplotype reporting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-hla-reference-fasta">Create HLA reference FASTA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#align-hla-reads">Align HLA reads</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-3-downstream-analysis">Module 3. Downstream Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-hla-associated-alignment-metrics">Generate HLA-associated alignment metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#paired-tumor-normal-data">Paired tumor-normal data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tumor-only-datasets">Tumor-only datasets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#quantifying-allelic-imbalance">Quantifying allelic imbalance</a></li>
@@ -570,10 +572,44 @@ export PATH=$PATH:/opt/samtools/bin
 <div class="section" id="create-hla-reference-fasta">
 <h3>Create HLA reference FASTA<a class="headerlink" href="#create-hla-reference-fasta" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">generate_reference_files</span></code> takes the HLA alleles typed in the <code class="docutils literal notranslate"><span class="pre">top_haplotypes</span></code> file and by cross-referencing the multiple sequence files (msf) obtained from IMGT-HLA, generates a genomic DNA reference fasta, with contigs associated with each allele.</p>
+<p>Index the HLA reference fasta (in docker container kcampbel/rnaseq_methods:v3):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisat2-build ${hla_fasta} custom_hla.hisat
+</pre></div>
+</div>
+</div>
+<div class="section" id="align-hla-reads">
+<h3>Align HLA reads<a class="headerlink" href="#align-hla-reads" title="Permalink to this headline">¶</a></h3>
+<p>Align HLA-associated reads (in docker container kcampbel/rnaseq_methods:v3):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mv ${sep=&quot; &quot; hisat} /tmp/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisat2 --no-discordant ${true=&#39;&#39; false=&#39;--no-spliced-alignment&#39; is_rna}\
+    ${true=&#39;-U&#39; false=&#39;-1&#39; single} ${fq1} ${true=&#39;&#39; false=&#39;-2 &#39; single}${fq2}\
+    -S ${name}.sam -x /tmp/custom_hla.hisat
+/opt/samtools/bin/samtools sort -o ${name}.bam ${name}.sam
+/opt/samtools/bin/samtools index ${name}.bam
+</pre></div>
+</div>
+<p>For DNA sequencing, mark duplicate reads (in docker container broadinstitute/genomes-in-the-cloud:2.3.1-1512499786):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>java -Xmx4g -jar /usr/gitc/picard.jar MarkDuplicates I=${bam_in} O=${name}.md.bam ASSUME_SORT_ORDER=coordinate METRICS_FILE=${name}.md.txt QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT /usr/local/bin/samtools index ${name}.md.bam
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="module-3-downstream-analysis">
 <h2>Module 3. Downstream Analysis<a class="headerlink" href="#module-3-downstream-analysis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="generate-hla-associated-alignment-metrics">
+<h3>Generate HLA-associated alignment metrics<a class="headerlink" href="#generate-hla-associated-alignment-metrics" title="Permalink to this headline">¶</a></h3>
+<p>Global alignment metrics (in docker container broadinstitute/genomes-in-the-cloud:2.3.1-1512499786):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/usr/local/bin/samtools flagstat ${bam_in} &gt; ${name}.flagstat.txt
+</pre></div>
+</div>
+<p>Allele-specific alignment numbers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/usr/local/bin/samtools idxstats ${bam_in} &gt; ${name}.idxstats.txt
+</pre></div>
+</div>
+<p>SNP coverage metrics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/usr/local/bin/samtools mpileup ${bam_in} -l ${bed} -q ${mq} -Q ${bq} -a &gt; ${name}.pileups.txt
+</pre></div>
+</div>
+</div>
 <div class="section" id="paired-tumor-normal-data">
 <h3>Paired tumor-normal data<a class="headerlink" href="#paired-tumor-normal-data" title="Permalink to this headline">¶</a></h3>
 </div>
