@@ -8,47 +8,61 @@ import os
 import sys
 import pandas as pd 
 import argparse
+import logging
+from process import counts2mat
 
-def main(counts:str, metric:str, fof:str, output:str, hgnc:bool):
-    if fof:
-        assert os.path.isfile(counts[0]), f'Counts must be a file of files if --fof is set.'
-        reader = open(counts[0]).readlines()
-        counts_l = [x.strip('\n') for x in reader]
+def parse_args(args=None):
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
+    parser.add_argument('metric', choices=['TPM', 'FPKM', 'counts'], help='Count metric')
+    parser.add_argument('counts', nargs='+', help='count files to process (e.g. *genes.tsv')
+    parser.add_argument('-o', '--outfile', required=True, help='Output file')
+    parser.add_argument('-u', '--update', type=str, help='Existing expression matrix file name to update')
+    parser.add_argument('-n', '--gene_name', default='hgnc_symbol', help='Gene name column in counts file')
+    parser.add_argument('-f', '--force', action='store_true', help='Overwrite existing samples in eset')
+    parser.add_argument('--fof', action='store_true', help='counts is a file of files')
+    
+    return parser.parse_args(args)
+
+def main():
+    args = parse_args()
+#    args = parse_args(
+#        [
+#            'TPM', 
+#            './test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv', 
+#            '--gene_name', 'gene_id',
+#            #'--fof',
+#            #'-o', './test/eset_pact_geneid_newsample.tsv',
+#            '-u', './test/eset_pact_geneid_newsample.tsv',
+#            #'-u', './test/eset_pact_geneid.tsv',
+#            '-o', '/dev/null',
+#            '-f',
+#        ])
+    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
+    logging.basicConfig(format=formatter, level=logging.DEBUG)
+    logging.info(f'Starting {os.path.basename(__file__)}')
+
+    # Collect new counts to add to eset
+    if args.fof:
+        reader = open(args.counts[0]).readlines()
+        counts = [x.strip('\n') for x in reader]
     else:
-        counts_l = counts
+        counts = args.counts
+    
+    # Load eset if updating
+    if args.update:
+        eset = pd.read_csv(args.update, sep='\t', index_col=0)
+    else:
+        eset = pd.DataFrame()
+        eset.index.name = args.gene_name
 
-    df = pd.DataFrame()
-    for ii in counts_l:
-        sampleId = os.path.basename(ii).split('_tumor')[0].strip('RNA_')
-        dat = pd.read_csv(ii, sep='\t')
-        if hgnc:
-            id_col = 'hgnc_symbol'
+    df = counts2mat(counts, args.metric, args.gene_name, eset, args.force)
+    if df is not None:
+        logging.info(f'Writing {args.outfile}')
+        if 'parquet' in args.outfile:
+            df.to_parquet(args.outfile)
         else:
-            id_col = dat.iloc[:,0].name
-        tmp = dat.groupby(id_col)[metric].sum()
-        tmp.name = sampleId
-        tmp = tmp[tmp>0]
-        df = df.merge(tmp, how='outer', left_index=True, right_index=True).fillna(0)
-    df.to_csv(output, sep='\t')
-    print(f'{len(counts_l)} samples processed')
+            df.to_csv(args.outfile, sep='\t')
+    logging.info(f'{os.path.basename(__file__)} finished')
 
 if __name__ == '__main__':
-    PARSER = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    PARSER.add_argument('metric', choices=['FPKM', 'TPM', 'counts'], help='Count metric')
-    PARSER.add_argument('counts', nargs = '+', help='*genes.tsv or *isoforms.tsv files to process. File of file accepted with -f flag.')
-    PARSER.add_argument('-f', '--fof', action='store_true', help='file of files to process')
-    PARSER.add_argument('-o', '--output', default=sys.stdout, help='Output file')
-    PARSER.add_argument('--hgnc', action='store_true', help='Return HGNC symbol as gene id')
-    
-    if len(sys.argv) == 1:
-        PARSER.print_help()
-        sys.exit()
-
-    ARGS = PARSER.parse_args()
-    #ARGS = PARSER.parse_args(['FPKM', 
-    # 'pact/RNA_PACT004_T_560351F_tumor_rna.genes.tsv', 
-    # 'pact/RNA_PACT384_T_021F_tumor_rna.genes.tsv'
-    # '--hgnc'
-    #])
-
-    main(**vars(ARGS))
+    main()
