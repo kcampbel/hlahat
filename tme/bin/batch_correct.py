@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-""" Combat batch correction
+""" Combat batch correction.
+Performs batch correction after splitting expression data by primary tissue site.
 """
-#    Expression matrix must have Ensembl gene ids in rows, samples in columns. A config yml is required with the following:
-#    xena_tpm_raw, pact_tpm_raw, meta, hgnc, blacklist 
 
 import sys
+import os
 import pandas as pd
 import patsy
 import numpy as np
@@ -12,21 +12,19 @@ import yaml
 import argparse
 import logging
 from combat import combat
-from process import read_exprs
+from process import read_exprs, get_extension
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
-    parser.add_argument('primary_site', nargs='+', help='Primary tissue site(s)')
-    parser.add_argument('-c', '--config', required=True, default='batch_correct.yml', help = 'YAML config file')
+    parser.add_argument('exprs', nargs='+', help='Gene expression matrices to compile')
+    parser.add_argument('--batch_name', required=True, help='Batch column in metadata')
+    parser.add_argument('--primary_site', required=True, nargs=1, help='Primary tissue site(s), comma-delimited')
+    parser.add_argument('--metadata_tsv', required=True, help='Specimen metadata')
+    parser.add_argument('--formula', help='Model covariate formula (e.g. ~ factor)')
+    parser.add_argument('--blacklist', help='Specimen blacklist')
+    parser.add_argument('-f', '--force', action='store_true', help='Force overwrite of samples with the same name')
     parser.add_argument('-o', '--outfile', required=True, help='Output expression matrix file')
-    parser.add_argument('-b', '--batch_name', required=True, help='Batch column in metadata')
-    parser.add_argument('-f', '--formula', help='Model covariate formula (e.g. ~ factor)')
-    parser.add_argument('-g', '--gid', default='hgnc', choices=['hgnc', 'gene_id'], help='Gene identifier to return')
-    #parser.add_argument('-b', '--blacklist', default='/home/csmith/git/bioinfo-tme/pact/blacklist.txt',
-    #parser.add_argument('-x', '--xena_tpm_raw', help='Xena expression matrix')
-    #parser.add_argument('-p', '--pact_tpm_raw', help='PACT expression matrix')
-    #parser.add_argument('-m' ,'--meta', help='Metadata tsv')
-    #    help = 'Sample blacklist')
+
     return parser.parse_args(args)
     
 def run_combat(exprs, meta, batch_name:str, formula:str, count_min=np.log2(0.001)):
@@ -104,81 +102,72 @@ def combat_split(exprs, meta, split_name:str, batch_name:str, formula:str = None
 def main():
     formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
     logging.basicConfig(format=formatter, level=logging.DEBUG)
-    logging.info('Starting batch correction')
+    logging.info(f'Starting {os.path.basename(__file__)}')
 
     args = parse_args()
 #    args = parse_args(
 #        [
-#            '-c', '/home/csmith/git/bioinfo-tme/test/batch_correct.yml',
-#            '-o', '/tmp/bc.parquet.gz',
-#            '-b', '_study',
-#            'Ovary'
+#            './test/eset_xena_geneid_proteincoding.tsv',
+#            './test/eset_pact_geneid_proteincoding.tsv',
+#            '--metadata_tsv', './test/meta_eset.tsv',
+#            '--blacklist', './test/blacklist.txt',
+#            '--batch_name', 'study',
+#            '--primary_site', 'Ovary',
+#            '-o', '/tmp/bc.tsv',
 #        ])
 
-    cfg = yaml.safe_load(open(args.config, 'r'))
     # Metadata
-    meta = pd.read_table(cfg['meta'], index_col='specimen_id')
+    primary_site = args.primary_site[0].split(',')
+    meta = pd.read_table(args.metadata_tsv, index_col='specimen_id')
     meta = meta[
         (meta.primary_site.isin(args.primary_site)) &
-        (meta._sample_type != 'Cell Line')
+        (meta.sample_type != 'Cell Line') &
+        (meta.study.isin(['TCGA', 'GTEX', 'PACT']))
     ]
+    if not meta.primary_site.isin(primary_site).all():
+        diffs = set(primary_site) - set(meta.primary_site.unique())
+        raise Exception(f'{",".join(diffs)} missing from metadata')
 
     # Expression matrices
-    ## Xena
-    meta_x = meta[meta._study.isin(['TCGA', 'GTEX'])]
-    sids = meta_x.index.to_list()
+    exprs = pd.Series(dtype=str)
+    gene_names = pd.Series()
+    for ii in args.exprs:
+        tmp = read_exprs(ii, index_col=0)
+        exprs = pd.concat([exprs, tmp], axis=1).fillna(0)
+        if gene_names.empty:
+            gene_names = tmp.index
+        else:
+            if not gene_names.isin(tmp.index.to_list()).any():
+                raise Exception(f'Gene matrices do not share any genes')
 
-    exprs_xena = read_exprs(cfg['xena_tpm_raw'], index_col='sample', samples=sids)
-    exprs_xena.index = exprs_xena.index.str.rsplit('.').str[0]
+    exprs_m = exprs.loc[:, exprs.columns.isin(meta.index)]
+    exprs_m.index.name = tmp.index.name
+    meta_m = meta.loc[exprs_m.columns]
 
-    ## PACT
-    meta_pact = meta[meta._study == 'PACT']
-    sids = meta_pact.index.to_list()
-    exprs_pact = read_exprs(cfg['pact_tpm_raw'], index_col='gene_id', samples=sids)
-
-    ## Harmonize
-    exprs_pact = exprs_pact.loc[:, exprs_pact.columns.isin(meta.index)]
-    meta_pact = meta_pact.loc[exprs_pact.columns]
-    exprs_pact = np.log2(exprs_pact + 0.001)
-
-    # Merge expression matrices
-    exprs_m = pd.concat([exprs_xena, exprs_pact], axis=1).fillna(np.log2(0.001))
-    if not exprs_m.index.str.contains('ENSG').all():
-        raise Exception('Expression matrix does not contain ENSG gene identifiers')
-
-
-    if cfg['blacklist']:
-        blacklist = [x.strip() for x in open(cfg['blacklist'])]
+    if args.blacklist:
+        logging.info(f'Checking for blacklisted samples from {args.blacklist}')
+        blacklist = [x.strip() for x in open(args.blacklist)]
         dropme = exprs_m.filter(items = blacklist, axis=1).columns.to_list()
         if dropme:
-            logging.info(f'Blacklisting {dropme} from {cfg["blacklist"]}')
+            logging.info(f'Blacklisting {dropme}')
             exprs_m.drop(dropme, axis=1, inplace=True)
-
-    ## HGNC
-    if args.gid == 'hgnc':
-        hgnc_df = pd.read_table(cfg['hgnc'], index_col='ensembl_gene_id')
-        hgnc_df.drop(columns='_merge')
-        exprs_m = exprs_m.rpow(2)\
-          .merge(hgnc_df, left_index=True, right_index=True)
-        exprs_m['gene'] = np.where(exprs_m.gene.isna(), exprs_m.index, exprs_m.gene)
-        exprs_m = np.log2(exprs_m.groupby('gene').sum())
+            meta_m.drop(dropme, axis=0, inplace=True)
 
     # Merge metadata
-    meta_m = pd.concat([meta_x, meta_pact])
-    sample_table = meta_m.groupby(['primary_site', '_study', 'tumor_normal']).primary_site.value_counts()
+    sample_table = meta_m.groupby(['primary_site', 'study', 'tumor_normal']).primary_site.value_counts()
     logging.info(f'Merged sample counts:\n{sample_table}')
     logging.info(f'Merged genes : {exprs_m.shape[0]} samples: {exprs_m.shape[1]}')
 
     # Combat
-    out = combat_split(exprs=exprs_m, meta=meta_m, split_name='primary_site', batch_name=args.batch_name, formula=args.formula)
+    exprs_m = np.log2(exprs_m + 0.001)
+    out = combat_split(exprs_m, meta=meta_m, split_name='primary_site', batch_name=args.batch_name, formula=args.formula)
 
-    sites = ''.join(args.primary_site)
     logging.info(f'Writing to {args.outfile}')
     if 'parquet' in args.outfile:
         out.to_parquet(args.outfile, compression='gzip')
     else:
         out.to_csv(args.outfile, sep='\t')
-    logging.info(f'Batch correction finished.')
+    logging.info(f'{os.path.basename(__file__)} finished')
 
 if __name__ == "__main__":
     main()

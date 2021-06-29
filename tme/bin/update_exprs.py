@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-""" Update expression set, metadata, and exprs log
+""" Update expression matrix.
+Updates expression matrix with counts from long format tsvs (e.g. RSEM) and updates
+expression set log and metadata using inputs from the sample's EPIC pipeline manifest. 
 """ 
 import os
 import sys
@@ -17,7 +19,7 @@ def parse_args(args=None):
     parser.add_argument('counts', nargs=1, help='count file to process (e.g. *genes.tsv)')
     parser.add_argument('--manifest', required=True, help='EPIC pipeline manifest file')
     parser.add_argument('--exprs', required=True, help='Gene expression matrix to update')
-    parser.add_argument('--exprs_log', required=True, help='Gene expression update log file')
+    parser.add_argument('--exprs_log', required=True, help='Update log file')
     parser.add_argument('--metadata_tsv', help='Specimen metadata')
     parser.add_argument('--tcga_gtex_map', help='TCGA to GTEX metadata mapping file')
     parser.add_argument('-o', '--outpath', default='rev', help='Output path')
@@ -82,22 +84,22 @@ def main():
     now = datetime.now()
     timestamp = now.strftime("%Y%m%dT%H%M%S")
 
-#    args = parse_args()
-    args = parse_args(
-        [
-        '--manifest', '/home/csmith/git/bioinfo-fio/tme/test/manifest.PACT004_T_560351F.yml',
-        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_exprs.tsv',
-        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
-        #'--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/tme/data/tcga_gtex.tsv',
-        #'--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
-        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
-        '--exprs_log', '/home/csmith/git/bioinfo-fio/tme/test/pact_eset_log.tsv',
-        '-o', '/tmp/stage_esets',
-        #'-o', '/tmp/stage_esets',
-        '/home/csmith/git/bioinfo-fio/tme/test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
-        #'-f', 
-        ]
-    )
+    args = parse_args()
+#    args = parse_args(
+#        [
+#        '--manifest', '/home/csmith/git/bioinfo-fio/tme/test/manifest.PACT004_T_560351F.yml',
+#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_exprs.tsv',
+#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
+#        #'--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/tme/data/tcga_gtex.tsv',
+#        #'--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
+#        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
+#        '--exprs_log', '/home/csmith/git/bioinfo-fio/tme/test/pact_eset_log.tsv',
+#        '-o', '/tmp/stage_esets',
+#        #'-o', '/tmp/stage_esets',
+#        '/home/csmith/git/bioinfo-fio/tme/test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
+#        #'-f', 
+#        ]
+#    )
 
     # S3
 #    args = parse_args(
@@ -155,7 +157,6 @@ def main():
 
         # exprs
         prefix, ext = get_extension(args.exprs)
-        #fn = f'{prefix}_{timestamp}{ext}'
         fp = f'{args.outpath}/{prefix}_{timestamp}{ext}'
         fp_orig = f'{args.outpath}/{prefix}{ext}'
         logging.info(f'Writing {fp} and {fp_orig}')

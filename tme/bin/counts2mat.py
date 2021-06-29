@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-""" Long format to expression matrix converter
-Convert tsvs to a matrix with gene/transcript/symbol ids in rows and sample names in columns.
+""" Counts to expression matrix converter.
+Convert long format tsvs (e.g. RSEM) to a matrix with gene ids in rows and sample names in columns.
 File name must be {sample_name}_tumor to parse the sample name for the column.
 e.g. for RNA_PACT999_T_9999_tumor_rna.tar.gz, PACT999_T_9999 will be used as the column name.
 """ 
