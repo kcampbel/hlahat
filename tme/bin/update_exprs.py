@@ -11,7 +11,8 @@ import logging
 from datetime import datetime
 import yaml
 import re
-from process import read_exprs, write_exprs, counts2mat, get_extension, manifest_to_meta, update_exprs_log
+from process import counts2mat, manifest_to_meta, update_exprs_log
+from fileio import read_exprs, write_exprs, get_extension, file_time
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -58,8 +59,6 @@ def main():
     formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
     logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
-    now = datetime.now()
-    timestamp = now.strftime("%Y%m%dT%H%M%S")
 
     args = parse_args()
 #    args = parse_args(
@@ -117,7 +116,7 @@ def main():
     
     # Write if exprs and manifest have been updated
     if exprs_new is not None and meta_new is not None:
-        logging.info(f'Updating exprs and metadata for {specimen_id}')
+        logging.info(f'Updating exprs for {specimen_id}')
         # Write outputs
         if not os.path.exists(args.outpath):
             os.makedirs(args.outpath, exist_ok=True)
@@ -134,6 +133,7 @@ def main():
         fp = f'{args.outpath}/{os.path.basename(args.exprs)}'
         logging.info(f'Writing {fp}')
         write_exprs(exprs, fp, compression='gzip')
+        timestamp = file_time(fp)
 
         # Log
         if args.exprs_log:

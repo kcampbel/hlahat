@@ -1,36 +1,6 @@
 import pandas as pd
 import os
 import logging
-import s3fs
-import re
-
-def read_exprs(filename:str, index_col:str, samples:list = None):
-    if 'parquet' in filename:
-        if re.match('s3://', filename):
-            s3 = s3fs.S3FileSystem()
-            fn = filename.split('s3://')[-1]
-            with s3.open(fn, 'rb') as f:
-                exprs = pd.read_parquet(f)
-        else:
-            exprs = pd.read_parquet(filename)
-    else:
-        exprs = pd.read_table(filename, index_col=index_col)
-    if samples:
-        exprs = exprs.filter(items=samples, axis=1)
-    return(exprs)
-
-def write_exprs(df, filename:str, compression='gzip'):
-    if 'parquet' in filename:
-        if re.match('s3://', filename):
-            s3 = s3fs.S3FileSystem()
-            fn = filename.split('s3://')[-1]
-            with s3.open(fn, 'wb') as f:
-                exprs = df.to_parquet(f, compression=compression)
-        else:
-            exprs = df.to_parquet(filename, compression=compression)
-    else:
-        exprs = df.to_csv(filename, sep='\t')
-    return(filename)
 
 def counts2mat(counts:list, metric:str, gene_name:str, exprs, force:bool):
     if exprs.index.name != gene_name:
@@ -64,13 +34,6 @@ def counts2mat(counts:list, metric:str, gene_name:str, exprs, force:bool):
         return exprs
     else:
         return None
-
-def get_extension(filename):
-    basename = os.path.basename(filename)  # os independent
-    split = basename.split('.')
-    prefix = split[0]
-    ext = '.'.join(split[1:])
-    return [prefix, '.' + ext] if ext else None
 
 def manifest_to_meta(manifest:dict):
     """ Converts EPIC manifest fields to a dict
