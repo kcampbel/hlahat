@@ -26,7 +26,7 @@ opts_knit$set(width=125)
 ```
 
 ```{r, echo=FALSE}
-htmltools::img(src = knitr::image_uri(file.path("/Users/ericstawiski/bin/images", "pact2.png")), 
+htmltools::img(src = knitr::image_uri(file.path("../images", "pact2.png")), 
                alt = 'logo', 
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
@@ -46,18 +46,18 @@ sample_id= "PACT280C_T_PP001445"
 ca_type="Breast"
 
 #read the expression data
-read_tsv("/Users/ericstawiski/Documents/Projects/TME/Data/exprs_combat_Breast_hgnc.tsv.gz") -> data
+read_tsv("../data/exprs_combat_Breast_hgnc.tsv.gz") -> data
 all_data <- as.data.frame(data)
 
 #get gene list to report
 library(readxl)
-report <- read_excel("/Users/ericstawiski/Documents/Projects/TME/Data/ReportGeneList.xlsx")
+report <- read_excel("../data/ReportGeneList.xlsx")
 
 exp_data=all_data[all_data$gene %in% report$Gene_Name,]
 rownames(exp_data) <- exp_data[, 1]
 exp_data2<- exp_data[, -1]
 
-samples=read.table("/Users/ericstawiski/Documents/Projects/TME/Data/meta_pact_xena2b.txt",fill=TRUE,header=T, sep = "\t", quote = "\"'")
+samples=read.table("../data/meta_pact_xena2b.txt",fill=TRUE,header=T, sep = "\t", quote = "\"'")
 
 xsamples=samples[samples$X_primary_site==ca_type,]
 
@@ -160,7 +160,7 @@ for(column in "Percentile PACT"){
 dtable
 
 #create a data frame for boxplots
-report <- read_excel("/Users/ericstawiski/Documents/Projects/TME/Data/ReportGeneList.xlsx")
+report <- read_excel("../data/ReportGeneList.xlsx")
 
 my_data=hgnc_data
 my_data$gene=rownames(my_data)
