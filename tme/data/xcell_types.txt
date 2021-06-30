@@ -1,0 +1,65 @@
+Full name	Cell types	FANTOM5	ENCODE	Blueprint	IRIS	Novershtern	HPCA	sources	samples	Group	Subgroup	Parent_Child
+Monocytes	Monocytes	42	0	16	12	5	66	5	141	Non-lymphocytes	Myeloid	Parent
+CD8+ T-cells	CD8+ T-cells	11	0	3	4	7	16	5	41	Lymphocytes	Lymphoid	Parent
+NK cells	NK cells	3	0	3	15	6	5	5	32	Lymphocytes	Lymphoid	Parent
+Macrophages	Macrophages	27	0	18	12	0	59	4	116	Non-lymphocytes	Myeloid	Parent
+Endothelial cells	Endothelial cells	22	14	4	0	0	48	4	88	Non-Hematopoietic	Stroma	Parent
+Dendritic cells	DC	4	0	1	6	0	45	4	56	Non-lymphocytes	Myeloid	Parent
+Neutrophils	Neutrophils	3	0	23	5	0	21	4	52	Non-lymphocytes	Myeloid	Parent
+Erythrocytes	Erythrocytes	2	0	7	0	33	8	4	50	HSC	HSC	HSC
+CD4+ naive T-cells	CD4+ naive T-cells	6	0	0	3	7	6	4	22	Lymphocytes	Lymphoid	CD4+ T-cells
+Multipotent rogenitors	MPP	2	1	3	0	10	0	4	16	HSC	HSC	Parent
+Smooth muscle cells	Smooth muscle cells	120	16	0	0	0	16	3	152	Non-Hematopoietic	Stroma	Parent
+Fibroblasts	Fibroblasts	73	20	0	0	0	15	3	108	Non-Hematopoietic	Stroma	Parent
+Epithelial cells	Epithelial cells	53	18	0	0	0	16	3	87	Non-Hematopoietic	Epithelial	Parent
+Keratinocytes	Keratinocytes	4	2	0	0	0	25	3	31	Non-Hematopoietic	Epithelial	Epithelial cells
+Chondrocytes	Chondrocytes	5	2	0	0	0	22	3	29	Non-Hematopoietic	Stroma	Parent
+Adipocytes	Adipocytes	18	7	0	0	0	3	3	28	Non-Hematopoietic	Stroma	Parent
+B-cells	B-cells	11	0	0	0	10	7	3	28	Lymphocytes	Lymphoid	Parent
+CD4+ T-cells	CD4+ T-cells	3	0	11	0	0	12	3	26	Lymphocytes	Lymphoid	Parent
+CD8+ effector memory T-cells	CD8+ Tem	0	0	1	0	10	8	3	19	Lymphocytes	Lymphoid	CD8+ T-cells
+Common myeloid progenitors	CMP	0	0	11	0	4	2	3	17	HSC	HSC	HSC
+Granulocyte-macrophage progenitors	GMP	0	0	3	0	4	8	3	15	HSC	HSC	HSC
+Megakaryocyte–erythroid progenitors	MEP	0	0	4	0	9	2	3	15	HSC	HSC	HSC
+Regulatory T-cells	Tregs	12	0	1	0	0	2	3	15	Lymphocytes	Lymphoid	CD4+ T-cells
+Hematopoietic stem cells	HSC	4	0	6	0	4	0	3	14	HSC	HSC	Parent
+Plasma cells	Plasma cells	0	0	4	7	0	3	3	14	Lymphocytes	Lymphoid	B-cells
+CD4+ central memory T-cells	CD4+ Tcm	0	0	1	0	7	5	3	13	Lymphocytes	Lymphoid	CD4+ T-cells
+Microvascular endothelial cells	mv Endothelial cells	3	8	0	0	0	2	3	13	Non-Hematopoietic	Stroma	Endothelial cells
+CD4+ effector memory T-cells	CD4+ Tem	0	0	1	0	7	4	3	12	Lymphocytes	Lymphoid	CD4+ T-cells
+Memory B-cells	Memory B-cells	0	0	1	8	0	3	3	12	Lymphocytes	Lymphoid	B-cells
+CD8+ central memory T-cells	CD8+ Tcm	0	0	1	0	7	3	3	11	Lymphocytes	Lymphoid	CD8+ T-cells
+naive B-cells	naive B-cells	0	0	2	0	5	3	3	10	Lymphocytes	Lymphoid	B-cells
+Eosinophils	Eosinophils	3	0	1	0	5	0	3	9	Non-lymphocytes	Myeloid	Parent
+Macrophages M1	Macrophages M1	77	0	3	0	0	0	2	80	Non-lymphocytes	Myeloid	Macrophages
+Myocytes	Myocytes	62	4	0	0	0	0	2	66	Non-Hematopoietic	Stroma	Skeletal muscle
+Lymphatic endothelial cells	ly Endothelial cells	51	0	0	0	0	14	2	65	Non-Hematopoietic	Stroma	Endothelial cells
+Mesenchymal stem cells	MSC	18	0	0	0	0	21	2	39	Non-Hematopoietic	Stroma	Parent
+Macrophages M2	Macrophages M2	0	0	4	0	0	25	2	29	Non-lymphocytes	Myeloid	Macrophages
+Osteoblasts	Osteoblast	6	0	0	0	0	15	2	21	Non-Hematopoietic	Stroma	Skeletal muscle
+Activated dendritic cells	aDC	0	0	0	6	0	10	2	16	Non-lymphocytes	Myeloid	DC
+Preadipocytes	Preadipocytes	14	2	0	0	0	0	2	16	Non-Hematopoietic	Stroma	Adipocytes
+Melanocytes	Melanocytes	9	4	0	0	0	0	2	13	Non-Hematopoietic	Epithelial	Parent
+Skeletal muscle cells	Skeletal muscle cells	6	7	0	0	0	0	2	13	Non-Hematopoietic	Stroma	Parent
+CD4+ memory T-cells	CD4+ memory T-cells	6	0	0	6	0	0	2	12	Lymphocytes	Lymphoid	CD4+ memory T-cells
+Megakaryocytes	Megakaryocytes	0	0	5	0	7	0	2	12	HSC	HSC	HSC
+pro B-cells	pro B-cells	0	0	0	0	8	2	2	10	Lymphocytes	Lymphoid	B-cells
+Basophils	Basophils	3	0	0	0	6	0	2	9	Non-lymphocytes	Myeloid	Parent
+Xonventional dendritic cells	cDC	0	0	0	0	5	4	2	9	Non-lymphocytes	Myeloid	DC
+Astrocytes	Astrocytes	6	2	0	0	0	0	2	8	Non-Hematopoietic	Epithelial	Parent
+Plasmacytoid dendritic cells	pDC	3	0	0	0	5	0	2	8	Non-lymphocytes	Myeloid	DC
+Pericytes	Pericytes	6	2	0	0	0	0	2	8	Non-Hematopoietic	Stroma	Fibroblasts
+Neurons	Neurons	3	4	0	0	0	0	2	7	Non-Hematopoietic	Epithelial	Astrocytes
+Class-switched memory B-cells	Class-switched memory B-cells	0	0	1	0	5	0	2	6	Lymphocytes	Lymphoid	B-cells
+Hepatocytes	Hepatocytes	3	0	0	0	0	3	2	6	Non-Hematopoietic	Epithelial	Parent
+Mesangial cells	Mesangial cells	3	2	0	0	0	0	2	5	Non-Hematopoietic	Stroma	Fibroblasts
+Immature dendritic cells	iDC	0	0	0	0	0	29	1	29	Non-lymphocytes	Myeloid	DC
+Mast cells	Mast cells	9	0	0	0	0	0	1	9	Non-lymphocytes	Myeloid	Parent
+Type 2 T-helper cells	Th2 cells	0	0	0	6	0	0	1	6	Lymphocytes	Lymphoid	CD4+ T-cells
+Common lymphoid progenitors	CLP	0	0	5	0	0	0	1	5	HSC	HSC	HSC
+Platelets	Platelets	0	0	0	0	0	5	1	5	Non-lymphocytes	HSC	Parent
+Type 1 T-helper cells	Th1 cells	0	0	0	5	0	0	1	5	Lymphocytes	Lymphoid	CD4+ T-cells
+CD8+ naive T-cells	CD8+ naive T-cells	0	0	0	0	0	4	1	4	Lymphocytes	Lymphoid	CD8+ T-cells
+Natural killer T-cells	NKT	0	0	0	0	4	0	1	4	Lymphocytes	Lymphoid	Parent
+Sebocytes	Sebocytes	3	0	0	0	0	0	1	3	Non-Hematopoietic	Epithelial	Epithelial cells
+Gamma delta T-cells	Tgd cells	0	0	0	0	0	2	1	2	Lymphocytes	Lymphoid	CD4+ T-cells
