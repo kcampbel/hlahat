@@ -3,7 +3,7 @@ title: "TME Report"
 date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown
-css: mycss2.css
+css: ../css/mycss2.css
 always_allow_html: yes
 ---
 
