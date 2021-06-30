@@ -4,20 +4,33 @@ import logging
 import s3fs
 import re
 
-def read_exprs(exprs_f:str, index_col:str, samples:list = None):
-    if 'parquet' in exprs_f:
-        if re.match('s3://', exprs_f):
+def read_exprs(filename:str, index_col:str, samples:list = None):
+    if 'parquet' in filename:
+        if re.match('s3://', filename):
             s3 = s3fs.S3FileSystem()
-            infile = exprs_f.strip('s3://')
-            with s3.open(infile, 'rb') as f:
+            fn = filename.split('s3://')[-1]
+            with s3.open(fn, 'rb') as f:
                 exprs = pd.read_parquet(f)
         else:
-            exprs = pd.read_parquet(exprs_f)
+            exprs = pd.read_parquet(filename)
     else:
-        exprs = pd.read_table(exprs_f, index_col=index_col)
+        exprs = pd.read_table(filename, index_col=index_col)
     if samples:
         exprs = exprs.filter(items=samples, axis=1)
     return(exprs)
+
+def write_exprs(df, filename:str, compression='gzip'):
+    if 'parquet' in filename:
+        if re.match('s3://', filename):
+            s3 = s3fs.S3FileSystem()
+            fn = filename.split('s3://')[-1]
+            with s3.open(fn, 'wb') as f:
+                exprs = df.to_parquet(f, compression=compression)
+        else:
+            exprs = df.to_parquet(filename, compression=compression)
+    else:
+        exprs = df.to_csv(filename, sep='\t')
+    return(filename)
 
 def counts2mat(counts:list, metric:str, gene_name:str, exprs, force:bool):
     if exprs.index.name != gene_name:
@@ -73,3 +86,25 @@ def manifest_to_meta(manifest:dict):
         'tcga_study_code': pi['patient.tumorType'],
     }
     return(row)
+
+def update_exprs_log(value:str, col_name:str, exprs_log, exprs_path:str, timestamp:str):
+    """ Update exprs log
+        Args:
+            value(str): new entry value (e.g. PACT_T_XXXX)
+            col_name(str): column name for value
+            exprs_log(pandas): exprs log df
+            exprs_path(str): Path to updated exprs
+            timestamp(str): timestamp
+
+        Returns:
+            pandas 
+    """ 
+    row = {
+        'date': timestamp,
+        col_name: value,
+        'exprs_path': exprs_path,
+    }
+    tmp = pd.DataFrame([row])
+    out = pd.concat([exprs_log, tmp], ignore_index=True)
+    return(out)
+    

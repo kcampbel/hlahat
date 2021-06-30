@@ -38,7 +38,7 @@ def main():
 #            '-f',
 #        ])
     formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.DEBUG)
+    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
 
     # Collect new counts to add to eset
@@ -57,6 +57,9 @@ def main():
 
     df = counts2mat(counts, args.metric, args.gene_name, eset, args.force)
     if df is not None:
+        dn = os.path.dirname(args.outfile)
+        if not os.path.exists(dn):
+            os.makedirs(dn, exist_ok=True)
         logging.info(f'Writing {args.outfile}')
         if 'parquet' in args.outfile:
             df.to_parquet(args.outfile)

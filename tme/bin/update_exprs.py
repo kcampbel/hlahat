@@ -11,15 +11,14 @@ import logging
 from datetime import datetime
 import yaml
 import re
-import subprocess as sb
-from process import read_exprs, counts2mat, get_extension, manifest_to_meta
+from process import read_exprs, write_exprs, counts2mat, get_extension, manifest_to_meta, update_exprs_log
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('counts', nargs=1, help='count file to process (e.g. *genes.tsv)')
     parser.add_argument('--manifest', required=True, help='EPIC pipeline manifest file')
     parser.add_argument('--exprs', required=True, help='Gene expression matrix to update')
-    parser.add_argument('--exprs_log', required=True, help='Update log file')
+    parser.add_argument('--exprs_log', help='Update log file')
     parser.add_argument('--metadata_tsv', help='Specimen metadata')
     parser.add_argument('--tcga_gtex_map', help='TCGA to GTEX metadata mapping file')
     parser.add_argument('-o', '--outpath', default='rev', help='Output path')
@@ -55,31 +54,9 @@ def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False):
     out = pd.concat([meta, tmp])
     return(out)
 
-def update_exprs_log(manifest:dict, exprs_log, exprs_path:str, timestamp:str):
-    """ Update exprs log
-        Args:
-            manifest(dict): EPIC manifest
-            exprs_log(pandas): exprs log df
-            exprs_path(str): Path to updated exprs
-            timestamp(str): timestamp
-
-        Returns:
-            pandas 
-    """ 
-    mf = manifest_to_meta(manifest)
-    specimen_id = mf['specimen_id']
-    row = {
-        'date': timestamp,
-        'specimen_id': specimen_id,
-        'exprs_path': exprs_path,
-    }
-    tmp = pd.DataFrame([row])
-    out = pd.concat([exprs_log, tmp], ignore_index=True)
-    return(out)
-    
 def main():
     formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.DEBUG)
+    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
     now = datetime.now()
     timestamp = now.strftime("%Y%m%dT%H%M%S")
@@ -88,9 +65,9 @@ def main():
 #    args = parse_args(
 #        [
 #        '--manifest', '/home/csmith/git/bioinfo-fio/tme/test/manifest.PACT004_T_560351F.yml',
-#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_exprs.tsv',
+#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset.tsv',
 #        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
-#        #'--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/tme/data/tcga_gtex.tsv',
+#        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/tme/data/tcga_gtex.tsv',
 #        #'--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
 #        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
 #        '--exprs_log', '/home/csmith/git/bioinfo-fio/tme/test/pact_eset_log.tsv',
@@ -119,7 +96,6 @@ def main():
 #        #'-f', 
 #        ]
 #    )
-    #cfg = yaml.safe_load(open(args.config, 'r'))
     manifest = yaml.safe_load(open(args.manifest))
     mf = manifest_to_meta(manifest)
     specimen_id = mf['specimen_id']
@@ -149,33 +125,24 @@ def main():
         if args.metadata_tsv:
             # Metadata
             prefix, ext = get_extension(args.metadata_tsv)
-            fp = f'{args.outpath}/{prefix}_{timestamp}{ext}'
-            fp_orig = f'{args.outpath}/{prefix}{ext}'
-            logging.info(f'Writing {fp} and {fp_orig}')
+            fp = f'{args.outpath}/{os.path.basename(args.metadata_tsv)}'
+            logging.info(f'Writing {fp}')
             meta_new.to_csv(fp, sep='\t')
-            meta_new.to_csv(fp_orig, sep='\t')
 
-        # exprs
+        # Expression 
         prefix, ext = get_extension(args.exprs)
-        fp = f'{args.outpath}/{prefix}_{timestamp}{ext}'
-        fp_orig = f'{args.outpath}/{prefix}{ext}'
-        logging.info(f'Writing {fp} and {fp_orig}')
-        if 'parquet' in fp:
-            exprs_new.to_parquet(fp, compression='gzip')
-            exprs_new.to_parquet(fp_orig, compression='gzip')
-        else:
-            exprs_new.to_csv(fp, sep='\t')
-            exprs_new.to_csv(fp_orig, sep='\t')
+        fp = f'{args.outpath}/{os.path.basename(args.exprs)}'
+        logging.info(f'Writing {fp}')
+        write_exprs(exprs, fp, compression='gzip')
 
         # Log
-        exprs_log = pd.read_csv(args.exprs_log, sep='\t')
-        exprs_log_new = update_exprs_log(manifest, exprs_log, fp, timestamp)
-        prefix, ext = get_extension(args.exprs_log)
-        fp = f'{args.outpath}/{prefix}_{timestamp}{ext}'
-        fp_orig = f'{args.outpath}/{prefix}{ext}'
-        logging.info(f'Writing {fp}')
-        exprs_log_new.to_csv(fp, sep='\t', index=False)
-        exprs_log_new.to_csv(fp_orig, sep='\t', index=False)
+        if args.exprs_log:
+            exprs_log = pd.read_csv(args.exprs_log, sep='\t')
+            exprs_log_new = update_exprs_log(specimen_id, 'specimen_id', exprs_log, fp, timestamp)
+            prefix, ext = get_extension(args.exprs_log)
+            fp = f'{args.outpath}/{os.path.basename(args.exprs_log)}'
+            logging.info(f'Writing {fp}')
+            exprs_log_new.to_csv(fp, sep='\t', index=False)
     else:
         logging.info(f'{specimen_id} found in exprs or metadata and --force not specified. Exiting...')
     logging.info(f'{os.path.basename(__file__)} finished')

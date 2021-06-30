@@ -11,8 +11,9 @@ import numpy as np
 import yaml
 import argparse
 import logging
+from datetime import datetime
 from combat import combat
-from process import read_exprs, get_extension
+from process import read_exprs, write_exprs, get_extension, update_exprs_log
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -20,10 +21,11 @@ def parse_args(args=None):
     parser.add_argument('--batch_name', required=True, help='Batch column in metadata')
     parser.add_argument('--primary_site', required=True, nargs=1, help='Primary tissue site(s), comma-delimited')
     parser.add_argument('--metadata_tsv', required=True, help='Specimen metadata')
+    parser.add_argument('--exprs_log', help='Update log filename')
     parser.add_argument('--formula', help='Model covariate formula (e.g. ~ factor)')
     parser.add_argument('--blacklist', help='Specimen blacklist')
     parser.add_argument('-f', '--force', action='store_true', help='Force overwrite of samples with the same name')
-    parser.add_argument('-o', '--outfile', required=True, help='Output expression matrix file')
+    parser.add_argument('-o', '--outfile', required=True, help='Output path')
 
     return parser.parse_args(args)
     
@@ -101,8 +103,10 @@ def combat_split(exprs, meta, split_name:str, batch_name:str, formula:str = None
 
 def main():
     formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.DEBUG)
+    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
+    now = datetime.now()
+    timestamp = now.strftime("%Y%m%dT%H%M%S")
 
     args = parse_args()
 #    args = parse_args(
@@ -110,10 +114,11 @@ def main():
 #            './test/eset_xena_geneid_proteincoding.tsv',
 #            './test/eset_pact_geneid_proteincoding.tsv',
 #            '--metadata_tsv', './test/meta_eset.tsv',
+#            '--exprs_log', 'test/bc_exprs_log.tsv',
 #            '--blacklist', './test/blacklist.txt',
 #            '--batch_name', 'study',
 #            '--primary_site', 'Ovary',
-#            '-o', '/tmp/bc.tsv',
+#            '-o', '/tmp/batch_correct/bc.tsv',
 #        ])
 
     # Metadata
@@ -162,11 +167,21 @@ def main():
     exprs_m = np.log2(exprs_m + 0.001)
     out = combat_split(exprs_m, meta=meta_m, split_name='primary_site', batch_name=args.batch_name, formula=args.formula)
 
-    logging.info(f'Writing to {args.outfile}')
-    if 'parquet' in args.outfile:
-        out.to_parquet(args.outfile, compression='gzip')
-    else:
-        out.to_csv(args.outfile, sep='\t')
+    dn = os.path.dirname(args.outfile)
+    if not os.path.exists(dn):
+        os.makedirs(dn, exist_ok=True)
+    fp = args.outfile
+    logging.info(f'Writing {fp}')
+    write_exprs(exprs_m, fp, compression='gzip')
+
+    # Log file
+    if args.exprs_log:
+        exprs_log = pd.read_csv(args.exprs_log, sep='\t')
+        exprs_log_new = update_exprs_log('combat', 'method', exprs_log, args.outfile, timestamp)
+        fp = f'{dn}/{os.path.basename(args.exprs_log)}'
+        logging.info(f'Writing {fp}')
+        exprs_log_new.to_csv(fp, sep='\t', index=False)
+
     logging.info(f'{os.path.basename(__file__)} finished')
 
 if __name__ == "__main__":
