@@ -1,0 +1,334 @@
+---
+title: "TME Report"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown
+css: ../css/mycss2.css
+always_allow_html: yes
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+	             cache=TRUE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               cache.lazy = FALSE)
+opts_knit$set(width=125)
+```
+
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri(file.path("../images", "pact2.png")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;')
+```
+
+## TPM Reporting Table
+
+Key TPM results from sample:
+
+```{r report, echo=FALSE, warning=FALSE, message=FALSE}
+library(readr)
+library(dplyr)
+library(DT)
+library(fmsb)
+library(reshape2)
+
+sample_id= "PACT280C_T_PP001445"
+ca_type="Breast"
+
+#read the expression data
+read_tsv("../data/exprs_combat_Breast_hgnc.tsv.gz") -> data
+all_data <- as.data.frame(data)
+
+#get gene list to report
+library(readxl)
+report <- read_excel("../data/ReportGeneList.xlsx")
+
+exp_data=all_data[all_data$gene %in% report$Gene_Name,]
+rownames(exp_data) <- exp_data[, 1]
+exp_data2<- exp_data[, -1]
+
+samples=read.table("../data/meta_pact_xena2b.txt",fill=TRUE,header=T, sep = "\t", quote = "\"'")
+
+xsamples=samples[samples$X_primary_site==ca_type,]
+
+#get right indication
+exp_data3=exp_data2[,names(exp_data2) %in% xsamples$specimen_id]
+
+#make copy for later
+my_cols=c("gene",xsamples$specimen_id)
+hgnc_data=all_data[,names(all_data) %in% my_cols]
+rownames(hgnc_data) <- hgnc_data[, 1]
+hgnc_data<- hgnc_data[, -1]
+
+#split data based on source
+sam_id = sample_id
+pact=exp_data3[,grep('^PACT', names(exp_data3))]
+pact=pact[,names(pact)!=sam_id]
+tcga=exp_data3[,grep('^TCGA', names(exp_data3))]
+gtex=exp_data3[,grep('^GTEX', names(exp_data3))]
+my_sam=exp_data3[,grep('^PACT424', names(exp_data3))]
+
+#PUT YOUR SAMPLE_ID HERE
+sample=exp_data3[,grep(sample_id, names(exp_data3))]
+
+#left join data 
+gene_info=as.data.frame(row.names(exp_data2))
+names(gene_info)=c("gene")
+gene_info2=left_join(gene_info,report,by=c("gene"="Gene_Name"))
+#drop columns
+gene_info3=gene_info2[,!(names(gene_info2) %in% c("TPM","Priortity"))]
+
+zscore<- function(x){
+  z<- (x - mean(x)) / sd(x)
+  return(z)
+}
+
+report_table=c()
+zpp=c()
+zgp=c()
+ztp=c()
+
+for (i in 1:dim(exp_data3)[1]){
+    p2=as.numeric(pact[i,])
+    t2=as.numeric(tcga[i,])
+    g2=as.numeric(gtex[i,])
+    s2=sample[i]
+    p2=c(p2,s2)
+    t2=c(t2,s2)
+    g2=c(g2,s2)
+    zp=zscore(p2)
+    zt=zscore(t2)
+    zg=zscore(g2)
+    
+    #get sample zscore
+    zps=sprintf("%1.2f",tail(zp, n=1))
+    zts=sprintf("%1.2f",tail(zt, n=1))
+    zgs=sprintf("%1.2f",tail(zg, n=1))
+    #get sample zscore percentile
+    if(zps != "NaN"){
+       zpp=tail(percentile(zp), n=1)
+       ztp=tail(percentile(zt), n=1)
+       zgp=tail(percentile(zg), n=1)
+    }
+
+    ens_gene=row.names(exp_data3)[i]
+    gene_info4=gene_info3[gene_info2$gene==ens_gene,]
+    my_row=c()
+    my_tpm=sprintf("%1.2f",(2^s2))
+    s2=sprintf("%1.2f",s2)
+   
+    report_row=cbind(gene_info4,my_tpm,s2,zps,zts,zgs,zpp,ztp,zgp)
+    report_table=rbind(report_table,report_row)
+}
+
+names(report_table)=c("Gene","Alias","Category","TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
+#remove NaN for now
+report_table=report_table[!(report_table$`Z-score PACT`=="NaN"),]
+report_table=report_table[!is.na(report_table$`Percentile PACT`),]
+report_table$TPM=as.numeric(report_table$TPM)
+report_table$`log2(TPM)`=as.numeric(report_table$`log2(TPM)`)
+report_table$`Z-score PACT`=as.numeric(report_table$`Z-score PACT`)
+report_table$`Z-score TCGA`=as.numeric(report_table$`Z-score TCGA`)
+report_table$`Z-score GTEX`=as.numeric(report_table$`Z-score GTEX`)
+report_table$`Percentile PACT`=as.numeric(report_table$`Percentile PACT`)
+report_table$`Percentile TCGA`=as.numeric(report_table$`Percentile TCGA`)
+report_table$`Percentile GTEX`=as.numeric(report_table$`Percentile GTEX`)
+
+dtable <- datatable(report_table)
+colRamp <- colorRamp(c("lightblue","white","red"))
+for(column in "Percentile PACT"){
+  x <- na.omit(report_table[[column]])
+  brks <- quantile(x, probs = seq(.05, .95, .005))
+  RGB <- colRamp(c(0, (brks-min(x))/(max(x)-min(x))))
+  clrs <- apply(RGB, 1, function(rgb){
+    sprintf("rgb(%s)", toString(round(rgb,0)))
+  })
+  dtable <- dtable %>% 
+    formatStyle(column, backgroundColor = styleInterval(brks, clrs))
+}
+
+dtable
+
+#create a data frame for boxplots
+report <- read_excel("../data/ReportGeneList.xlsx")
+
+my_data=hgnc_data
+my_data$gene=rownames(my_data)
+my_data=melt(my_data,id=c("gene"),value.name = "TPM")
+my_data$Source=rep("Unk",dim(my_data)[1])
+my_data$Source[grep('^PACT', my_data$variable)]="PACT"
+my_data$Source[grep('^TCGA', my_data$variable)]="TCGA"
+my_data$Source[grep('^GTEX', my_data$variable)]="GTEX"
+my_data$Source[my_data$variable==sample_id]="Sample"
+my_data$Source <- factor(my_data$Source, levels = c("Sample", "PACT", "TCGA","GTEX"))
+
+```
+
+
+## TPM Boxplots {.tabset}
+
+### Gene Expression Key Genes
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r, my_data=my_data}
+library(plotly)
+
+#get a list
+my_data2=my_data[my_data$gene %in% report$Gene_Name[report$Priortity=="A"],]
+
+fig <- plot_ly(my_data2, x = ~gene, y = ~TPM, color = ~Source, colors=c("red","#113C63","grey50","grey81"), type = "box",width=1200)
+fig <- fig %>% layout(boxmode = "group")
+
+fig
+
+```
+
+### Gene Expression Key Genes2
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r , my_data=my_data,echo=FALSE, warning=FALSE, message=FALSE}
+
+#get a list
+my_data2=my_data[my_data$gene %in% report$Gene_Name[report$Priortity=="B"],]
+
+fig <- plot_ly(my_data2, x = ~gene, y = ~TPM, color = ~Source, colors=c("red","#113C63","grey50","grey81"), type = "box",width=1200)
+fig <- fig %>% layout(boxmode = "group")
+
+fig
+
+```
+
+### Gene Expression Chemokines
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r , my_data=my_data,echo=FALSE, warning=FALSE, message=FALSE}
+
+#get a list
+my_data2=my_data[my_data$gene %in% report$Gene_Name[report$Priortity=="C"],]
+
+fig <- plot_ly(my_data2, x = ~gene, y = ~TPM, color = ~Source, colors=c("red","#113C63","grey50","grey81"), type = "box",width=1200)
+fig <- fig %>% layout(boxmode = "group")
+
+fig
+
+```
+### Gene Expression Receptors
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r , my_data=my_data,echo=FALSE, warning=FALSE, message=FALSE}
+
+#get a list
+my_data2=my_data[my_data$gene %in% report$Gene_Name[report$Priortity=="CR"],]
+
+fig <- plot_ly(my_data2, x = ~gene, y = ~TPM, color = ~Source, colors=c("red","#113C63","grey50","grey81"), type = "box",width=1200)
+fig <- fig %>% layout(boxmode = "group")
+
+fig
+
+```
+### Gene Expression GOI
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r , my_data=my_data,echo=FALSE, warning=FALSE, message=FALSE}
+
+#get a list
+my_data2=my_data[my_data$gene %in% report$Gene_Name[report$Priortity=="D"],]
+
+fig <- plot_ly(my_data2, x = ~gene, y = ~TPM, color = ~Source, colors=c("red","#113C63","grey50","grey81"), type = "box",width=1200)
+fig <- fig %>% layout(boxmode = "group")
+
+fig
+
+```
+
+## {-}
+
+<!-- load some data here  -->
+```{r , echo=FALSE, warning=FALSE, message=FALSE, results = FALSE}
+library(GSVA)
+library(cluster)
+library(dplyr)
+library(xCell)
+
+#read pact data
+pact=hgnc_data[,grep('^PACT', names(hgnc_data))]
+
+#read pathway file as list of lists
+inlist <- strsplit(readLines("/Users/ericstawiski/Documents/Projects/TME/DataMappings/GeneSets.txt"), "[[:space:]]+")
+pathways <- lapply(inlist, tail, n = -1)
+names(pathways) <- lapply(inlist, head, n = 1)
+
+#zscore
+Pzscore <- gsva(as.matrix(pact), pathways, method="zscore", verbose=FALSE, parallel.sz=1)
+xcell=xCellAnalysis(as.matrix(pact))
+xcell_t = read.table("/Users/ericstawiski/Documents/Projects/TME/DataMappings/xcell_types.txt",header=T, sep = "\t")
+xcell_lym=xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Lymphocytes"],]
+xcell_nonhem=xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Non-Hematopoietic"],]
+xcell_nonlym=xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Non-lymphocytes"],]
+
+```
+## Cellular Composition {.tabset .tabset-fade}
+
+### Lymphocytes
+
+Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+
+```{r , xcell_lym=xcell_lym,echo=FALSE, warning=FALSE, message=FALSE}
+library(NMF)
+
+aheatmap(xcell_lym, scale = "row")
+
+```
+
+### Myeloid
+
+Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+
+```{r , xcell_lym=xcell_lym,echo=FALSE, warning=FALSE, message=FALSE}
+
+aheatmap(xcell_nonlym, scale = "row")
+
+```
+
+### Stroma/Epithelial
+
+Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+
+```{r , xcell_lym=xcell_lym,echo=FALSE, warning=FALSE, message=FALSE}
+aheatmap(xcell_nonhem, scale = "row")
+
+```
+
+##
+
+## Pathway Analysis
+Z-score enrichment analysis for key pathways as implimented by GSVA. 
+
+```{r , Pzscore=Pzscore,echo=FALSE, warning=FALSE, message=FALSE}
+library(RColorBrewer)
+cols <- colorRampPalette(brewer.pal(8, "Blues"))(25)
+#heatmap(Pzscore,col=cols)
+aheatmap(Pzscore,scale = "row")
+
+```
+
+
+End of TME Report.
+
+
+
