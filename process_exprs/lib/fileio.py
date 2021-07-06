@@ -49,7 +49,7 @@ def write_exprs(df, filename:str, compression:str='gzip'):
         else:
             exprs = df.to_parquet(filename, compression=compression)
     else:
-        exprs = df.to_csv(fn, sep='\t')
+        exprs = df.to_csv(filename, sep='\t')
     return(filename)
 
 

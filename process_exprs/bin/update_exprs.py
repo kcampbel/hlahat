@@ -11,8 +11,8 @@ import logging
 from datetime import datetime
 import yaml
 import re
-from process import counts2mat, manifest_to_meta, update_exprs_log
-from fileio import read_exprs, write_exprs, get_extension, file_time
+from lib.process import counts2mat, manifest_to_meta, update_exprs_log
+from lib.fileio import read_exprs, write_exprs, get_extension, file_time
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
