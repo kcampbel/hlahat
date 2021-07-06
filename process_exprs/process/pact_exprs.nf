@@ -5,6 +5,7 @@
 include { saveFiles; getSoftwareName } from '../lib/functions'
 
 params.options = [:]
+params.pact_emat_s3 = false
 
 process SAMPLE_TO_PACT_EMAT {
  //   label 'process_medium'
@@ -27,8 +28,8 @@ process SAMPLE_TO_PACT_EMAT {
 //    path metadata_tsv 
 
     output:
-    tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_hgnc_tpm_updated), emit: pact_hgnc_updated
-    tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_gid_tpm_updated), emit: pact_gid_updated
+    tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_hgnc_tpm_updated), emit: pact_hgnc_emat_updated
+    //tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_gid_tpm_updated), emit: pact_gid_emat_updated
     path outdir
 
     script:
@@ -38,20 +39,47 @@ process SAMPLE_TO_PACT_EMAT {
     pact_hgnc_tpm_updated = outdir + '/' + pact_hgnc_tpm
     pact_gid_tpm_updated  = outdir + '/' + pact_gid_tpm
     //log.info "$metadata_tsv_updated"
+    if( params.pact_emat_s3 )
+        """
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_hgnc_tpm}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log}\
+        --metadata_tsv ${metadata_tsv}\
+        --tcga_gtex_map ${tcga_gtex_map}\
+        -o ${outdir}
 
-    """
-    update_exprs.py ${gene_counts}\
-     --exprs ${pact_hgnc_tpm}\
-     --manifest ${manifest}\
-     --exprs_log ${pact_emat_log}\
-     --metadata_tsv ${metadata_tsv}\
-     --tcga_gtex_map ${tcga_gtex_map}\
-     -o ${outdir}
+        timestamp_exprs.py\
+        --exprs ${pact_hgnc_tpm_updated}\
+        --exprs_log ${pact_emat_log_updated}\
+        --metadata_tsv ${metadata_tsv_updated}\
+        -o ${params.pact_emat_s3}
 
-    update_exprs.py ${gene_counts}\
-     --exprs ${pact_gid_tpm}\
-     --manifest ${manifest}\
-     --exprs_log ${pact_emat_log}\
-     -o ${outdir}
-    """
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_gid_tpm}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log}\
+        -o ${outdir}
+
+        timestamp_exprs.py\
+        --exprs ${pact_gid_tpm_updated}\
+        --exprs_log ${pact_emat_log_updated}\
+        -o ${params.pact_emat_s3}
+        """
+    else
+        """
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_hgnc_tpm}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log}\
+        --metadata_tsv ${metadata_tsv}\
+        --tcga_gtex_map ${tcga_gtex_map}\
+        -o ${outdir}
+
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_gid_tpm}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log}\
+        -o ${outdir}
+        """
 }

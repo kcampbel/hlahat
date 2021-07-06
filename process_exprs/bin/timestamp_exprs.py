@@ -7,7 +7,7 @@ import pandas as pd
 import argparse
 import logging
 import time
-from fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
+from lib.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -29,7 +29,7 @@ def main():
     logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
 
-   args = parse_args()
+    args = parse_args()
 #    args = parse_args(
 #        [
 #        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
