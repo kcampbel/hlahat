@@ -7,6 +7,7 @@ import pandas as pd
 import argparse
 import logging
 import time
+import re
 from lib.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
 
 def parse_args(args=None):
@@ -58,7 +59,7 @@ def main():
     fp_orig, fp = rev_filename(args.exprs, timestamp, args.outpath)
     logging.info(f'Writing {fp} and {fp_orig}')
     dn = os.path.dirname(fp)
-    if not os.path.exists(dn):
+    if not os.path.exists(dn) and not re.match('s3://', fp):
         os.makedirs(dn, exist_ok=True)
     write_exprs(exprs, fp, compression='gzip')
     write_exprs(exprs, fp_orig, compression='gzip')

@@ -21,7 +21,8 @@ WorkflowMain.initialise(workflow, params, log)
 */
 // Check input path parameters to see if they exist
 checkPathParamList = [
-    params.input
+    params.input 
+    //params.xena_hgnc_tpm, params.bc_emat_log, params.blacklist
     // params.fasta, params.transcript_fasta, params.additional_fasta,
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
@@ -35,7 +36,7 @@ log.info "Process RNAseq expression matrices v${VERSION}"
 log.info "Nextflow Version:	$workflow.nextflow.version"
 log.info "Command Line:		$workflow.commandLine"
 log.info "========================================="
-log.info "$PYTHONPATH"
+//log.info "$PYTHONPATH"
 
 /*
 ========================================================================================
@@ -44,27 +45,21 @@ log.info "$PYTHONPATH"
 */
 include { UPDATE_PACT_EMAT } from './workflow/update_pact_emat' addParams( params.modules["update_pact_emat"] )
 include { HELLOWORLD       } from './workflow/helloworld'       addParams( params.modules["pact_emat"] )
-//include { BATCH_CORRECT     } from './workflow/batch_correct'     addParams( params.modules["batch_correct"] )
+include { BATCH_CORRECT     } from './workflow/batch_correct'     addParams( params.modules["batch_correct"] )
 
+// CSV input
 Channel.from(ch_input)
     .splitCsv(sep: '\t', header: true)
     .map{ row-> tuple(
         row.sample, 
         row.gene_counts,
-        row.manifest
+        row.manifest,
+        row.primary_site
         ) }
-    .groupTuple(by: [0])
+   // .groupTuple(by: [0])
     .set { ch_input } 
 
-ch_metadata_tsv = file(params.metadata_tsv)
-
 // PACT RNAseq expression matrix
-
-//pact_gid_tpm  = file(params.pact_gid_tpm)
-//pact_hgnc_tpm = file(params.pact_hgnc_tpm)
-//tcga_gtex_map = file(params.tcga_gtex_map)
-//pact_emat_log = file(params.pact_emat_log)
-
 ch_pact_emat = Channel.fromPath( 
     [
         file(params.pact_gid_tpm),
@@ -74,14 +69,22 @@ ch_pact_emat = Channel.fromPath(
     ]
 ).collect()
 
-workflow PROCESS_EXPRS {
-    // Load workflow input
-//    HELLOWORLD (
-//        ch_input,
-//        ch_pact_emat,
-//        ch_metadata_tsv
-//    )
+// Batch correction
+ch_batch_correct = Channel.fromPath(
+    [
+        file(params.xena_hgnc_tpm),
+        file(params.bc_emat_log),
+        file(params.blacklist)
+    ]
+).collect()
 
+// Pact/Xena metadata
+ch_metadata_tsv = file(params.metadata_tsv)
+
+workflow PROCESS_EXPRS {
+    take:
+
+    main:
     UPDATE_PACT_EMAT (
         ch_input,
         ch_pact_emat,
@@ -89,22 +92,14 @@ workflow PROCESS_EXPRS {
     )
 
     // Batch correction
-//        ch_batch_correct = Channel.fromPath(
-//        [
-//            file(params$xena_gid_tpm),
-//            file(params$bc_hgnc_tpm),
-//            file(params$bc_emat_log),
-//            file(params$blacklist)
-//        ]
-//    )
-//    
-//    BATCH_CORRECT (
-//        ch_input,
-//        ch_batch_correct,
-//        UPDATE_PACT_EMAT.out.pact_emat_updated
-//        )
-//    
-//    )
+    BATCH_CORRECT (
+        ch_input,
+        UPDATE_PACT_EMAT.out.pact_emat_updated, // val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_hgnc_tpm_updated)
+        ch_batch_correct
+        )
+    
+    emit:
+    bc_hgnc_tpm = BATCH_CORRECT.out.bc_hgnc_tpm
 }
 
 workflow.onComplete {
@@ -120,8 +115,6 @@ workflow.onComplete {
         ['aws', 'sns', 'publish', '--topic-arn', 'arn:aws:sns:us-west-2:757652839166:scrnaseq-nextflow-pipeline', '--subject', subject, '--message', message, '--region', 'us-west-2'].execute()
     }
 }
-
-//include { foo } from './workflow/foo'
 
 /*
 ========================================================================================

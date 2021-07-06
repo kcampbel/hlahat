@@ -1,0 +1,128 @@
+primary_site	tcga_study_code	cancer_type	tcga_description	xena_detailed_category	xena_primary_site
+Blood	LAML	LAML	acute myeloid leukemia	Cells - Ebv-Transformed Lymphocytes	Blood
+Blood	LAML	LAML	acute myeloid leukemia	Whole Blood	Blood
+Blood	DLBC	DLBC	diffuse large B-cell lymphoma	Cells - Ebv-Transformed Lymphocytes	Blood
+Blood	DLBC	DLBC	diffuse large B-cell lymphoma	Whole Blood	Blood
+AdrenalGland	ACC	ACC	adrenocortical cancer	Adrenal Gland	Adrenal Gland
+AdrenalGland	PCPG	PCPG	pheochromocytoma & paraganglioma	Adrenal Gland	Adrenal Gland
+Bladder	BLCA	BLCA	bladder urothelial carcinoma	Bladder Urothelial Carcinoma	Bladder
+Bladder	BLCA	BLCA	bladder urothelial carcinoma	Bladder	Bladder
+Breast	BRCA	BRCA	breast invasive carcinoma	Breast Invasive Carcinoma	Breast
+Breast	BRCA	BRCA	breast invasive carcinoma	Breast - Mammary Tissue	Breast
+CervixUteri	CESC	CESC	cervical & endocervical cancer	Cervix - Endocervix	Cervix Uteri
+CervixUteri	CESC	CESC	cervical & endocervical cancer	Cervix - Ectocervix	Cervix Uteri
+ColonRectum	COADREAD	CRC	colon adenocarcinoma	Rectum Adenocarcinoma	Rectum
+ColonRectum	COADREAD	CRC	colon adenocarcinoma	Colon Adenocarcinoma	Colon
+ColonRectum	COADREAD	CRC	colon adenocarcinoma	Colon - Transverse	Colon
+ColonRectum	COADREAD	CRC	colon adenocarcinoma	Colon - Sigmoid	Colon
+ColonRectum	COADREAD	READ	rectum adenocarcinoma	Rectum Adenocarcinoma	Rectum
+ColonRectum	COADREAD	READ	rectum adenocarcinoma	Colon Adenocarcinoma	Colon
+ColonRectum	COADREAD	READ	rectum adenocarcinoma	Colon - Transverse	Colon
+ColonRectum	COADREAD	READ	rectum adenocarcinoma	Colon - Sigmoid	Colon
+Esophagus	ESCA	ESCA	esophageal carcinoma	Esophageal Carcinoma	Esophagus
+Esophagus	ESCA	ESCA	esophageal carcinoma	Esophagus - Gastroesophageal Junction	Esophagus
+Esophagus	ESCA	ESCA	esophageal carcinoma	Esophagus - Mucosa	Esophagus
+Esophagus	ESCA	ESCA	esophageal carcinoma	Esophagus - Muscularis	Esophagus
+Muscle	HNSC	HNSC	head & neck squamous cell carcinoma	Muscle - Skeletal	Muscle
+Muscle	SARC	SARC	sarcoma	Muscle - Skeletal	Muscle
+Kidney	KICH	KICH	kidney chromophobe	Kidney Papillary Cell Carcinoma	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Kidney Clear Cell Carcinoma	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Kidney Chromophobe	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Kidney - Cortex	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Wilms Tumor	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Kidney, Rhabdoid Tumor	Kidney
+Kidney	KICH	KICH	kidney chromophobe	Clear Cell Sarcoma Of The Kidney	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Kidney Papillary Cell Carcinoma	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Kidney Clear Cell Carcinoma	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Kidney Chromophobe	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Kidney - Cortex	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Wilms Tumor	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Kidney, Rhabdoid Tumor	Kidney
+Kidney	KIRC	KIRC	kidney clear cell carcinoma	Clear Cell Sarcoma Of The Kidney	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Kidney Papillary Cell Carcinoma	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Kidney Clear Cell Carcinoma	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Kidney Chromophobe	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Kidney - Cortex	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Wilms Tumor	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Kidney, Rhabdoid Tumor	Kidney
+Kidney	KIRP	KIRP	kidney papillary cell carcinoma	Clear Cell Sarcoma Of The Kidney	Kidney
+Liver	LIHC	LIHC	liver hepatocellular carcinoma	Liver Hepatocellular Carcinoma	Liver
+Liver	LIHC	LIHC	liver hepatocellular carcinoma	Liver	Liver
+Lung	LUAD	LUAD	lung adenocarcinoma	Lung Squamous Cell Carcinoma	Lung
+Lung	LUAD	LUAD	lung adenocarcinoma	Lung Adenocarcinoma	Lung
+Lung	LUAD	LUAD	lung adenocarcinoma	Lung	Lung
+Lung	LUSC	LUSC	lung squamous cell carcinoma	Lung Squamous Cell Carcinoma	Lung
+Lung	LUSC	LUSC	lung squamous cell carcinoma	Lung Adenocarcinoma	Lung
+Lung	LUSC	LUSC	lung squamous cell carcinoma	Lung	Lung
+Lung	MESO	MESO	mesothelioma	Lung Squamous Cell Carcinoma	Lung
+Lung	MESO	MESO	mesothelioma	Lung Adenocarcinoma	Lung
+Lung	MESO	MESO	mesothelioma	Lung	Lung
+Ovary	OV	OV	ovarian serous cystadenocarcinoma	Ovarian Serous Cystadenocarcinoma	Ovary
+Ovary	OV	OV	ovarian serous cystadenocarcinoma	Ovary	Ovary
+Pancreas	PAAD	PAAD	pancreatic adenocarcinoma	Pancreatic Adenocarcinoma	Pancreas
+Pancreas	PAAD	PAAD	pancreatic adenocarcinoma	Pancreas	Pancreas
+Prostate	PRAD	PRAD	prostate adenocarcinoma	Prostate Adenocarcinoma	Prostate
+Prostate	PRAD	PRAD	prostate adenocarcinoma	Prostate	Prostate
+Skin	SKCM	MEL	skin cutaneous melanoma	Skin Cutaneous Melanoma	Skin
+Skin	SKCM	MEL	skin cutaneous melanoma	Cells - Transformed Fibroblasts	Skin
+Skin	SKCM	MEL	skin cutaneous melanoma	Skin - Sun Exposed (Lower Leg)	Skin
+Skin	SKCM	MEL	skin cutaneous melanoma	Skin - Not Sun Exposed (Suprapubic)	Skin
+Stomach	STAD	STAD	stomach adenocarcinoma	Stomach Adenocarcinoma	Stomach
+Stomach	STAD	STAD	stomach adenocarcinoma	Stomach	Stomach
+Thyroid	THCA	THCA	thyroid carcinoma	Thyroid	Thyroid
+Uterus	UCS	UCS	uterine carcinosarcoma	Uterine Carcinosarcoma	Uterus
+Uterus	UCS	UCS	uterine carcinosarcoma	Uterus	Uterus
+Uterus	UCEC	UCEC	uterine corpus endometrioid carcinoma	Uterine Carcinosarcoma	Uterus
+Uterus	UCEC	UCEC	uterine corpus endometrioid carcinoma	Uterus	Uterus
+Eye				Uveal Melanoma	Eye
+Endometrium				Uterine Corpus Endometrioid Carcinoma	Endometrium
+Thyroid				Thyroid Carcinoma	Thyroid Gland
+Thymus				Thymoma	Thymus
+Testis				Testicular Germ Cell Tumor	Testis
+Testis				Testis	Testis
+SofttissueBone				Sarcoma	Soft tissue,Bone
+Paraganglia				Pheochromocytoma & Paraganglioma	Paraganglia
+Liningofbodycavities				Mesothelioma	Lining of body cavities
+HeadandNeckregion				Head & Neck Squamous Cell Carcinoma	Head and Neck region
+Brain				Glioblastoma Multiforme	Brain
+Brain				Brain Lower Grade Glioma	Brain
+Brain				Brain - Amygdala	Brain
+Brain				Brain - Spinal Cord (Cervical C-1)	Brain
+Brain				Brain - Hypothalamus	Brain
+Brain				Brain - Putamen (Basal Ganglia)	Brain
+Brain				Brain - Nucleus Accumbens (Basal Ganglia)	Brain
+Brain				Brain - Caudate (Basal Ganglia)	Brain
+Brain				Brain - Cerebellar Hemisphere	Brain
+Brain				Brain - Frontal Cortex (Ba9)	Brain
+Brain				Brain - Anterior Cingulate Cortex (Ba24)	Brain
+Brain				Brain - Substantia Nigra	Brain
+Brain				Brain - Hippocampus	Brain
+Brain				Brain - Cerebellum	Brain
+Brain				Brain - Cortex	Brain
+Lymphatictissue				Diffuse Large B-Cell Lymphoma	Lymphatic tissue
+Bileduct				Cholangiocarcinoma	Bile duct
+Cervix				Cervical & Endocervical Cancer	Cervix
+Adrenalgland				Adrenocortical Cancer	Adrenal gland
+Whitebloodcell				Acute Myeloid Leukemia	White blood cell
+Whitebloodcell				Acute Myeloid Leukemia, Induction Failure Subproject	White blood cell
+Whitebloodcell				Acute Lymphoblastic Leukemia	White blood cell
+					
+				Skin - Sun Exposed (Lower Leg)	
+				Stomach	
+				Esophagus - Mucosa	
+BoneMarrow				Cells - Leukemia Cell Line (Cml)	Bone Marrow
+FallopianTube				Fallopian Tube	Fallopian Tube
+BloodVessel				Artery - Aorta	Blood Vessel
+BloodVessel				Artery - Coronary	Blood Vessel
+BloodVessel				Artery - Tibial	Blood Vessel
+Pituitary				Pituitary	Pituitary
+Heart				Heart - Left Ventricle	Heart
+Heart				Heart - Atrial Appendage	Heart
+Nerve				Nerve - Tibial	Nerve
+SmallIntestine				Small Intestine - Terminal Ileum	Small Intestine
+Spleen				Spleen	Spleen
+SalivaryGland				Minor Salivary Gland	Salivary Gland
+Vagina				Vagina	Vagina
+AdiposeTissue				Adipose - Visceral (Omentum)	Adipose Tissue
+AdiposeTissue				Adipose - Subcutaneous	Adipose Tissue
+Sympathetic�NervousSystem				Neuroblastoma	Sympathetic�Nervous System
