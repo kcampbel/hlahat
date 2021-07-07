@@ -389,10 +389,13 @@ Allele-specific alignment numbers::
 
   /usr/local/bin/samtools idxstats ${bam_in} > ${name}.idxstats.txt
 
-SNP coverage metrics::
+SNP coverage metrics, where bed refers the the allele SNPs bed (custom_hla.allelic_differences.bed)::
 
   /usr/local/bin/samtools mpileup ${bam_in} -l ${bed} -q ${mq} -Q ${bq} -a > ${name}.pileups.txt
 
+Fix SNP pileups (in docker container kcampbel/hlahat_r:v2)::
+
+  Rscript /code/summarize_pileups.R ${bed} ${name}.pileups.txt ${name}.fixpileups
 
 ##########################################
 Paired tumor-normal data

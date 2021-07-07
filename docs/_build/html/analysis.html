@@ -605,8 +605,12 @@ export PATH=$PATH:/opt/samtools/bin
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/usr/local/bin/samtools idxstats ${bam_in} &gt; ${name}.idxstats.txt
 </pre></div>
 </div>
-<p>SNP coverage metrics:</p>
+<p>SNP coverage metrics, where bed refers the the allele SNPs bed (custom_hla.allelic_differences.bed):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/usr/local/bin/samtools mpileup ${bam_in} -l ${bed} -q ${mq} -Q ${bq} -a &gt; ${name}.pileups.txt
+</pre></div>
+</div>
+<p>Fix SNP pileups (in docker container kcampbel/hlahat_r:v2):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Rscript /code/summarize_pileups.R ${bed} ${name}.pileups.txt ${name}.fixpileups
 </pre></div>
 </div>
 </div>
