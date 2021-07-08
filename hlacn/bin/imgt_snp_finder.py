@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-''' Generates snps from IMGT 
+''' Generates SNPs from IMGT alignments
 '''
 import sys
 from Bio import SeqIO, AlignIO
@@ -90,7 +90,6 @@ def hla_nearest(query:list, imgt:dict):
             nearest_longer = [x for x in imgt_alleles if jj in x]
             if nearest_longer:
                 result = nearest_longer[0]
-                #warnings.warn(f'{jj} -> {result} nearest match')
                 logging.info(f'{jj} -> {result} nearest match')
             else:
                 # Reduce to two-field resolution until a match is found
@@ -103,13 +102,11 @@ def hla_nearest(query:list, imgt:dict):
                         nearest_same = [x for x in imgt_alleles if pattern in x]
                         if any(nearest_same):
                             result = nearest_same[0]
-                            #warnings.warn(f'{jj} -> {result} nearest match')
                             logging.info(f'{jj} -> {result} nearest match')
                             break
                         else:
                             result = None
         if not result:
-            #warnings.warn(f'{jj} not found. Skipping...')
             logging.warning(f'{jj} not found in reference. Skipping...')
             continue
         else:
@@ -130,9 +127,6 @@ def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
     """
     # Remove loci from imgt alignments not in query
     loci = {x[0] for x in alleles}
-    #for k in imgt_aln_gen.keys():
-    #    if k not in loci:
-    #        imgt_aln_gen.pop(k) 
     for k in loci: 
         if k not in imgt_aln_gen.keys():
             del imgt_aln_gen[k]
@@ -168,19 +162,23 @@ def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
         gene_start = ref_bed_df.loc[k].start
         df = arr2snp(arr, alleles=alleles_all, gene_start=gene_start)
         out = pd.concat([out, df], ignore_index=True)
+    out['gene'] = out.allele.str.split('*').str[0]
     return(out)
 
 def main(args=None):
-    args = parse_args(args)
-#    args = parse_args(['--imgt_alignments', 'data/imgt_aln_gen.p',
-#                       '-g', 'data/hla_genotypes_hs37d5.tsv',
-#                       '-b', 'data/hla_hs37d5.bed',
-#                       '-o', 'test/snps.tsv',
-#                       'A*02:01']
-#    )
-    #formatter = '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - %(message)s'
-    #logging.basicConfig(filename=logFile, filemode='w', format=formatter, level=logging.DEBUG)
+#    args = parse_args(args)
+    args = parse_args(['--imgt_alignments', 'data/imgt_aln_gen.p',
+                       '-g', 'data/hla_genotypes_hs37d5.tsv',
+                       '-b', 'data/hla_hs37d5.bed',
+                       '-o', 'test/snps.tsv',
+                       'A*02:01']
+    )
+    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
+    logging.basicConfig(format=formatter, level=logging.INFO)
+    logging.info(f'Starting {os.path.basename(__file__)}')
 
+    logging.info(f'Loading IMGT alignments: {args.imgt_alignments} reference HLA bed: {args.ref_hla_bed},' + 
+     f'reference HLA genotypes: {args.ref_hla_genotypes}')
     ref_bed_df = pd.read_csv(args.ref_hla_bed, header=None, sep='\t', 
         names=['chrom', 'start', 'end', 'score', 'strand'], index_col=3)
     ref_gt_df = pd.read_csv(args.ref_hla_genotypes, header=None, sep='\t', names=['genotype'], index_col=0)
@@ -191,9 +189,11 @@ def main(args=None):
     else:
         alleles_l = args.alleles
 
+    logging.info(f'Finding nearest IMGT alleles for {",".join(alleles_l)}')
     alleles_nearest = hla_nearest(alleles_l, imgt_aln_gen)
     df = aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles_nearest)
 
+    logging.info(f'Writing {args.outfile}')
     df.to_csv(args.outfile, sep='\t', index=False)
 
 if __name__ == "__main__":

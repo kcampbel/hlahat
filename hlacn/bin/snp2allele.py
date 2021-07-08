@@ -10,14 +10,13 @@ from hlacn.lib.phasing import bcftools_cmd, bcf_to_df, fitSequenza_cmd, vaf_norm
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('specimen_id')
-    parser.add_argument('normal_dna_bam')
-    parser.add_argument('tumor_dna_bam')
-    parser.add_argument('snp_bed')
-    parser.add_argument('snp_tsv')
-    parser.add_argument('seqz_file')
-    parser.add_argument('sequenzaModelRData')
-    parser.add_argument('outDir')
+    parser.add_argument('-i', '--specimen_id', required=True, help='Specimen id')
+    parser.add_argument('-n', '--normal_dna_bam', required=True, help='Normal BAM')
+    parser.add_argument('-t', '--tumor_dna_bam', required=True, help='Tumor BAM')
+    parser.add_argument('-g', '--genome_fasta', required=True, help='Reference genome FASTA')
+    parser.add_argument('-s', '--snp_tsv', required=True, help='IMGT SNPs tsv')
+    parser.add_argument('-m', '--sequenzaModelRData', required=True, help='Sequenza model RData file')
+    parser.add_argument('-o', '--outDir', required=True, help='Output dir')
     
     return parser.parse_args(args)
 
@@ -25,33 +24,30 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #    [
-#        'PACT125_T_202824',
-#        '/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_N_202825/PACT125_N_202825/PACT125_N_202825_normal_dna-final.bam',
-#        '/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_T_202824/PACT125_T_202824/PACT125_T_202824_tumor_dna-final.bam',
-#        '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.bed',
-#        '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.tsv',
-#        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/yma/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/PACT125_T_202824.hla.small.seqz.gz',
-#        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/sequenzaModel.RData',
-#        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test/snp_count_ratio',
+#        '-i', 'PACT125_T_202824',
+#        '-n', '/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_N_202825/PACT125_N_202825/PACT125_N_202825_normal_dna-final.bam',
+#        '-t' ,'/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_T_202824/PACT125_T_202824/PACT125_T_202824_tumor_dna-final.bam',
+#        '-g', '/media/nfs/data/References/hg19/hs37d5.chr/hs37d5.chr.fa',
+#        '-s', '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.tsv',
+#        '-m', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/sequenzaModel.RData',
+#        '-o', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test',
 #    ])
     specimen_id = args.specimen_id
     nBam = args.normal_dna_bam
     tBam = args.tumor_dna_bam
-    posBed = args.snp_bed
     snp_f = args.snp_tsv
-    seqzFile = args.seqz_file
+    genome_fasta = args.genome_fasta
     sequenzaModelRData = args.sequenzaModelRData
     outDir = f'{args.outDir}/{args.specimen_id}'
     logDir = f'{outDir}/log'
 
     missing = list()
-    for ii in [tBam, nBam, posBed, snp_f, seqzFile, sequenzaModelRData]:
+    for ii in [tBam, nBam, snp_f, sequenzaModelRData]:
         if not os.path.exists(ii):
             missing.append(ii)
     if missing:
         raise FileNotFoundError(missing)
 
-    genome_fa = '/media/nfs/data/References/hg19/hs37d5.chr/hs37d5.chr.fa'
     if not os.path.exists(logDir):
         os.makedirs(logDir, exist_ok=True)
 
@@ -59,8 +55,15 @@ def main():
     logging.basicConfig(filename=f'{logDir}/snp2allele.log', format=formatter, filemode='w', level=logging.DEBUG)
 
     # BCFTOOLS
+    ## Make SNP bed
+    snp_df = pd.read_table(snp_f)
+    snp_df = snp_df.rename(columns={'snp': 'alt', 'base.ref': 'ref'})
+    snp_bed = snp_df.assign(start=snp_df.position-1).loc[:, ['chromosome', 'start', 'position']]
+    snp_bed_f = f'{outDir}/{specimen_id}_snps.bed'
+    snp_bed.to_csv(snp_bed_f, sep='\t', index=False, header=False)
+
     posTsv = f'{outDir}/{specimen_id}_pos.tsv'
-    cmd = bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv)
+    cmd = bcftools_cmd(nBam, tBam, snp_bed_f, genome_fasta, posTsv)
     logging.info(cmd)
     logfile = f'{logDir}/bcftools.log'
     handle = open(logfile, 'wt')
@@ -69,51 +72,41 @@ def main():
 
     # Intersect with IMGT SNPs
     pos_df = pd.read_table(posTsv, skiprows=1, names=['chromosome', 'position', 'ref', 'alt', 'nGT', 'tGT', 'nAD', 'tAD'])
-    snp_df = pd.read_table(snp_f)
-    snp_df = snp_df.rename(columns={'snp': 'alt', 'base.ref': 'ref'})
-    snp_df['gene'] = snp_df.allele.str[0]
 
     tmp = bcf_to_df(pos_df, min_reads=0)
     pos_m = tmp.merge(snp_df, how='outer', indicator=True)
     logging.info(f'bcftools snps (left), IMGT snps (right)\n{pos_m._merge.value_counts()}')
 
-    pos_imgt = pos_m[
-    (pos_m._merge == 'both') &
-    (pos_m.normalCounts > 20)
-    ]
+    # Filter SNPs
+    min_normal = 20
+    pos_imgt = pos_m[pos_m._merge == 'both']
+    nsnps = pos_imgt.shape[0]
+    pos_imgt = pos_imgt[pos_imgt.normalCounts > min_normal]
+    logging.info(f'Removing {nsnps - pos_imgt.shape[0]} SNPs with less than {min_normal} reads in normal' + 
+    f'\n{pos_imgt.gene.value_counts()}')
     
-    # Drop shared SNPs
+    # Drop shared SNPs between allele 1 and allele 2
     snp_uniq = (pos_imgt.groupby(['position']).pos_imgt.count() == 1).reset_index()
-    snp_uniq = snp_uniq[snp_uniq.pos_imgt]\
-    .drop('pos_imgt', axis=1)
+    snp_uniq = snp_uniq[snp_uniq.pos_imgt].drop('pos_imgt', axis=1)
     pos_imgt = pos_imgt.merge(snp_uniq)
     pos_imgt = pos_imgt.astype({'start': 'int32', 'end': 'int32'})
-    pos_imgt = vaf_normalize_to_normal(pos_imgt)
     logging.info(f'Dropping SNPs shared between alleles\n{pos_imgt.gene.value_counts()}')
-    fn = f'{outDir}/{specimen_id}_imgt_nodups.tsv'
-    pos_imgt.to_csv(fn, sep='\t', index=False)
 
-    # Intersect with Sequenza SNPs
-    #seqz = pd.read_table(seqzFile)
-    #seqz = seqz.rename(columns={'chr':'chromosome'})
-    #tmp = pos_imgt.drop(columns='_merge')
-    #imgt_seqz = tmp.merge(seqz[['chromosome', 'position']], how='outer', indicator=True)
-    #imgt_seqz.groupby('gene')._merge.value_counts()
-    #imgt_seqz = imgt_seqz[imgt_seqz._merge == 'both']
-    #imgt_seqz = imgt_seqz.astype({'start': 'int32', 'end': 'int32'})
-    #logging.info(f'Intersect with Sequenza seqz.gz\n{imgt_seqz.gene.value_counts()}')
+    # Normalize tumor VAF to normal
+    pos_imgt = vaf_normalize_to_normal(pos_imgt)
+    fn = f'{outDir}/{specimen_id}_imgt_unique_snps.tsv'
+    pos_imgt.to_csv(fn, sep='\t', index=False)
 
     # Fit SNPs
     varsFile = f'{outDir}/{specimen_id}_workVars.tsv'
     pos_imgt.to_csv(varsFile, sep='\t', index=False)
-    #imgt_seqz.to_csv(varsFile, sep='\t', index=False)
     cmd = fitSequenza_cmd(
         specimen_id = specimen_id,
         varsFile = varsFile,
         outputDir = outDir,
         altMode = 'n',
         sequenzaModelRData = sequenzaModelRData,
-        sequenzaTools = '/home/csmith/git/immune_escape/hlacn/lib/sequenzaTools.R'
+        sequenzaTools = f'{os.path.dirname(__file__)}/../lib/sequenzaTools.R'
     )
     logging.info(' '.join(cmd))
     logfile = f'{logDir}/fitSequenza.log'
@@ -122,9 +115,6 @@ def main():
     handle.close()
     allelesFile = f'{outDir}/alt1/{specimen_id}_alleles.tsv'
     sb.run(['ln', '-fs', allelesFile, outDir], check=True)
-
-    # Statistics
-    
 
     logging.info(f'{specimen_id} finished.')
     logging.shutdown()

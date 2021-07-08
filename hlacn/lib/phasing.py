@@ -106,30 +106,16 @@ def chisq2dict(obs, CNt:int = None):
         
     return out
 
-def vaf_normalize_to_normal(df, method:str = 'snp_count_ratio'):
-    out = pd.DataFrame()
-    if method == 'snp_count_ratio':
-        out = df
-        tALT_norm, tREF_norm = df.tALT/df.nALT, df.tREF/df.nREF
-        out = out.assign(tALT_norm=tALT_norm, tREF_norm=tREF_norm, obsVafNorm = tALT_norm/(tALT_norm + tREF_norm))
-    else:
-        df_grp = df.groupby(['Start_b', 'End_b'])
-        if method == 'count_sum':
-            tmp = df_grp.agg(nREF_win=('nREF', 'sum'), nALT_win=('nALT', sum), snps_per_window=('nALT', 'count')).reset_index()
-            tmp['nVafWindow'] = tmp.nALT_win/(tmp.nALT_win + tmp.nREF_win)
-        elif method == 'nVaf_median':
-            tmp = df_grp.agg(nVafWindow = ('nVaf', 'median'), snps_per_window=('nALT', 'count')).reset_index()
-        elif method == 'nVaf_mean':
-            tmp = df_grp.agg(nVafWindow = ('nVaf', 'mean'), snps_per_window=('nALT', 'count')).reset_index()
-        elif method == 'nVaf_weighted_mean':
-            tmp = df_grp.apply(lambda x: np.average(x.nVaf, weights=x.normalCounts)).reset_index(name='nVafWindow')
-        else:
-            print(f'{method} not found')
-            return None
-        out = df.merge(tmp)
-        obsVafNorm = out.obsVaf + (0.5 - out.nVafWindow)
-        obsVafNorm = np.where(obsVafNorm > 1, 1, obsVafNorm)
-        obsVafNorm = np.where(obsVafNorm < 0, 0, obsVafNorm)
-        out['obsVafNorm'] = obsVafNorm
-    return(out)
+def vaf_normalize_to_normal(df):
+    """ Normalizes tumor VAF to normal VAF
+    Normalizes tumor ref and alt ref counts to the normal for each SNP
 
+    Args:
+        df(pandas): requires tumor read counts tALT, tREF and normal read counts nALT, nREF
+
+    Returns:
+        pandas
+    """
+    tALT_norm, tREF_norm = df.tALT/df.nALT, df.tREF/df.nREF
+    out = df.assign(tALT_norm=tALT_norm, tREF_norm=tREF_norm, obsVafNorm = tALT_norm/(tALT_norm + tREF_norm))
+    return(out)
