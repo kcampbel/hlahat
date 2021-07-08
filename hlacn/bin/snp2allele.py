@@ -5,7 +5,7 @@ import pandas as pd
 import argparse
 import subprocess as sb
 import logging
-from hlacn.lib.phasing import bcftools_cmd, bcf_to_df, fitSequenza_cmd
+from hlacn.lib.phasing import bcftools_cmd, bcf_to_df, fitSequenza_cmd, vaf_normalize_to_normal
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
@@ -32,7 +32,7 @@ def main():
 #        '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.tsv',
 #        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/yma/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/PACT125_T_202824.hla.small.seqz.gz',
 #        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/sequenzaModel.RData',
-#        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test',
+#        '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test/snp_count_ratio',
 #    ])
     specimen_id = args.specimen_id
     nBam = args.normal_dna_bam
@@ -68,7 +68,6 @@ def main():
     handle.close()
 
     # Intersect with IMGT SNPs
-    # Necessary step?
     pos_df = pd.read_table(posTsv, skiprows=1, names=['chromosome', 'position', 'ref', 'alt', 'nGT', 'tGT', 'nAD', 'tAD'])
     snp_df = pd.read_table(snp_f)
     snp_df = snp_df.rename(columns={'snp': 'alt', 'base.ref': 'ref'})
@@ -82,28 +81,32 @@ def main():
     (pos_m._merge == 'both') &
     (pos_m.normalCounts > 20)
     ]
-
+    
     # Drop shared SNPs
     snp_uniq = (pos_imgt.groupby(['position']).pos_imgt.count() == 1).reset_index()
     snp_uniq = snp_uniq[snp_uniq.pos_imgt]\
     .drop('pos_imgt', axis=1)
     pos_imgt = pos_imgt.merge(snp_uniq)
     pos_imgt = pos_imgt.astype({'start': 'int32', 'end': 'int32'})
+    pos_imgt = vaf_normalize_to_normal(pos_imgt)
     logging.info(f'Dropping SNPs shared between alleles\n{pos_imgt.gene.value_counts()}')
+    fn = f'{outDir}/{specimen_id}_imgt_nodups.tsv'
+    pos_imgt.to_csv(fn, sep='\t', index=False)
 
     # Intersect with Sequenza SNPs
-    seqz = pd.read_table(seqzFile)
-    seqz = seqz.rename(columns={'chr':'chromosome'})
-    tmp = pos_imgt.drop(columns='_merge')
-    imgt_seqz = tmp.merge(seqz[['chromosome', 'position']], how='outer', indicator=True)
+    #seqz = pd.read_table(seqzFile)
+    #seqz = seqz.rename(columns={'chr':'chromosome'})
+    #tmp = pos_imgt.drop(columns='_merge')
+    #imgt_seqz = tmp.merge(seqz[['chromosome', 'position']], how='outer', indicator=True)
     #imgt_seqz.groupby('gene')._merge.value_counts()
-    imgt_seqz = imgt_seqz[imgt_seqz._merge == 'both']
-    imgt_seqz = imgt_seqz.astype({'start': 'int32', 'end': 'int32'})
-    logging.info(f'Intersect with Sequenza seqz.gz\n{imgt_seqz.gene.value_counts()}')
+    #imgt_seqz = imgt_seqz[imgt_seqz._merge == 'both']
+    #imgt_seqz = imgt_seqz.astype({'start': 'int32', 'end': 'int32'})
+    #logging.info(f'Intersect with Sequenza seqz.gz\n{imgt_seqz.gene.value_counts()}')
 
     # Fit SNPs
     varsFile = f'{outDir}/{specimen_id}_workVars.tsv'
-    imgt_seqz.to_csv(varsFile, sep='\t', index=False)
+    pos_imgt.to_csv(varsFile, sep='\t', index=False)
+    #imgt_seqz.to_csv(varsFile, sep='\t', index=False)
     cmd = fitSequenza_cmd(
         specimen_id = specimen_id,
         varsFile = varsFile,
@@ -119,6 +122,9 @@ def main():
     handle.close()
     allelesFile = f'{outDir}/alt1/{specimen_id}_alleles.tsv'
     sb.run(['ln', '-fs', allelesFile, outDir], check=True)
+
+    # Statistics
+    
 
     logging.info(f'{specimen_id} finished.')
     logging.shutdown()

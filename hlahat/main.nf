@@ -1,5 +1,4 @@
 // HLA-HAT
-nextflow.enable.dsl=2
 
 /*
 ========================================================================================
@@ -23,12 +22,10 @@ if (params.input_hlahat) { ch_input = file(params.input_hlahat) } else { exit 1,
 ========================================================================================
 */
 
-//include { STAGE_FASTQS } from '../workflow/stage_fastqs'
-//include { INPUT_CHECK    } from '../workflow/input_check'    addParams( options: [:] )
-//include { CAT_FASTQ      } from '../workflow/input_check'    addParams( options: [:] )
-include { EXTRACT_READS  } from './process/hisat_genotype'  addParams( params.modules["extract_reads"] )
-include { HISAT_GENOTYPE } from './process/hisat_genotype'  addParams( params.modules["hisat_genotype"] )
-//ch_hisat_prefix = Channel.fromPath(params.hisat_prefix)
+include { EXTRACT_READS  } from '../process/extract_reads'     addParams( params.modules["extract_reads"] )
+include { HISAT_GENOTYPE } from '../process/hisat_genotype'    addParams( params.modules["hisat_genotype"] )
+include { PATIENT_REFERENCE } from '../process/patient_reference' addParams( params.modules["patient_reference"] )
+include { ALIGN_HLA_READS } from '../process/align_hla_reads'   addParams( params.modules["align_hla_reads"] )
 
 /*
 ========================================================================================
@@ -45,6 +42,7 @@ workflow HLA_HAT {
         .map{ row-> tuple(row.sample, file(row.fastq_1), file(row.fastq_2)) }
         .groupTuple(by: [0])
         .set { ch_fastq }
+
 
 //    INPUT_CHECK (
 //        ch_input
@@ -72,8 +70,13 @@ workflow HLA_HAT {
 //    .mix(ch_fastq.single)
 //    .view { it }
 //    .set { ch_cat_fastq }
-
     ch_hisat_prefix = file(params.hisat_prefix)
+    ch_imgthla = file(params.imgthla)
+    //take:
+    //ch_hisat_prefix
+    take:
+
+    main:
     EXTRACT_READS (
         ch_fastq,
         ch_hisat_prefix
@@ -83,18 +86,19 @@ workflow HLA_HAT {
         EXTRACT_READS.out.reads,
         ch_hisat_prefix
     )
-}
 
-/*
-========================================================================================
-    RUN ALL WORKFLOWS
-========================================================================================
-*/
+    PATIENT_REFERENCE (
+        HISAT_GENOTYPE.out.hisatgt_report,
+        ch_imgthla 
+    )
 
-//
-// WORKFLOW: Execute a single named workflow for the pipeline
-// See: https://github.com/nf-core/rnaseq/issues/619
-//
-workflow {
-    HLA_HAT ()
+    ALIGN_HLA_READS (
+        EXTRACT_READS.out.reads,
+        PATIENT_REFERENCE.out.patient_reference
+    )
+
+    emit:
+    hisatgt_hlatypes = PATIENT_REFERENCE.out.top_hlatypes
+    //ch_hlahat_hlatype = HISAT_GENOTYPE.out.hla_types
+
 }
