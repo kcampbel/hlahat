@@ -98,7 +98,7 @@ for(s in 1:solutions){
         dir.create(outDirAlt, recursive=TRUE, showWarnings=FALSE)
     }
     alleleTsvAlt = file.path(outDirAlt, paste(id, "_alleles.tsv", sep=""))
-    cn <- mutSeg_cn(id, vars, sequenzaExtractRData, cellularity, ploidy, snp=TRUE, vaf_col='obsVafNorm', method='segDR')
+    cn <- mutSeg_cn(id, vars, sequenzaExtractRData, cellularity, ploidy, snp=TRUE, vaf_col='obsVafNorm_flip', method='segDR')
     message("TimeStamp:", Sys.time(), ":: Writing ", alleleTsvAlt)
     write.table(cn, file=alleleTsvAlt, quote=FALSE, sep="\t", row.names=FALSE)
 }

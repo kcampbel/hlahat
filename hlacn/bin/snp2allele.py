@@ -5,7 +5,8 @@ import pandas as pd
 import argparse
 import subprocess as sb
 import logging
-from hlacn.lib.phasing import bcftools_cmd, bcf_to_df, fitSequenza_cmd, vaf_normalize_to_normal
+from hlacn.lib.command import bcftools_cmd, fitSequenza_cmd
+from hlacn.lib.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
@@ -30,7 +31,7 @@ def main():
 #        '-g', '/media/nfs/data/References/hg19/hs37d5.chr/hs37d5.chr.fa',
 #        '-s', '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.tsv',
 #        '-m', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/sequenzaModel.RData',
-#        '-o', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test',
+#        '-o', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test/snp_count_ratio_flipped',
 #    ])
     specimen_id = args.specimen_id
     nBam = args.normal_dna_bam
@@ -94,8 +95,9 @@ def main():
 
     # Normalize tumor VAF to normal
     pos_imgt = vaf_normalize_to_normal(pos_imgt)
-    fn = f'{outDir}/{specimen_id}_imgt_unique_snps.tsv'
-    pos_imgt.to_csv(fn, sep='\t', index=False)
+
+    # Equalize number of SNPs for each allele
+    pos_imgt = flip_snps(pos_imgt, vaf_col='obsVafNorm', new_col='obsVafNorm_flip')
 
     # Fit SNPs
     varsFile = f'{outDir}/{specimen_id}_workVars.tsv'

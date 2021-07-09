@@ -1,7 +1,5 @@
-from io import StringIO
 import pandas as pd
 import numpy as np
-from scipy.stats import chisquare, chi2_contingency
 
 def seqz_join(seqz, other):
     """ Intersects a Sequenza seqz file with a pyranges object
@@ -25,20 +23,6 @@ def seqz_join(seqz, other):
           'Start': 'start',
           'End': 'end'})
     return out 
-
-def bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv):
-    posFormat = "'%CHROM\t%POS\t%REF\t%ALT[\t%GT][\t%AD]\n'" 
-    cmd = ["bcftools", "mpileup",
-            "-d", "5000", "-xBQ0", "--ignore-RG",
-            "-a", "FORMAT/AD",
-            "-R", posBed,
-            "-f", genome_fa,
-            nBam, tBam, "|",
-            "bcftools", "norm", "-m-", "|",
-            "bcftools", "query", "-uHf", posFormat, ">",
-            posTsv]
-    cmd = ' '.join(cmd)
-    return(cmd)
 
 def bcf_to_df(df, min_reads):
     df = df[~df.alt.str.contains('<*>')]
@@ -67,45 +51,6 @@ def bcf_to_df(df, min_reads):
     ]
     return(out)
 
-def fitSequenza_cmd(specimen_id:str, varsFile:str, outputDir:str, altMode:str, sequenzaModelRData:str, sequenzaTools:str):
-    cmd = [
-        'fitSequenzaModel_hla.R',
-        '-i', specimen_id,
-        '-v', varsFile,
-        '-o', outputDir,
-        '-a', altMode,
-        '-r', sequenzaModelRData,
-        '-t', sequenzaTools
-    ]
-    return(cmd)
-
-def chisq2dict(obs, CNt:int = None):
-    """ Chisquare results to dictionary
-    Args:
-        obs(pandas): observed frequencies with alleles in rows and Mt in columns
-        
-    Returns:
-        dict of {'c' = chisquare, 'p': p-value} 
-        
-    """
-    if len(obs.shape) > 1:
-        result = chi2_contingency(obs)
-        out = {
-            'c': result[0],
-            'p': result[1],
-            #'dof': result[2],
-            #'expected': result[3]
-            }
-    else:
-        
-        result = chisquare(obs) 
-        out = {
-            'c': result[0],
-            'p': result[1],
-            }
-        
-    return out
-
 def vaf_normalize_to_normal(df):
     """ Normalizes tumor VAF to normal VAF
     Normalizes tumor ref and alt ref counts to the normal for each SNP
@@ -119,3 +64,38 @@ def vaf_normalize_to_normal(df):
     tALT_norm, tREF_norm = df.tALT/df.nALT, df.tREF/df.nREF
     out = df.assign(tALT_norm=tALT_norm, tREF_norm=tREF_norm, obsVafNorm = tALT_norm/(tALT_norm + tREF_norm))
     return(out)
+
+def flip_snps(df, vaf_col:str, prop:float = 0.5, new_col:str = 'obsVafNorm_flip'):
+    """ SNP VAF flipper
+    Flips VAF in a proportion of SNPs
+
+    Args:
+        df(pandas): pandas with columns: gene
+        vaf_col(str): name of VAF column
+        prop(float): proportion of SNPs to flip
+        new_col(str): name of column with flipped VAFs
+    
+    Returns:
+        pandas with new columns "vaf_col+'_flip'"(float) and "snp_flip"(bool)
+    """
+    samples_by_allele = (df.allele.value_counts()*prop).round(0).astype(int)
+
+    out = df.copy()
+    for allele in samples_by_allele.index:
+        tmp = out[out.allele == allele]
+        flipme = tmp.sample(samples_by_allele.loc[allele])
+        flipme[new_col] = 1 - tmp[vaf_col]
+        flipme['snp_flip'] = True
+        out = out.drop(flipme.index, axis='index')
+        out = pd.concat([out, flipme])
+    out['snp_flip'] = out.snp_flip.fillna(False)
+    out[new_col] = np.where(out[new_col].isna(), out[vaf_col], out[new_col])
+    out.sort_index(inplace=True)
+    return out
+
+
+
+        
+
+        
+
