@@ -1,5 +1,5 @@
 // HLA-HAT
-
+nextflow.enable.dsl=2
 /*
 ========================================================================================
     VALIDATE INPUTS
@@ -22,10 +22,24 @@ if (params.input_hlahat) { ch_input = file(params.input_hlahat) } else { exit 1,
 ========================================================================================
 */
 
-include { EXTRACT_READS  } from '../process/extract_reads'     addParams( params.modules["extract_reads"] )
-include { HISAT_GENOTYPE } from '../process/hisat_genotype'    addParams( params.modules["hisat_genotype"] )
-include { PATIENT_REFERENCE } from '../process/patient_reference' addParams( params.modules["patient_reference"] )
-include { ALIGN_HLA_READS } from '../process/align_hla_reads'   addParams( params.modules["align_hla_reads"] )
+include { EXTRACT_READS     } from './process/extract_reads'     addParams( params.modules["extract_reads"] )
+include { HISAT_GENOTYPE    } from './process/hisat_genotype'    addParams( params.modules["hisat_genotype"] )
+include { PATIENT_REFERENCE } from './process/patient_reference' addParams( params.modules["patient_reference"] )
+include { ALIGN_HLA_READS   } from './process/align_hla_reads'   addParams( params.modules["align_hla_reads"] )
+include { PICARD_MARK_DUPLICATES   } from './process/mark_duplicates'   addParams( params.modules["mark_duplicates"] )
+
+// Metadata input
+include { create_fastq_channels } from './lib/functions.nf'
+Channel.from(ch_input)
+    .splitCsv(sep: '\t', header: true)
+    .map { create_fastq_channels(it) }
+    .groupTuple(by: [0])
+   // .view { it }
+    .set { ch_fastq }
+
+// Global params
+ch_hisat_prefix = file(params.hisat_prefix)
+ch_imgthla = file(params.imgthla)
 
 /*
 ========================================================================================
@@ -34,46 +48,7 @@ include { ALIGN_HLA_READS } from '../process/align_hla_reads'   addParams( param
 */ 
 
 workflow HLA_HAT {
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-    Channel.from(ch_input)
-        .splitCsv(sep: ',', header: true)
-        .map{ row-> tuple(row.sample, file(row.fastq_1), file(row.fastq_2)) }
-        .groupTuple(by: [0])
-        .set { ch_fastq }
 
-
-//    INPUT_CHECK (
-//        ch_input
-//    )
-//    .map {
-//        meta, fastq ->
-//            meta.id = meta.id.split('_')[0..-2].join('_')
-//            [ meta, fastq ] }
-//    .groupTuple(by: [0])
-//    .branch {
-//        meta, fastq ->
-//            single  : fastq.size() == 1
-//                return [ meta, fastq.flatten() ]
-//            multiple: fastq.size() > 1
-//                return [ meta, fastq.flatten() ]
-//    }
-//    .set { ch_fastq }
-//    
-////    //
-////    // MODULE: Concatenate FastQ files from same sample if required
-////    //
-//    CAT_FASTQ (
-//        ch_fastq.multiple
-//    )
-//    .mix(ch_fastq.single)
-//    .view { it }
-//    .set { ch_cat_fastq }
-    ch_hisat_prefix = file(params.hisat_prefix)
-    ch_imgthla = file(params.imgthla)
-    //take:
-    //ch_hisat_prefix
     take:
 
     main:
@@ -92,13 +67,31 @@ workflow HLA_HAT {
         ch_imgthla 
     )
 
+    ch_align_hla_reads = EXTRACT_READS.out.reads
+        .map {
+            meta, fastqs ->
+                specimen_id = meta.specimen_id
+                [ specimen_id, meta, fastqs ]   
+        }
+        .combine(PATIENT_REFERENCE.out.patient_reference, by: 0)
+        .map {
+            { it [1..-1 ]}
+        }
+        .view {it} // [meta, fastqs, hla_fasta, hla_bed]
+
     ALIGN_HLA_READS (
-        EXTRACT_READS.out.reads,
-        PATIENT_REFERENCE.out.patient_reference
+        ch_align_hla_reads
+    )
+
+    PICARD_MARK_DUPLICATES (
+        ALIGN_HLA_READS.out.hla_bam
     )
 
     emit:
     hisatgt_hlatypes = PATIENT_REFERENCE.out.top_hlatypes
-    //ch_hlahat_hlatype = HISAT_GENOTYPE.out.hla_types
 
+}
+
+workflow {
+    HLA_HAT ()
 }
