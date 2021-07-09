@@ -393,9 +393,28 @@ SNP coverage metrics, where bed refers the the allele SNPs bed (custom_hla.allel
 
   /usr/local/bin/samtools mpileup ${bam_in} -l ${bed} -q ${mq} -Q ${bq} -a > ${name}.pileups.txt
 
-Fix SNP pileups (in docker container kcampbel/hlahat_r:v2)::
+Fix SNP pileups (in docker container kcampbel/hlahat_r:v3)::
 
   Rscript /code/summarize_pileups.R ${bed} ${name}.pileups.txt ${name}.fixpileups
+
+
+##########################################
+Quantifying allelic imbalance
+##########################################
+
+Allelic imbalance is quantified using the following formula: **LD = log2(A) - log2(B)** where LD represents the *log fold difference* between the copy number of allele *A* and allele *B*, and copy number is estimated by the sequencing coverage. HLA-HAT quantifies this at the SNP level, and then metrics are summarized at the gene and locus level by the median value. The Rscript ``generate_ld.R`` accepts the ``fixpileups.txt`` and ``flagstat.txt`` files outputted by the previous step to summarize these values.
+
+The following command can be used (in docker container kcampbel/hlahat_r:v4)::
+
+  Rscript /code/generate_ald.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --normal_depth_cutoff=15 --normal_pileups=${normal_name}.fixpileups.txt --normal_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
+
+.. note::
+    If tumor DNA data is being evaluated (particularly WES), it is recommended to include the patient-matched normal data. Assuming that these datasets were generated simultaneously, the matched-normal WES data should reflect similar challenges in bait capture as the tumor WES. Consider using this approach in the case of hybridized capture approaches for RNAseq, as well.
+
+This command can also be used in the absence of matched normal data. This is recommended for RNAseq data that does not include a hybridized capture step::
+
+  Rscript /code/generate_ald.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
+
 
 ##########################################
 Paired tumor-normal data
@@ -405,9 +424,6 @@ Paired tumor-normal data
 Tumor-only datasets
 #####################
 
-##########################################
-Quantifying allelic imbalance
-##########################################
 
 #####################
 Variant detection
