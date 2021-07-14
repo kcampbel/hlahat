@@ -1,0 +1,93 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r goi_libs, echo=FALSE, results='hide', include=FALSE}
+library(dplyr)
+library(knitr)
+library(tibble)
+library(tidyr)
+
+library(plotly)
+
+pal_3grp <- c("red","#113C63","grey50","grey81")
+
+boxplot_goi <- function(df){
+    ax <- list(title = '')
+    fig <- plot_ly(df,
+                    x = ~gene, y = ~bcTPM, color = ~Source, 
+                    type='box', colors=pal_3grp, width=1200) %>%
+      layout(boxmode = "group", xaxis=ax)
+}
+```
+
+## TPM Boxplots {.tabset}
+
+### Gene Expression Key Genes
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r goi_munge,  echo=FALSE, warning=FALSE, message=FALSE}
+dat <- df_goi %>% 
+  mutate(Source = if_else(specimen_id == sid, sid, as.character(study))) %>%
+  mutate(Source = factor(Source, levels=c(sid, "PACT", "TCGA", "GTEX"))) 
+```
+
+```{r goi_A, echo=FALSE, warning=FALSE, message=FALSE}
+#get a list
+df <- dat %>%
+  filter(priority == 'A')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+### Gene Expression Key Genes2
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r goi_B, echo=FALSE, warning=FALSE, message=FALSE}
+df <- dat %>%
+  filter(priority == 'B')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+### Gene Expression Chemokines
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r goi_C, echo=FALSE, warning=FALSE, message=FALSE}
+df <- dat %>%
+  filter(priority == 'C')
+
+fig <- boxplot_goi(df)
+fig
+```
+### Gene Expression Receptors
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r goi_CR, echo=FALSE, warning=FALSE, message=FALSE}
+df <- dat %>%
+  filter(priority == 'CR')
+
+fig <- boxplot_goi(df)
+fig
+```
+### Gene Expression GOI
+
+Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+
+```{r goi_D, echo=FALSE, warning=FALSE, message=FALSE}
+df <- dat %>%
+  filter(priority == 'D')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+## {-}

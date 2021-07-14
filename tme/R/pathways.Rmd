@@ -1,0 +1,60 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r pathway_libs, echo=FALSE, results='hide', include=FALSE}
+library(dplyr)
+library(knitr)
+library(tibble)
+library(tidyr)
+
+library(GSVA)
+library(cluster)
+library(parallel)
+```
+
+## Pathway Analysis
+Gene set enrichment for key pathways
+```{r pathway_munge}
+emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
+geneset_f <- '../data/GeneSets.txt'
+hgnc_f <- '../data/hgnc_biomart.tsv.gz'
+
+# hgnc
+hgnc <- read_tsv(hgnc_f) %>%
+  janitor::clean_names()
+
+#read pathway file as list of lists
+inlist <- strsplit(readLines(geneset_f), "[[:space:]]+")
+pathways <- lapply(inlist, tail, n = -1)
+names(pathways) <- lapply(inlist, head, n = 1)
+pathways <- lapply(pathways, function(x) symbol_check(x, rownames(emat_pact), hgnc))
+
+# Check for missing genes in mat
+missing_l <- list()
+for(set_name in names(pathways)){
+  ii <- pathways[[set_name]]
+  missing <-!ii %in% rownames(emat_pact)
+  if(any(missing)){
+    missing_gene <- ii[missing]
+    missing_l[[set_name]] <- missing_gene
+    tmp <- paste(missing_gene, collapse=',')
+    print(paste('WARNING:', set_name, 'missing:', tmp))
+  }
+}
+```
+
+```{r pathway_gsva, echo=FALSE, warning=FALSE, message=FALSE}
+#enrich <- gsva(as.matrix(emat), pathways, method="zscore", verbose=FALSE, parallel.sz=4)
+enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, parallel.sz=4)
+
+```
+
+```{r pathway_heatmap, echo=FALSE, warning=FALSE, message=FALSE}
+#cols <- colorRampPalette(brewer.pal(8, "Blues"))(25)
+#heatmap(Pzscore,col=cols)
+aheatmap(enrich, scale = "row")
+
+```

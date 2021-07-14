@@ -1,0 +1,93 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r stage_input_libs, echo=FALSE, results='hide', include=FALSE}
+library(arrow)
+library(dplyr)
+library(janitor)
+library(readr)
+library(tibble)
+library(tidyr)
+source('../lib/munge.R')
+```
+
+```{r stage_input_config}
+#sid <- 'PACT107_T_51418MS' # Colon
+sid <- 'PACT291_T_840213-001T' # Colon
+xena_root <- '/Users/csmith/Documents/References/xena'
+#mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.parquet.gz')
+#mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.tsv.gz')
+#mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
+mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/testpc_combat_Lung_hgnc.tsv.gz')
+meta_f <- file.path('../test_data/meta_pact_xena.tsv')
+goi_f <- '../data/pact_goi.tsv'
+hgnc_f <- '../data/hgnc_biomart.tsv.gz'
+
+```
+
+```{r stage_input_datain_mat, cache.lazy = FALSE}
+if(grepl('parquet', mat_f)){
+    emat_o <- read_parquet(mat_f)
+} else {
+    emat_o <- read.delim(mat_f, check.names=FALSE, row.names=1) 
+}
+emat <- emat_o
+```
+
+```{r stage_input_datain_meta}
+#mat <- read.delim(mat_f, header=TRUE, check.names=FALSE, row.names=1)
+meta_o <- read_tsv(meta_f) %>%
+  janitor::clean_names() 
+meta <- meta_o %>%
+  filter(specimen_id %in% colnames(emat)) %>%
+  unite('study_tumor_normal', study, tumor_normal, remove=FALSE) %>%
+  mutate(study_tumor_normal = factor(study_tumor_normal)) %>%
+  mutate(study = factor(study, levels=c('GTEX', 'PACT', 'TCGA')))
+
+goi <- read_tsv(goi_f) %>%
+  mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
+  #dplyr::select(-category) %>%
+  distinct()
+
+#activation <- data.frame(gene=c('PRF1', 'CD3E', 'GZMB', 'IL2', 'IFNG'))#, 'CXCL9', 'CXCL10', 'CXCL13'))
+#activation$cat2 <- 'Activation'
+#inhibition <- data.frame(gene=c('CD274', 'TIGIT', 'LAG3', 'PDCD1', 'TGFB1'))
+#inhibition$cat2 <- 'Inhibition'
+#igenes <- rbind(activation, inhibition)
+##igenes <- c('CD274', 'CD3E', 'GZMB', 'IFNG', 'IL2', 'LAG3', 'PDCD1', 'PRF1', 'TGFB1', 'TIGIT')
+#goi_i <- goi %>% 
+# # filter(gene %in% igenes) 
+#  right_join(igenes)
+
+hgnc <- read_tsv(hgnc_f) %>%
+  janitor::clean_names()
+
+```
+
+```{r stage_input_qc} 
+dat <- emat 
+rmax <- apply(dat, 1, max)
+#phist <- hist(rmax, breaks=100)
+thresh = -9.5
+keep <- names(rmax[rmax > thresh])
+print(paste0('Removing ', nrow(dat) - length(keep), ' genes with less than a max(', thresh, ') expression'))
+#plot(phist)
+#abline(v=thresh, col='red')
+
+# Subset matrices
+emat <- dat[keep, ] 
+emat_goi <- emat[rownames(emat) %in% goi$gene, ]
+
+#edf_goi <- emat_goi %>%
+#  rownames_to_column('gene') 
+
+df_goi <- emat %>% 
+  rownames_to_column('gene') %>%
+  right_join(goi) %>%
+  pivot_longer(starts_with(c('GTEX', 'TCGA', 'PACT')), names_to="specimen_id", values_to = "bcTPM") %>%
+  left_join(meta)
+
+```

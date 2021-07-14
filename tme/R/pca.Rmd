@@ -1,0 +1,48 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r pca_libs, echo=FALSE, results='hide', include=FALSE}
+library(dplyr)
+library(knitr)
+library(tibble)
+library(tidyr)
+library(plotly)
+```
+
+## PCA
+
+```{r pca_calc}
+dat <- emat
+dat_var <- sort(apply(dat, 1, var), decreasing=TRUE)
+topvar <- names(dat_var[1:1000])
+#topvar <- names(dat_var[1:5000])
+top_mat <- t(dat[topvar,])
+pr <-  prcomp(top_mat, center=TRUE, scale=TRUE)
+
+```
+
+```{r pca_plot}
+df <- pr$x[, 1:3] %>%
+  as.data.frame() %>%
+  rownames_to_column('specimen_id') %>%
+  left_join(meta)# %>%
+df$study_tumor_normal <-  factor(df$study_tumor_normal, levels = c(levels(df$study_tumor_normal), sid))
+
+df_gt <- df %>% filter(study != 'PACT')
+df_p <- df %>% filter(study == 'PACT')
+
+df2 <- df %>% filter(specimen_id == sid) %>%
+  mutate(study_tumor_normal = sid)
+df2$study_tumor_normal <- factor(df2$study_tumor_normal, levels = c(levels(df$study_tumor_normal)))
+
+pal <- c('burlywood3', 'darkorchid3', 'steelblue2')
+fig <- plot_ly(df_gt, x = ~PC1, y = ~PC2, type = 'scatter', mode = 'markers',
+               color = ~study_tumor_normal, colors=pal,
+               text = ~paste(specimen_id, xena_detailed_category, sep='\n')) %>%
+  add_trace(data=df_p, x = ~PC1, y = ~PC2, color = ~study_tumor_normal, type='scatter', mode='markers', marker=list(color='black')) %>% 
+  add_trace(data=df2, x = ~PC1, y = ~PC2, type='scatter', marker=list(color='red'), size=3) 
+fig
+```

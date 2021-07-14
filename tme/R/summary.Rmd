@@ -1,0 +1,50 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r summary_libs, echo=FALSE, results='hide', include=FALSE}
+library(dplyr)
+library(janitor)
+library(readr)
+library(tibble)
+library(tidyr)
+
+library(yaml)
+library(kableExtra)
+
+source('../lib/munge.R')
+```
+
+# Patient Summary
+```{r summary_config}
+manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
+tcga_tpm_quantile_min <- .25
+tcga_tpm_quantile_max <- .75
+
+```
+
+```{r summary_pttable}
+manifest <- read_yaml(manifest_f)
+summary_pt_dat <- data.frame(
+  'Patient' = manifest$pipeline$patient_info$patient.id,
+  'Sample' = manifest$pipeline$patient_info$sample.id,
+  'PACT ID' = manifest$pipeline$pact_id,
+  'Study' = manifest$pipeline$patient_info$study.id,
+  'Panel' = manifest$pipeline$panel,
+  check.names=FALSE
+)
+summary_pt_dat %>% 
+  knitr::kable('html') %>%
+  kable_styling(full_width = F, font_size = 16, position = 'left')
+  #kable_styling("striped", full_width = F, font_size = 16, position = 'left')
+
+```
+
+```{r summary_goitable}
+summary_goi_tab <- goi_tab %>%
+  filter(`Percentile TCGA` < tcga_tpm_quantile_min | `Percentile TCGA` > tcga_tpm_quantile_max) 
+dt_quantile_ramp(summary_goi_tab, 'Percentile PACT')
+
+```
