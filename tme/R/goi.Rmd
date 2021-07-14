@@ -9,8 +9,12 @@ library(dplyr)
 library(knitr)
 library(tibble)
 library(tidyr)
-
+library(stringr)
 library(plotly)
+library(DT)
+
+source('../src/munge.R')
+source('../src/visualization.R')
 
 pal_3grp <- c("red","#113C63","grey50","grey81")
 
@@ -23,13 +27,168 @@ boxplot_goi <- function(df){
 }
 ```
 
+## TPM Reporting Table
+
+```{r goi_config}
+cn_f <- '../test_data/PACT056_T_196454/PACT056_T_196454_segments.txt'
+ea_f <- '../test_data/PACT056_T_196454/PACT056_T_196454_baseline_oncotator_results_Annotated.tsv'
+```
+
+```{r goi_datain}
+dat <- emat_goi
+
+pact <- dat[, grep('^PACT', names(dat))]
+pact <- pact[, names(pact)!=sid]
+tcga <- dat[, grep('^TCGA', names(dat))]
+gtex <- dat[, grep('^GTEX', names(dat))]
+#my_sam=dat[, grep(sam_id, names(dat))]
+
+#PUT YOUR sid HERE
+esample=dat[,  grep(sid, names(dat))]
+
+#left join data 
+#gene_info=as.data.frame(row.names(exp_data2))
+#names(gene_info)=c("gene")
+#gene_info2=left_join(gene_info,report,by=c("gene"="Gene_Name"))
+#drop columns
+#gene_info3=gene_info2[,!(names(gene_info2) %in% c("TPM","Priortity"))]
+
+```
+
+```{r goi_tab_munge}
+rs_dat=c()
+zpp=c()
+zgp=c()
+ztp=c()
+
+for (i in 1:dim(dat)[1]){
+    p2=as.numeric(pact[i,])
+    t2=as.numeric(tcga[i,])
+    g2=as.numeric(gtex[i,])
+    s2=esample[i]
+    
+    # Add sample to end of PACT, TCGA, GTEX values
+    p2=c(p2,s2)
+    t2=c(t2,s2)
+    g2=c(g2,s2)
+    zp=zscore(p2)
+    zt=zscore(t2)
+    zg=zscore(g2)
+    
+    # Get sample zscor and percentiles
+    #zps=sprintf("%1.2f",tail(zp, n=1))
+    #zts=sprintf("%1.2f",tail(zt, n=1))
+    #zgs=sprintf("%1.2f",tail(zg, n=1))
+    zps=tail(zp, n=1)
+    zts=tail(zt, n=1)
+    zgs=tail(zg, n=1)
+    if(!is.na(zps)){
+       zpp=tail(percentile(zp, zp), n=1)
+       ztp=tail(percentile(zt, zt), n=1)
+       zgp=tail(percentile(zg, zg), n=1)
+    } else {
+      zpp=NA
+      ztp=NA
+      zpg=NA
+    }
+
+    ens_gene=row.names(dat)[i]
+    gene_info <- goi %>% 
+      filter(gene==ens_gene) %>%
+      dplyr::select(gene, alias, category)
+    
+    my_row=c()
+    my_tpm=2^s2
+    #my_tpm=sprintf("%1.2f",(2^s2))
+    #s2=sprintf("%1.2f",s2)
+   
+    rs_row=cbind(gene_info,my_tpm,s2,zps,zts,zgs,zpp,ztp,zgp)
+    rs_dat=rbind(rs_dat,rs_row)
+}
+
+names(rs_dat)=c("Gene","Alias","Category","TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
+```
+
+```{r goi_cnmut}
+cn_o <- read_tsv(cn_f)
+cn <- cn_o
+
+ea_o <- read_tsv(ea_f)
+#ea_cols = c('Hugo_Symbol', 'Chromosome', 'Start_position', 'End_position', 'Protein_Change')
+ea_cols = c('Hugo_Symbol', 'Protein_Change')
+ea <- ea_o %>%
+  mutate(Chromosome=paste0('chr',Chromosome)) %>%
+  filter(!is.na(Protein_Change)) %>%
+  dplyr::select(all_of(ea_cols)) %>%
+  distinct()
+
+# Get gene positions for intersect
+ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37, mirror='uswest')
+ens_canonical <- c(seq(1:22), 'X', 'Y', 'MT')
+genes <- c(goi$gene)
+bm <- getBM(attributes=c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),
+            filters='hgnc_symbol', mart=ens, 
+            values=genes) %>%
+  filter(chromosome_name %in% ens_canonical) %>%
+  mutate(chromosome=str_replace(chromosome_name, 'MT', 'M'),
+         chromosome = paste0('chr', chromosome)
+         ) %>%
+  left_join(ea, by=c('hgnc_symbol'='Hugo_Symbol'))
+
+# Intersect
+cnRanges <- GenomicRanges::makeGRangesFromDataFrame(cn, seqnames.field='chromosome', 
+        start.field="start.pos", end.field="end.pos", keep.extra.columns=TRUE)
+gRanges = GenomicRanges::makeGRangesFromDataFrame(bm, seqnames.field='chromosome', 
+        start.field="start_position", end.field="end_position", keep.extra.columns=TRUE)
+
+g_m <- findoverlaps_metadata(gRanges, cnRanges) %>%
+  dplyr::rename(Gene=hgnc_symbol) %>%
+  dplyr::select(Gene, Mutation=Protein_Change, CNt)
+
+```
+
+```{r goi_merge_dat}
+cols = c("Gene","Alias","Category", "Mutation", "CNt", "TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
+goi_dat <- g_m %>%
+  full_join(rs_dat) %>%
+  dplyr::select(all_of(cols))
+
+```
+
+```{r goi_DT}
+round1 <- c("TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX")
+round2 <- c("Percentile PACT","Percentile TCGA","Percentile GTEX")
+
+goi_tab <- goi_dat %>%
+  filter(!is.na(`Z-score PACT`),
+         !is.na(`Percentile PACT`)
+  ) %>%
+  mutate_at(round1, round, 1) %>%
+  mutate_at(round2, round, 2)
+
+colRamp <- colorRamp(c("lightblue","white","red"))
+goi_dtab <- datatable(goi_tab)
+for(column in "Percentile PACT"){
+  x <- na.omit(goi_tab[[column]])
+  brks <- quantile(x, probs = seq(.05, .95, .005))
+  RGB <- colRamp(c(0, (brks-min(x))/(max(x)-min(x))))
+  clrs <- apply(RGB, 1, function(rgb){
+    sprintf("rgb(%s)", toString(round(rgb,0)))
+  })
+  goi_dtab <- goi_dtab %>% 
+    formatStyle(column, backgroundColor = styleInterval(brks, clrs))
+}
+
+goi_dtab
+```
+
 ## TPM Boxplots {.tabset}
 
 ### Gene Expression Key Genes
 
 Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
 
-```{r goi_munge,  echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_bar_munge,  echo=FALSE, warning=FALSE, message=FALSE}
 dat <- df_goi %>% 
   mutate(Source = if_else(specimen_id == sid, sid, as.character(study))) %>%
   mutate(Source = factor(Source, levels=c(sid, "PACT", "TCGA", "GTEX"))) 
@@ -48,7 +207,7 @@ fig
 
 Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
 
-```{r goi_B, echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_B}
 df <- dat %>%
   filter(priority == 'B')
 
@@ -60,7 +219,7 @@ fig
 
 Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
 
-```{r goi_C, echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_C}
 df <- dat %>%
   filter(priority == 'C')
 
@@ -71,7 +230,7 @@ fig
 
 Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
 
-```{r goi_CR, echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_CR}
 df <- dat %>%
   filter(priority == 'CR')
 
@@ -82,7 +241,7 @@ fig
 
 Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
 
-```{r goi_D, echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_D}
 df <- dat %>%
   filter(priority == 'D')
 

@@ -14,10 +14,10 @@ library(tidyr)
 library(yaml)
 library(kableExtra)
 
-source('../lib/munge.R')
+source('../src/munge.R')
 ```
 
-# Patient Summary
+## Patient Summary
 ```{r summary_config}
 manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
 tcga_tpm_quantile_min <- .25

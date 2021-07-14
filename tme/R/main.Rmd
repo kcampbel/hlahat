@@ -1,55 +1,49 @@
 ---
 title: "TME Report"
 date: "`r Sys.Date()`"
+version: 0.1
 output:
-  rmdformats::readthedown
+  rmdformats::readthedown:
+    highlight: tango
+    lightbox: true
+    gallery: false
 css: ../css/mycss2.css
 always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
-
-```{r setup, include=FALSE}
+```{r main_libs, include=FALSE}
 library(knitr)
 library(rmdformats)
 
 ## Global options
 options(max.print="75")
 opts_chunk$set(echo=FALSE,
-	             cache=TRUE,
-               cache_rebuild=TRUE,
                prompt=FALSE,
                tidy=TRUE,
                comment=NA,
                message=FALSE,
                warning=FALSE,
-               echo=FALSE
+	             cache=TRUE,
+               #cache_rebuild=TRUE,
+               cache.path='tme_report_cache/html/',
+               fig.path='tme_report_files/figure-html/'
                )
 opts_knit$set(width=125)
-```
 
-```{r, echo=FALSE}
 htmltools::img(src = knitr::image_uri(file.path("../images", "pact2.png")), 
                alt = 'logo', 
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
 
-```{r stage_input, child = 'stage_input.Rmd', eval=TRUE}
+```{r test, eval=FALSE}
+rmarkdown::render('main.Rmd')
+
 ```
 
-```{r pca, child = 'pca.Rmd', eval=TRUE}
+```{r summary, child='summary.Rmd', eval=exists('summary_trigger')}
 ```
 
-```{r reporting_table, child = 'reporting_table.Rmd', eval=TRUE}
-```
-
-```{r goi, child = 'goi.Rmd', eval=TRUE}
-```
-
-```{r cellcomp, child = 'cellular_composition.Rmd', eval=TRUE}
-```
-
-```{r pathways, child = 'pathways.Rmd', eval=TRUE}
-```
-
-```{r summary, child = 'summary.Rmd', eval=TRUE}
+```{r child_reports, child='child_reports.Rmd'}
 ```

@@ -14,7 +14,7 @@ library(xCell)
 library(NMF)
 ```
 
-```{r cellcomp_xcell}
+```{r cellcomp_xcell, results='hide'}
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
 
 xcell <- xCellAnalysis(as.matrix(emat_pact))

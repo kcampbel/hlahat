@@ -41,20 +41,18 @@ for(set_name in names(pathways)){
     missing_gene <- ii[missing]
     missing_l[[set_name]] <- missing_gene
     tmp <- paste(missing_gene, collapse=',')
-    print(paste('WARNING:', set_name, 'missing:', tmp))
+    warning(paste('WARNING:', set_name, 'missing:', tmp))
   }
 }
 ```
 
-```{r pathway_gsva, echo=FALSE, warning=FALSE, message=FALSE}
+```{r pathway_gsva, results='hide'}
 #enrich <- gsva(as.matrix(emat), pathways, method="zscore", verbose=FALSE, parallel.sz=4)
 enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, parallel.sz=4)
 
 ```
 
-```{r pathway_heatmap, echo=FALSE, warning=FALSE, message=FALSE}
-#cols <- colorRampPalette(brewer.pal(8, "Blues"))(25)
-#heatmap(Pzscore,col=cols)
+```{r pathway_heatmap}
 aheatmap(enrich, scale = "row")
 
 ```

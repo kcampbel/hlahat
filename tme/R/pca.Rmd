@@ -12,7 +12,7 @@ library(tidyr)
 library(plotly)
 ```
 
-## PCA
+## Transcriptome PCA
 
 ```{r pca_calc}
 dat <- emat

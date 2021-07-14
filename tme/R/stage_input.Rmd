@@ -11,30 +11,36 @@ library(janitor)
 library(readr)
 library(tibble)
 library(tidyr)
-source('../lib/munge.R')
+source('../src/munge.R')
 ```
 
 ```{r stage_input_config}
-#sid <- 'PACT107_T_51418MS' # Colon
-sid <- 'PACT291_T_840213-001T' # Colon
+#sid <- 'PACT107_T_51418MS' # COADREAD no RNAseq
+#sid <- 'PACT291_T_840213-001T' # LUAD no RNAseq in emat
+sid <- 'PACT056_T_196454' # COADREAD
 xena_root <- '/Users/csmith/Documents/References/xena'
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.parquet.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.tsv.gz')
-#mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
-mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/testpc_combat_Lung_hgnc.tsv.gz')
+mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
+#mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/testpc_combat_Lung_hgnc.tsv.gz')
 meta_f <- file.path('../test_data/meta_pact_xena.tsv')
 goi_f <- '../data/pact_goi.tsv'
 hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 
 ```
 
-```{r stage_input_datain_mat, cache.lazy = FALSE}
+```{r stage_input_datain_mat}
+#, cache.lazy = FALSE}
 if(grepl('parquet', mat_f)){
     emat_o <- read_parquet(mat_f)
 } else {
     emat_o <- read.delim(mat_f, check.names=FALSE, row.names=1) 
 }
 emat <- emat_o
+
+if(!any(grepl(sid, colnames(emat)))){
+  stop(paste0('ERROR:', sid, 'not found in expression matrix'))
+}
 ```
 
 ```{r stage_input_datain_meta}
@@ -50,7 +56,7 @@ meta <- meta_o %>%
 goi <- read_tsv(goi_f) %>%
   mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
   #dplyr::select(-category) %>%
-  distinct()
+  distinct() 
 
 #activation <- data.frame(gene=c('PRF1', 'CD3E', 'GZMB', 'IL2', 'IFNG'))#, 'CXCL9', 'CXCL10', 'CXCL13'))
 #activation$cat2 <- 'Activation'
@@ -67,22 +73,19 @@ hgnc <- read_tsv(hgnc_f) %>%
 
 ```
 
-```{r stage_input_qc} 
+```{r stage_input_qc, include=FALSE} 
 dat <- emat 
 rmax <- apply(dat, 1, max)
-#phist <- hist(rmax, breaks=100)
+phist <- hist(rmax, breaks=100)
 thresh = -9.5
 keep <- names(rmax[rmax > thresh])
-print(paste0('Removing ', nrow(dat) - length(keep), ' genes with less than a max(', thresh, ') expression'))
-#plot(phist)
-#abline(v=thresh, col='red')
+warning(paste0('Removing ', nrow(dat) - length(keep), ' genes with less than a max(', thresh, ') expression'))
+plot(phist)
+abline(v=thresh, col='red')
 
 # Subset matrices
 emat <- dat[keep, ] 
 emat_goi <- emat[rownames(emat) %in% goi$gene, ]
-
-#edf_goi <- emat_goi %>%
-#  rownames_to_column('gene') 
 
 df_goi <- emat %>% 
   rownames_to_column('gene') %>%

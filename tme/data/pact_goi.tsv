@@ -1,92 +1,154 @@
-id	gene	alias	category
-ENSG00000153563	CD8A	CD8	CD8Tcells
-ENSG00000120217	CD274	PD-L1	Coinhibitoryligand
-ENSG00000197646	PDCD1LG2	PD-L2	Coinhibitoryligand
-ENSG00000163599	CTLA4	CTLA-4	CoinhibitoryR.
-ENSG00000075624	ACTB	ActinB	housekeeping
-ENSG00000111640	GAPDH	GAPDH	housekeeping
-ENSG00000198851	CD3E	CD3	TCRco-R.
-ENSG00000010610	CD4	CD4	TCRco-R.
-ENSG00000153563	CD8A	CD8	TCRco-R.
-ENSG00000049768	FOXP3	FOXP3	TRegmasterregulator
-ENSG00000128271	ADORA2A	A2aR	Adenosinepathway
-ENSG00000135318	NT5E	CD73	Adenosinepathway
-ENSG00000206503	HLA-A	HLA-A	Agpresentation
-ENSG00000234745	HLA-B	HLA-B	Agpresentation
-ENSG00000204287	HLA-DRA	HLA-DR	Agpresentation
-ENSG00000204525	HLA-C	HLA-C	Agpresentation
-ENSG00000166710	B2M	B2M	Ag.presentation
-ENSG00000168394	TAP1	TAP1	Ag.presentation
-ENSG00000118520	ARG1	ARG1	Arginase1
-ENSG00000156738	MS4A1	CD20	Bcells
-ENSG00000004468	CD38	CD38	cADPribosehydrolase
-ENSG00000121966	CXCR4	CXCR4	ChemokineR.4
-ENSG00000126353	CCR7	CCR7	ChemokineR.7
-ENSG00000038945	MSR1	CD204	ClassAS.R.
-ENSG00000135218	CD36	CD36	ClassBS.R.
-ENSG00000188389	PDCD1	PD-1	CoinhibitoryR.
-ENSG00000135077	HAVCR2	TIM-3	CoinhibitoryR.
-ENSG00000089692	LAG3	LAG-3	CoinhibitoryR.
-ENSG00000169896	ITGAM	CD11b	ComplementR.3
-ENSG00000197405	C5AR1	CD88	ComplementR.5
-ENSG00000121594	CD80	CD80	Costimulatoryligand
-ENSG00000114013	CD86	CD86	Costimulatoryligand
-ENSG00000026751	SLAMF7	SLAMF7	Costimulatoryligand
-ENSG00000178562	CD28	CD28	CostimulatoryR.
-ENSG00000101017	CD40	CD40	CostimulatoryR.
-ENSG00000173762	CD7	CD7	CostimulatoryR.
-ENSG00000163600	ICOS	ICOS	CostimulatoryR.
-ENSG00000186891	TNFRSF18	GITR	CostimulatoryR.
-ENSG00000186827	TNFRSF4	OX40	CostimulatoryR.
-ENSG00000049249	TNFRSF9	4-1BB	CostimulatoryR.
-ENSG00000140678	ITGAX	CD11c	DCcells
-ENSG00000170017	ALCAM	CD166	Glycoprotein
-ENSG00000129226	CD68	CD68	Glycoprotein
-ENSG00000085117	CD82	CD82	Glycoprotein
-ENSG00000196371	FUT4	CD15	Granulocyte
-ENSG00000150337	FCGR1A	CD64	HighaffinityFCGR1a
-ENSG00000177575	CD163	CD163	HighaffinityS.R.
-ENSG00000090339	ICAM1	CD54	ICAM-1
-ENSG00000027697	IFNGR1	CD119	IFNgR.
-ENSG00000134460	IL2RA	CD25	IL-2R.
-ENSG00000185291	IL3RA	CD123	IL-3R.
-ENSG00000168685	IL7R	CD127	IL-7R.
-ENSG00000188389	PDCD1	PD-1	InhibitoryR.
-ENSG00000111537	IFNG	IFNG	InterferonTypeII
-ENSG00000143226	FCGR2A	CD32	LowaffinityFCGR2a
-ENSG00000203747	FCGR3A	CD16	LowaffinityFCGR3a
-ENSG00000170458	CD14	CD14	LPSco-R.
-ENSG00000120586	MRC1	CD206	Mannosereceptor
-ENSG00000166825	ANPEP	CD13	Metalloprotease
-ENSG00000173762	CD7	CD7	NKcells
-ENSG00000081237	PTPRC	CD45	Panimmune
-ENSG00000185291	IL3RA	CD123	pDC
-ENSG00000120586	MRC1	CD206	Protumormacrophage
-ENSG00000148773	MKI67	Ki-67	Proliferationmarker
-ENSG00000088827	SIGLEC1	CD169	Sialoadhesin
-ENSG00000184584	TMEM173	STING	STING
-ENSG00000181847	TIGIT	VSIG9	Tcellresponse
-ENSG00000110651	CD81	CD81	Tetraspanin
-ENSG00000136869	TLR4	CD284	Toll-LikeReceptor
-ENSG00000072274	TFRC	CD71	TransferrinR.
-ENSG00000131203	IDO1	IDO	Tryptophanmetabolism
-ENSG00000188676	IDO2	INDOL1	Tryptophanmetabolism
-ENSG00000099250	NRP1	CD304	VEGFco-R.
-ENSG00000010610	CD4	CD4	CD4Tcells
-ENSG00000100453	GZMB		Tcell
-ENSG00000180644	PRF1		Tcell
-ENSG00000049768	FOXP3	FOXP3	TReg
-ENSG00000204267	TAP2	TAP2	Ag.presentation
-ENSG00000129226	CD68	CD68	Macrophage
-ENSG00000198851	CD3E	CD3	Tcells
-ENSG00000105329	TGFB1		TGFBpathway
-ENSG00000140682	TGFB1I1		TGFBpathway
-ENSG00000092969	TGFB2		TGFBpathway
-ENSG00000119699	TGFB3		TGFBpathway
-ENSG00000120708	TGFBI		TGFBpathway
-ENSG00000106799	TGFBR1		TGFBpathway
-ENSG00000163513	TGFBR2		TGFBpathway
-ENSG00000069702	TGFBR3		TGFBpathway
-ENSG00000260001	TGFBR3L		TGFBpathway
-ENSG00000135966	TGFBRAP1		TGFBpathway
-ENSG00000109471	IL2	IL2	
+gene	alias	category	priority	role	checkpoint	category_orig	priority_orig	notes
+B2M	B2M	Ag presentation	A	Ag presentation	Other	Ag presentation	A	
+TAP1	TAP1	Ag presentation	A	Ag presentation	Other	Ag presentation	NA	
+TAP2	TAP2	Ag presentation	A	Ag presentation	Other	Ag presentation	NA	
+CALR	CALR	Ag presentation	B	Ag presentation	Other	Ag presentation	B	
+ERAP1	ARTS-1	PeptidetrimminginER	B	Ag presentation	NA	PeptidetrimminginER	B	
+ERAP2	LRAP	PeptidetrimminginER	B	Ag presentation	NA	PeptidetrimminginER	NA	
+CCL11	Eotaxin	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL13	"MCP-4,NCC-1,Ck10"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL14	"HCC-1,MCIF,Ck1,NCC-2,CCL"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL15	"Leukotactin-1,MIP-5,HCC-2,NCC-3"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL16	"LEC,NCC-4,LMC,Ck12"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL17	"TARC,dendrokine,ABCD-2"	Chemokine	C	Chemokine	NA	Chemokine	C	Cell adhesion
+CCL18	"PARC,DC-CK1,AMAC-1,Ck7,MIP-4"	Chemokine	C	Chemokine	NA	Chemokine	C	Metastasis supressor
+CCL19	"ELC,Exodus-3,Ck11"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL2	MCP-1	Chemokine	C	Chemokine	NA	Chemokine	C	B-cells IL-4
+CCL20	"LARC,Exodus-1,Ck4"	Chemokine	C	Chemokine	NA	Chemokine	C	Ig
+CCL21	"SLC,6Ckine,Exodus-2,Ck9,TCA-4"	Chemokine	C	Chemokine	NA	Chemokine	C	Ig
+CCL22	"MDC,DC/-CK"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL23	"MPIF-1,Ck8,MIP-3,MPIF-1"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL24	"Eotaxin-2,MPIF-2,Ck6"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL25	"TECK,Ck15"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL26	"Eotaxin-3,MIP-4a,IMAC,TSC-1"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL27	"CTACK,ILC,Eskine,PESKY,skinkine"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL28	MEC	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL3	MIP-1a	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL4	MIP-1	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL5	RANTES	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL7	"MARC,MCP-3"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCL8	MCP-2	Chemokine	C	Chemokine	NA	Chemokine	C	
+CX3CL1	"Fractalkine,Neurotactin,ABCD-3"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL1	"Gro-a,GRO1,NAP-3,KC"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL10	"IP-10,CRG-2"	Chemokine	C	Chemokine	Activation	Chemokine	C	
+CXCL11	"I-TAC,-R1,IP-9"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL12	"SDF-1,PBSF"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL13	"BCA-1,BLC"	Chemokine	C	Chemokine	Activation	Chemokine	C	
+CXCL16	SRPSOX	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL17	"DMC,VCC-1"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL2	"Gro-,GRO2,MIP-2a"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL3	"Gro-?,GRO3,MIP-2"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL5	ENA-78	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL6	GCP-2	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL7	"NAP-2,CTAPIII,-Ta,PEP"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL8	"IL-8,NAP-1,MDNCF,GCP-1"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CXCL9	"MIG,CRG-10"	Chemokine	C	Chemokine	NA	Chemokine	C	
+CCR1	CCR1	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR10	CCR10	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR2	CCR2	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR3	CCR3	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR4	CCR4	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR5	CCR5	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR6	CCR6	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR7	CCR7	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR8	CCR8	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CCR9	CCR9	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CX3CR1	CX3CR1	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR1	CXCR1	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR2	CXCR2	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR3	CXCR3	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR3B	CXCR3B	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR5	CXCR5	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR6	CXCR6	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CXCR7	CXCR7	ChemokineR	CR	Chemokine receptors	NA	ChemokineR	CR	
+CD163	CD163	HighaffinityS.R	B	Other	NA	HighaffinityS.R.	B	Macrophage
+CD68	CD68	Macrophage	B	Other	NA	Macrophage	B	Macrophage
+ACTB	ActinB	Housekeeping	A	NA	NA	Housekeeping	A	
+CD44	CD44	EffectorMemoryTcell	B	Other	NA	EffectorMemoryTcell	B	
+ALCAM	CD166	Glycoprotein	B	Other	Other	Glycoprotein	B	
+CD82	CD82	Glycoprotein	B	Other	NA	Glycoprotein	B	
+BCL6	BCL-6	ImmuneModulator/Memory	B	Other	NA	ImmuneModulator/Memory	B	
+FCGR2A	CD32	LowaffinityFCGR2a	B	Other	NA	LowaffinityFCGR2a	B	
+FCGR3A	CD16	LowaffinityFCGR3a	B	Other	NA	LowaffinityFCGR3a	B	
+CD81	CD81	Tetraspanin	B	Other	NA	Tetraspanin	B	
+FAS	CD95	TNF	B	Other	NA	NA	B	
+FOXP3	FOXP3	TReg	A	Other	Inhibitory	TRegmasterregulator	A	
+CD40	CD40	CostimulatoryR	B	Other	Stimulatory	CostimulatoryR.	B	
+CD274	PD-L1	Coinhibitoryligand	D	Receptor	Inhibitory	Coinhibitoryligand	NA	
+CD4	CD4	TCRco-R	A	Receptor	NA	TCR	A	
+CD8A	CD8	TCRco-R	A	Receptor	NA	CD8Tcells	A	
+CD3E	CD3	TCRco-R	D	Receptor	NA	Tcells	D	
+ADORA2A	A2aR	Adenosinepathway	NA	Receptor	Inhibitory	Adenosinepathway	NA	
+NT5E	CD73	Adenosinepathway	NA	Receptor	Inhibitory	Adenosinepathway	NA	
+HLA-A	HLA-A	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA	
+HLA-B	HLA-B	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA	
+HLA-C	HLA-C	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA	
+HLA-DRA	HLA-DR	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA	
+ARG1	ARG1	Arginase1	NA	Other	Inhibitory	Arginase1	NA	
+MS4A1	CD20	Bcells	NA	NA	NA	Bcells	NA	
+CD38	CD38	cADPribosehydrolase	NA	NA	NA	cADPribosehydrolase	NA	
+CCL1	"I-309,TCA-3"	Chemokine	NA	NA	NA	Chemokine	NA	
+CCL10	"MRP-2,CCF18,MIP-1?"	Chemokine	NA	NA	NA	Chemokine	NA	
+CCL12	MCP-5	Chemokine	NA	NA	NA	Chemokine	NA	
+CCL6	"C10,MRP-2"	Chemokine	NA	NA	NA	Chemokine	NA	
+CCL9	"MRP-2,CCF18,MIP-1?"	Chemokine	NA	NA	NA	Chemokine	NA	
+CXCL14	"BRAK,bolekine"	Chemokine	NA	NA	NA	Chemokine	NA	
+CXCL15	"Lungkine,WECHE"	Chemokine	NA	NA	NA	Chemokine	NA	
+CXCL4	PF-4	Chemokine	NA	NA	NA	Chemokine	NA	
+CXCR4	CXCR4	ChemokineR4	NA	NA	NA	ChemokineR.4	NA	
+MSR1	CD204	ClassAS.R	NA	NA	NA	ClassAS.R.	NA	
+CD36	CD36	ClassBS.R	NA	NA	NA	ClassBS.R.	NA	
+PDCD1LG2	PD-L2	Coinhibitoryligand	NA	Co-inhibitor	Inhibitory	Coinhibitoryligand	NA	
+CTLA4	CTLA-4	CoinhibitoryR	NA	Receptor	Inhibitory	CoinhibitoryR.	NA	
+HAVCR2	TIM-3	CoinhibitoryR	NA	Receptor	Inhibitory	CoinhibitoryR.	NA	
+LAG3	LAG-3	CoinhibitoryR	NA	Receptor	Inhibitory	CoinhibitoryR.	NA	
+PDCD1	PD-1	CoinhibitoryR	NA	Receptor	Inhibitory	CoinhibitoryR.	NA	
+ITGAM	CD11b	ComplementR3	NA	NA	NA	ComplementR.3	NA	
+C5AR1	CD88	ComplementR5	NA	NA	NA	ComplementR.5	NA	
+CD80	CD80	Costimulatoryligand	NA	Co-stimulator	Stimulatory	Costimulatoryligand	NA	
+CD86	CD86	Costimulatoryligand	NA	NA	NA	Costimulatoryligand	NA	
+SLAMF7	SLAMF7	Costimulatoryligand	NA	NA	NA	Costimulatoryligand	NA	
+CD28	CD28	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+CD7	CD7	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+ICOS	ICOS	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+TNFRSF18	GITR	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+TNFRSF4	OX40	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+TNFRSF9	4-1BB	CostimulatoryR	NA	Receptor	Stimulatory	CostimulatoryR.	NA	
+ITGAX	CD11c	DCcells	NA	NA	NA	DCcells	NA	
+FUT4	CD15	Granulocyte	NA	NA	NA	Granulocyte	NA	
+FCGR1A	CD64	HighaffinityFCGR1a	NA	NA	NA	HighaffinityFCGR1a	NA	
+GAPDH	GAPDH	housekeeping	NA	NA	NA	housekeeping	NA	
+ICAM1	CD54	ICAM-1	NA	NA	NA	ICAM-1	NA	
+IFNGR1	CD119	IFNgR	NA	NA	NA	IFNgR.	NA	
+IL2RA	CD25	IL-2R	NA	Receptor	Stimulatory	IL-2R.	NA	
+IL7R	CD127	IL-7R	NA	NA	NA	IL-7R.	NA	
+EOMES	Eomes	ImmuneModulator/Memory	NA	NA	NA	ImmuneModulator/Memory	NA	
+IFNG	IFNG	InterferonTypeII	NA	NA	NA	InterferonTypeII	NA	
+CD14	CD14	LPSco-R	NA	NA	NA	LPSco-R.	NA	
+MRC1	CD206	Mannosereceptor	NA	NA	NA	Mannosereceptor	NA	
+ANPEP	CD13	Metalloprotease	NA	NA	NA	Metalloprotease	NA	
+IL2	IL2	NA	NA	NA	NA	NA	NA	
+CXCL9	CXCL9	NA	NA	Other	Activation	NA	NA	
+PTPRC	CD45	Panimmune	NA	NA	NA	Panimmune	NA	
+IL3RA	CD123	pDC	NA	NA	NA	IL-3R.	NA	
+MKI67	Ki-67	Proliferationmarker	NA	NA	NA	Proliferationmarker	NA	
+SIGLEC1	CD169	Sialoadhesin	NA	NA	NA	Sialoadhesin	NA	
+TMEM173	STING	STING	NA	NA	NA	STING	NA	
+GZMB	NA	Tcell	NA	Other	Stimulatory	Tcell	NA	
+PRF1	NA	Tcell	NA	Other	Stimulatory	Tcell	NA	
+TIGIT	VSIG9	Tcellresponse	NA	Receptor	Inhibitory	Tcellresponse	NA	
+TGFB1	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFB1I1	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFB2	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFB3	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBI	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBR1	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBR2	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBR3	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBR3L	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TGFBRAP1	NA	TGFB	NA	NA	NA	TGFBpathway	NA	
+TLR4	CD284	Toll-LikeReceptor	NA	Receptor	Stimulatory	Toll-LikeReceptor	NA	
+TFRC	CD71	TransferrinR	NA	NA	NA	TransferrinR.	NA	
+IDO2	INDOL1	Tryptophanmetabolism	NA	NA	NA	Tryptophanmetabolism	NA	
+IDO1	IDO	Tryptophanmetabolism	NA	Other	Inhibitory	Tryptophanmetabolism	NA	
+NRP1	CD304	VEGFco-R	NA	NA	NA	VEGFco-R.	NA	
