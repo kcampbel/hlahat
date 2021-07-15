@@ -19,23 +19,17 @@ source('../src/munge.R')
 
 ## Patient Summary
 ```{r summary_config}
-manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
-tcga_tpm_quantile_min <- .25
-tcga_tpm_quantile_max <- .75
+tcga_tpm_percentile_min <- .25
+tcga_tpm_percentile_max <- .75
 
 ```
 
 ```{r summary_pttable}
-manifest <- read_yaml(manifest_f)
-summary_pt_dat <- data.frame(
-  'Patient' = manifest$pipeline$patient_info$patient.id,
-  'Sample' = manifest$pipeline$patient_info$sample.id,
-  'PACT ID' = manifest$pipeline$pact_id,
-  'Study' = manifest$pipeline$patient_info$study.id,
-  'Panel' = manifest$pipeline$panel,
-  check.names=FALSE
-)
-summary_pt_dat %>% 
+if(exists('subtype')){
+  pt_dat$Subtype <- subtype
+}
+
+pt_dat %>% 
   knitr::kable('html') %>%
   kable_styling(full_width = F, font_size = 16, position = 'left')
   #kable_styling("striped", full_width = F, font_size = 16, position = 'left')
@@ -44,7 +38,13 @@ summary_pt_dat %>%
 
 ```{r summary_goitable}
 summary_goi_tab <- goi_tab %>%
-  filter(`Percentile TCGA` < tcga_tpm_quantile_min | `Percentile TCGA` > tcga_tpm_quantile_max) 
-dt_quantile_ramp(summary_goi_tab, 'Percentile PACT')
+  filter(`Percentile TCGA` < tcga_tpm_percentile_min | `Percentile TCGA` > tcga_tpm_percentile_max) 
+caption = paste0('Genes of interest with low (<', 
+                 tcga_tpm_percentile_min,
+                 ') or high (>',
+                 tcga_tpm_percentile_max,
+                 ') gene expression relative to TCGA.'
+)
+dt_quantile_ramp(summary_goi_tab, c('Percentile PACT', 'Percentile TCGA'), caption)
 
 ```

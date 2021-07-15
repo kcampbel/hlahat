@@ -1,0 +1,28 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r stage_input, child = 'stage_input.Rmd', eval=TRUE}
+```
+
+```{r subtype, child = 'subtype.Rmd', eval=exists('subtype_trigger'), eval=TRUE}
+```
+
+```{r pca, child = 'pca.Rmd', eval=TRUE}
+```
+
+```{r goi, child = 'goi.Rmd', eval=TRUE}
+```
+
+```{r cellcomp, child = 'cellular_composition.Rmd', eval=TRUE}
+```
+
+```{r pathways, child = 'pathways.Rmd', eval=TRUE}
+```
+
+```{r summary_trigger}
+summary_trigger = TRUE
+```
+

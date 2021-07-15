@@ -25,9 +25,12 @@ boxplot_goi <- function(df){
                     type='box', colors=pal_3grp, width=1200) %>%
       layout(boxmode = "group", xaxis=ax)
 }
+
 ```
 
-## TPM Reporting Table
+## Genes of interest
+
+### Reporting Table
 
 ```{r goi_config}
 cn_f <- '../test_data/PACT056_T_196454/PACT056_T_196454_segments.txt'
@@ -106,7 +109,7 @@ for (i in 1:dim(dat)[1]){
     rs_dat=rbind(rs_dat,rs_row)
 }
 
-names(rs_dat)=c("Gene","Alias","Category","TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
+names(rs_dat)=c("Gene","Alias","Category","bcTPM","log2(bcTPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
 ```
 
 ```{r goi_cnmut}
@@ -123,7 +126,7 @@ ea <- ea_o %>%
   distinct()
 
 # Get gene positions for intersect
-ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37, mirror='uswest')
+ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37, verbose=TRUE)
 ens_canonical <- c(seq(1:22), 'X', 'Y', 'MT')
 genes <- c(goi$gene)
 bm <- getBM(attributes=c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),
@@ -148,7 +151,7 @@ g_m <- findoverlaps_metadata(gRanges, cnRanges) %>%
 ```
 
 ```{r goi_merge_dat}
-cols = c("Gene","Alias","Category", "Mutation", "CNt", "TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
+cols = c("Gene","Alias","Category", "Mutation", "CNt", "bcTPM","log2(bcTPM)","Z-score PACT","Z-score TCGA","Z-score GTEX","Percentile PACT","Percentile TCGA","Percentile GTEX")
 goi_dat <- g_m %>%
   full_join(rs_dat) %>%
   dplyr::select(all_of(cols))
@@ -156,7 +159,8 @@ goi_dat <- g_m %>%
 ```
 
 ```{r goi_DT}
-round1 <- c("TPM","log2(TPM)","Z-score PACT","Z-score TCGA","Z-score GTEX")
+
+round1 <- c("bcTPM","log2(bcTPM)","Z-score PACT","Z-score TCGA","Z-score GTEX")
 round2 <- c("Percentile PACT","Percentile TCGA","Percentile GTEX")
 
 goi_tab <- goi_dat %>%
@@ -166,87 +170,104 @@ goi_tab <- goi_dat %>%
   mutate_at(round1, round, 1) %>%
   mutate_at(round2, round, 2)
 
-colRamp <- colorRamp(c("lightblue","white","red"))
-goi_dtab <- datatable(goi_tab)
-for(column in "Percentile PACT"){
-  x <- na.omit(goi_tab[[column]])
-  brks <- quantile(x, probs = seq(.05, .95, .005))
-  RGB <- colRamp(c(0, (brks-min(x))/(max(x)-min(x))))
-  clrs <- apply(RGB, 1, function(rgb){
-    sprintf("rgb(%s)", toString(round(rgb,0)))
-  })
-  goi_dtab <- goi_dtab %>% 
-    formatStyle(column, backgroundColor = styleInterval(brks, clrs))
-}
+caption = 'Somatic mutations, tumor copy number, and batch-corrected (bcTPM) expression of key genes.'
+dt_quantile_ramp(goi_tab, c('Percentile PACT', 'Percentile TCGA'), caption)
 
-goi_dtab
 ```
 
-## TPM Boxplots {.tabset}
+### Boxplots {.tabset}
 
-### Gene Expression Key Genes
-
-Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
+####  Ag presentation
 
 ```{r goi_bar_munge,  echo=FALSE, warning=FALSE, message=FALSE}
 dat <- df_goi %>% 
   mutate(Source = if_else(specimen_id == sid, sid, as.character(study))) %>%
-  mutate(Source = factor(Source, levels=c(sid, "PACT", "TCGA", "GTEX"))) 
+  mutate(Source = factor(Source, levels=c(sid, "PACT", "TCGA", "GTEX"))) %>%
+  mutate(checkpoint2 = factor(checkpoint2, levels=c('Stimulatory', 'Inhibitory', 'Other')))
+         
 ```
 
-```{r goi_A, echo=FALSE, warning=FALSE, message=FALSE}
-#get a list
+```{r goi_agg_presentation, echo=FALSE, warning=FALSE, message=FALSE}
+##get a list
 df <- dat %>%
-  filter(priority == 'A')
+  filter(role == 'Ag presentation') 
 
 fig <- boxplot_goi(df)
 fig
 ```
 
-### Gene Expression Key Genes2
+####  Receptors
 
-Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
-
-```{r goi_B}
+```{r goi_Receptor}
 df <- dat %>%
-  filter(priority == 'B')
+  filter(role == 'Receptor')
 
 fig <- boxplot_goi(df)
 fig
 ```
 
-### Gene Expression Chemokines
+####  Co-inhibitor
 
-Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
-
-```{r goi_C}
+```{r goi_co-inhibitor}
 df <- dat %>%
-  filter(priority == 'C')
+  filter(role == 'Co-inhibitor')
 
 fig <- boxplot_goi(df)
 fig
 ```
-### Gene Expression Receptors
+####  Co-stimulators
 
-Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
-
-```{r goi_CR}
+```{r goi_Co-stimulator}
 df <- dat %>%
-  filter(priority == 'CR')
+  filter(role == 'Co-stimulator')
 
 fig <- boxplot_goi(df)
 fig
 ```
-### Gene Expression GOI
+####  Chemokines
 
-Gene expression levels were normalized by transcript length, library size, and transcript per million (**TPM**) transcripts. Normalization by length allows comparison between transcripts within a sample and normalization by library size allows comparison between multiple samples.
-
-```{r goi_D}
+```{r goi_Chemokine}
 df <- dat %>%
-  filter(priority == 'D')
+  filter(role == 'Chemokine')
 
 fig <- boxplot_goi(df)
 fig
 ```
 
-## {-}
+####  Chemokine receptors
+
+```{r goi_Chemokine_receptors}
+df <- dat %>%
+  filter(role == 'Chemokine receptors')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+####  Other
+
+```{r goi_other}
+df <- dat %>%
+  filter(role == 'Other')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+### {-}
+
+## Correlation Matrix
+
+Correlations among `r ncol(emat)` `r pt_dat[['TCGA Study Code']]` PACT samples
+
+```{r goi_corrplot, eval=FALSE}
+shortlist <- goi %>%
+  filter(!is.na(priority)) %>%
+  pull(gene) 
+
+dat <- emat[rownames(emat) %in% shortlist, grepl('^PACT', colnames(emat))]
+novar <- apply(dat, 1, var) == 0
+dat <- dat[!novar, ]
+xcor <- cor(t(dat))
+corrplot(xcor, type = 'upper', method = 'square', order='hclust', hclust.method='ward.D2', tl.col='black', tl.cex=0.5)
+```

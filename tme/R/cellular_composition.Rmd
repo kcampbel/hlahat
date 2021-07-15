@@ -28,7 +28,7 @@ xcell_nonlym <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="N
 
 ### Lymphocytes
 
-Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
 
 ```{r cellcomp_lym, echo=FALSE, warning=FALSE, message=FALSE}
 aheatmap(xcell_lym, scale = "row")
@@ -37,7 +37,7 @@ aheatmap(xcell_lym, scale = "row")
 
 ### Myeloid
 
-Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
 
 ```{r cellcomp_nonlym, echo=FALSE, warning=FALSE, message=FALSE}
 aheatmap(xcell_nonlym, scale = "row")
@@ -46,7 +46,7 @@ aheatmap(xcell_nonlym, scale = "row")
 
 ### Stroma/Epithelial
 
-Cellular compoistion was calculated using gene set enrichment analysis using Xcell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
+Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
 
 ```{r cellcomp_nonhem, echo=FALSE, warning=FALSE, message=FALSE}
 aheatmap(xcell_nonhem, scale = "row")

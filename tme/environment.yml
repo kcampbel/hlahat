@@ -1,4 +1,4 @@
-name: bioinfo-tme
+name: tme
 
 channels:
   - bioconda
@@ -7,24 +7,27 @@ channels:
   - nodefaults
 dependencies:
   - bioconductor-biomart
-  - bioconductor-gsva
   - bioconductor-deseq2
   - bioconductor-edger
+  - bioconductor-limma
   - bioconductor-genomicranges
+  - bioconductor-gsva
   - nextflow=>20.10
   - pkg-config=0.29.2
   - python=3.7
   - r-arrow
-  - r-base>=4
-  - r-rcolorbrewer
+  - r-base=4.1
+  - r-corrplot
   - r-devtools
   - r-dt
+  - r-kableextra
   - r-knitr
-  - r-parallel
-  - r-plotly
   - r-markdown
   - r-nmf
+  - r-parallelly
+  - r-plotly
   - r-reshape2
+  - r-rmarkdown
   - r-rmdformats
   - r-rcolorbrewer
   - r-stringr

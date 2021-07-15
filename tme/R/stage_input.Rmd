@@ -15,13 +15,14 @@ source('../src/munge.R')
 ```
 
 ```{r stage_input_config}
+manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
 #sid <- 'PACT107_T_51418MS' # COADREAD no RNAseq
 #sid <- 'PACT291_T_840213-001T' # LUAD no RNAseq in emat
 sid <- 'PACT056_T_196454' # COADREAD
 xena_root <- '/Users/csmith/Documents/References/xena'
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.parquet.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.tsv.gz')
-mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
+bctpm_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/testpc_combat_Lung_hgnc.tsv.gz')
 meta_f <- file.path('../test_data/meta_pact_xena.tsv')
 goi_f <- '../data/pact_goi.tsv'
@@ -31,20 +32,37 @@ hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 
 ```{r stage_input_datain_mat}
 #, cache.lazy = FALSE}
-if(grepl('parquet', mat_f)){
-    emat_o <- read_parquet(mat_f)
+if(grepl('parquet', bctpm_f)){
+    emat_o <- read_parquet(bctpm_f)
 } else {
-    emat_o <- read.delim(mat_f, check.names=FALSE, row.names=1) 
+    emat_o <- read.delim(bctpm_f, check.names=FALSE, row.names=1) 
 }
 emat <- emat_o
 
 if(!any(grepl(sid, colnames(emat)))){
   stop(paste0('ERROR:', sid, 'not found in expression matrix'))
 }
+
 ```
 
-```{r stage_input_datain_meta}
-#mat <- read.delim(mat_f, header=TRUE, check.names=FALSE, row.names=1)
+```{r stage_input_manifest}
+manifest <- read_yaml(manifest_f)
+pt_dat <- data.frame(
+  'Patient' = manifest$pipeline$patient_info$patient.id,
+  'Sample' = manifest$pipeline$patient_info$sample.id,
+  'PACT ID' = manifest$pipeline$pact_id,
+  'Study' = manifest$pipeline$patient_info$study.id,
+  'TCGA Study Code' = manifest$pipeline$patient_info$patient.tumorType,
+  #'Panel' = manifest$pipeline$panel,
+  check.names=FALSE
+)
+
+if(pt_dat$`TCGA Study Code` %in% c('COADREAD')){
+  subtype_trigger = TRUE
+}
+```
+
+```{r stage_input_metadata}
 meta_o <- read_tsv(meta_f) %>%
   janitor::clean_names() 
 meta <- meta_o %>%
@@ -73,7 +91,7 @@ hgnc <- read_tsv(hgnc_f) %>%
 
 ```
 
-```{r stage_input_qc, include=FALSE} 
+```{r stage_emat_qc, include=FALSE} 
 dat <- emat 
 rmax <- apply(dat, 1, max)
 phist <- hist(rmax, breaks=100)
@@ -91,6 +109,8 @@ df_goi <- emat %>%
   rownames_to_column('gene') %>%
   right_join(goi) %>%
   pivot_longer(starts_with(c('GTEX', 'TCGA', 'PACT')), names_to="specimen_id", values_to = "bcTPM") %>%
-  left_join(meta)
+  left_join(meta) %>%
+  mutate(checkpoint = factor(checkpoint, levels=c('Stimulatory', 'Inhibitory', 'Other')))
 
 ```
+

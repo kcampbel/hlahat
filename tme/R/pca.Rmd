@@ -12,8 +12,9 @@ library(tidyr)
 library(plotly)
 ```
 
-## Transcriptome PCA
+## Transcriptome
 
+Patient sample transcriptome-wide gene expression relative to PACT, TCGA and GTEX using top 1000 most highly variable genes for `r pt_dat[['TCGA Study Code']]`
 ```{r pca_calc}
 dat <- emat
 dat_var <- sort(apply(dat, 1, var), decreasing=TRUE)

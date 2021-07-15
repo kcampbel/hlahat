@@ -23,7 +23,8 @@ if (!any(rownames(installed.packages()) == "BiocManager")){
 for(ii in pkgs)
 {
 if (!any(rownames(installed.packages()) == ii)){
-	BiocManager::install(ii)
+	BiocManager::install(ii, update=FALSE)
     }
 }
 
+devtools::install_github("Sage-Bionetworks/CMSclassifier")

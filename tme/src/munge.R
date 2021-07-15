@@ -42,9 +42,9 @@ symbol_check <- function(query, target, ref){
 	    }
 	}
         if(length(hit) != 1){
-          cat(paste('WARNING:', gene, 'matches:', paste(hit, collapse=', '), '\n'))
+          warning(paste('WARNING:', gene, 'matches:', paste(hit, collapse=', '), '\n'))
         } else if(is.na(hit)){
-          cat(paste('WARNING:', gene, 'gene not found in either ref or target', '\n'))
+          warning(paste('WARNING:', gene, 'gene not found in either ref or target', '\n'))
         } else {
           #cat(paste(gene, '->', hit, '\n'))
           query[which(query == gene)] <- hit

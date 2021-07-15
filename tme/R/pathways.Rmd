@@ -13,13 +13,30 @@ library(tidyr)
 library(GSVA)
 library(cluster)
 library(parallel)
+library(NMF)
+
+source('../src/munge.R')
+source('../src/visualization.R')
+```
+
+```{r chunkopts, echo=FALSE, results='hise', include=FALSE, eval=FALSE}
+opts_chunk$set(echo=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+	             cache=TRUE,
+	             #cache=FALSE,
+               cache_rebuild=TRUE
+)
 ```
 
 ## Pathway Analysis
-Gene set enrichment for key pathways
+Gene set enrichment for key pathways using [single-sample GSEA]("https://www.genepattern.org/modules/docs/ssGSEAProjection/4")
 ```{r pathway_munge}
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
-geneset_f <- '../data/GeneSets.txt'
+geneset_f <- '../data/genesets.txt'
 hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 
 # hgnc
@@ -53,6 +70,19 @@ enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, p
 ```
 
 ```{r pathway_heatmap}
-aheatmap(enrich, scale = "row")
+annCol <- meta %>%
+  filter(specimen_id %in% colnames(emat_pact)) %>%
+  mutate(Sample = factor(if_else(specimen_id == sid, sid, 'Other'))) %>%
+  column_to_rownames('specimen_id') %>%
+  dplyr::select(Sample)
+
+if(exists('subtype_df')){
+  df <- subtype_df[rownames(annCol),] %>%
+    dplyr::select(SSPmod)
+  annCol <- rbind(annCol, df)
+}
+
+aheatmap(enrich, scale = "row", annCol=annCol)
 
 ```
+
