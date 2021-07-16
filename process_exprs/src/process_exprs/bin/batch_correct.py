@@ -12,9 +12,8 @@ import yaml
 import argparse
 import logging
 from datetime import datetime
-from lib.combat import combat
-from lib.process import update_exprs_log
-from lib.fileio import read_exprs, write_exprs, get_extension
+from process_exprs.combat import combat
+from process_exprs.fileio import read_exprs, write_exprs, get_extension
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -180,7 +179,13 @@ def main():
     # Log file
     if args.exprs_log:
         exprs_log = pd.read_csv(args.exprs_log, sep='\t')
-        exprs_log_new = update_exprs_log('combat', 'method', exprs_log, args.outfile, timestamp)
+        row = {
+            'date': timestamp,
+            'method': 'combat',
+            'exprs_path': args.outfile
+        }
+        tmp = pd.DataFrame([row])
+        exprs_log_new = pd.concat([exprs_log, tmp], ignore_index=True)
         fp = f'{dn}/{os.path.basename(args.exprs_log)}'
         logging.info(f'Writing {fp}')
         exprs_log_new.to_csv(fp, sep='\t', index=False)

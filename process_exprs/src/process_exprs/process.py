@@ -49,25 +49,3 @@ def manifest_to_meta(manifest:dict):
         'tcga_study_code': pi['patient.tumorType'],
     }
     return(row)
-
-def update_exprs_log(value:str, col_name:str, exprs_log, exprs_path:str, timestamp:str):
-    """ Update exprs log
-        Args:
-            value(str): new entry value (e.g. PACT_T_XXXX)
-            col_name(str): column name for value
-            exprs_log(pandas): exprs log df
-            exprs_path(str): Path to updated exprs
-            timestamp(str): timestamp
-
-        Returns:
-            pandas 
-    """ 
-    row = {
-        'date': timestamp,
-        col_name: value,
-        'exprs_path': exprs_path,
-    }
-    tmp = pd.DataFrame([row])
-    out = pd.concat([exprs_log, tmp], ignore_index=True)
-    return(out)
-    

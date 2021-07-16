@@ -8,7 +8,7 @@ import argparse
 import logging
 import time
 import re
-from lib.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
+from process_exprs.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)

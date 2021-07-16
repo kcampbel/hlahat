@@ -9,7 +9,7 @@ import sys
 import pandas as pd 
 import argparse
 import logging
-from process import counts2mat
+from process_exprs.process import counts2mat
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)

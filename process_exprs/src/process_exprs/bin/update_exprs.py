@@ -11,8 +11,8 @@ import logging
 from datetime import datetime
 import yaml
 import re
-from lib.process import counts2mat, manifest_to_meta, update_exprs_log
-from lib.fileio import read_exprs, write_exprs, get_extension, file_time
+from process_exprs.process import counts2mat, manifest_to_meta
+from process_exprs.fileio import read_exprs, write_exprs, get_extension, file_time
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -50,7 +50,10 @@ def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False):
     primary_site = tcga_gtex[['tcga_study_code', 'primary_site']]\
                     [tcga_gtex.tcga_study_code == row['tcga_study_code']]\
                     .drop_duplicates().primary_site.unique()[0]
-    row.update({'primary_site': primary_site})
+    row.update({
+        'primary_site': primary_site,
+        'study': 'PACT'
+        })
     tmp = pd.DataFrame([row]).set_index('specimen_id')
     out = pd.concat([meta, tmp])
     return(out)
@@ -138,7 +141,13 @@ def main():
         # Log
         if args.exprs_log:
             exprs_log = pd.read_csv(args.exprs_log, sep='\t')
-            exprs_log_new = update_exprs_log(specimen_id, 'specimen_id', exprs_log, fp, timestamp)
+            row = {
+                'date': timestamp,
+                'specimen_id': specimen_id,
+                'exprs_path': fp
+            }
+            tmp = pd.DataFrame([row])
+            exprs_log_new = pd.concat([exprs_log, tmp], ignore_index=True)
             prefix, ext = get_extension(args.exprs_log)
             fp = f'{args.outpath}/{os.path.basename(args.exprs_log)}'
             logging.info(f'Writing {fp}')
