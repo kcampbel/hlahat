@@ -1,0 +1,19 @@
+name: immune_escape
+channels:
+  - r
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bcftools=1.9=ha228f0b_4
+  - bioconductor-copynumber=1.26.0=r36_0
+  - biopython=1.78
+  - nextflow>=21.0
+  - numpy
+  - pandas
+  - picard
+  - pyranges=0.0.100=pyh5e36f6f_0
+  - r-base=3.6.1=haffb61f_2
+  - r-optparse
+  - r-sequenza=3.0.0=r36h6115d3f_1
+  - sequenza-utils=3.0.0=py37h21043fe_3
