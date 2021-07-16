@@ -5,8 +5,8 @@ import pandas as pd
 import argparse
 import subprocess as sb
 import logging
-from hlacn.lib.command import bcftools_cmd, fitSequenza_cmd
-from hlacn.lib.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
+from hlacn.command import bcftools_cmd, fitSequenza_cmd
+from hlacn.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(

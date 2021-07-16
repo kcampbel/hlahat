@@ -1,4 +1,4 @@
-name: immune_escape
+name: hlacn
 channels:
   - r
   - conda-forge
@@ -11,7 +11,6 @@ dependencies:
   - nextflow>=21.0
   - numpy
   - pandas
-  - picard
   - pyranges=0.0.100=pyh5e36f6f_0
   - r-base=3.6.1=haffb61f_2
   - r-optparse
