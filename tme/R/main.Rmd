@@ -12,6 +12,8 @@ css: ../css/mycss2.css
 always_allow_html: yes
 editor_options: 
   chunk_output_type: console
+params:
+  config_yml: "NAMESPACE"
 ---
 
 ```{r main_libs, echo=FALSE, results='hide', include=FALSE}
@@ -41,8 +43,18 @@ htmltools::img(src = knitr::image_uri(file.path("../images", "pact2.png")),
                style = 'position:absolute; top:0; right:0; padding:10px;')
 ```
 
-```{r summary, child='summary.Rmd', eval=exists('summary_trigger'), cache=FALSE}
+```{r main_parameters}
+config <- read_yaml(params$config_yml)
+for(ii in seq_along(config)){
+  message(paste0(names(config)[[ii]], ':', config[[ii]]))
+  assign(names(config)[ii], config[[ii]])
+}
+
+```
+
+```{r summary, child='summary.Rmd', eval=exists('summary_trigger')}
 ```
 
 ```{r child_reports, child='child_reports.Rmd'}
 ```
+TME report version v0.1

@@ -15,10 +15,11 @@ library(yaml)
 library(kableExtra)
 
 source('../src/munge.R')
+source('../src/visualization.R')
 ```
 
 ## Patient Summary
-```{r summary_config}
+```{r summary_config, eval=FALSE}
 tcga_tpm_percentile_min <- .25
 tcga_tpm_percentile_max <- .75
 
@@ -32,14 +33,21 @@ if(exists('subtype')){
 pt_dat %>% 
   knitr::kable('html') %>%
   kable_styling(full_width = F, font_size = 16, position = 'left')
-  #kable_styling("striped", full_width = F, font_size = 16, position = 'left')
 
 ```
 
 ```{r summary_goitable}
+priority_goi <- goi %>%
+  filter(!is.na(priority)) %>%
+  pull(gene)
+
 summary_goi_tab <- goi_tab %>%
-  filter(`Percentile TCGA` < tcga_tpm_percentile_min | `Percentile TCGA` > tcga_tpm_percentile_max) 
-caption = paste0('Genes of interest with low (<', 
+  filter(`Percentile TCGA` < tcga_tpm_percentile_min | `Percentile TCGA` > tcga_tpm_percentile_max,
+         Gene %in% priority_goi
+  ) %>%
+  arrange(desc(`Percentile TCGA`))
+
+caption = paste0('Selected genes of interest with low (<', 
                  tcga_tpm_percentile_min,
                  ') or high (>',
                  tcga_tpm_percentile_max,

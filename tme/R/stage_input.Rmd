@@ -11,14 +11,14 @@ library(janitor)
 library(readr)
 library(tibble)
 library(tidyr)
+
+library(yaml)
 source('../src/munge.R')
 ```
 
-```{r stage_input_config}
+
+```{r stage_input_config, eval=FALSE}
 manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
-#sid <- 'PACT107_T_51418MS' # COADREAD no RNAseq
-#sid <- 'PACT291_T_840213-001T' # LUAD no RNAseq in emat
-sid <- 'PACT056_T_196454' # COADREAD
 xena_root <- '/Users/csmith/Documents/References/xena'
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.parquet.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.tsv.gz')
@@ -30,20 +30,6 @@ hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 
 ```
 
-```{r stage_input_datain_mat}
-#, cache.lazy = FALSE}
-if(grepl('parquet', bctpm_f)){
-    emat_o <- read_parquet(bctpm_f)
-} else {
-    emat_o <- read.delim(bctpm_f, check.names=FALSE, row.names=1) 
-}
-emat <- emat_o
-
-if(!any(grepl(sid, colnames(emat)))){
-  stop(paste0('ERROR:', sid, 'not found in expression matrix'))
-}
-
-```
 
 ```{r stage_input_manifest}
 manifest <- read_yaml(manifest_f)
@@ -60,6 +46,27 @@ pt_dat <- data.frame(
 if(pt_dat$`TCGA Study Code` %in% c('COADREAD')){
   subtype_trigger = TRUE
 }
+sid <- pt_dat[['PACT ID']]
+report_title <- paste0("TME Report: ", sid)
+```
+
+---
+title: "`r report_title`"
+---
+
+```{r stage_input_datain_mat}
+#, cache.lazy = FALSE}
+if(grepl('parquet', bctpm_f)){
+    emat_o <- read_parquet(bctpm_f)
+} else {
+    emat_o <- read.delim(bctpm_f, check.names=FALSE, row.names=1) 
+}
+emat <- emat_o
+
+if(!any(grepl(sid, colnames(emat)))){
+  stop(paste0('ERROR:', sid, 'not found in expression matrix'))
+}
+
 ```
 
 ```{r stage_input_metadata}
@@ -75,20 +82,6 @@ goi <- read_tsv(goi_f) %>%
   mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
   #dplyr::select(-category) %>%
   distinct() 
-
-#activation <- data.frame(gene=c('PRF1', 'CD3E', 'GZMB', 'IL2', 'IFNG'))#, 'CXCL9', 'CXCL10', 'CXCL13'))
-#activation$cat2 <- 'Activation'
-#inhibition <- data.frame(gene=c('CD274', 'TIGIT', 'LAG3', 'PDCD1', 'TGFB1'))
-#inhibition$cat2 <- 'Inhibition'
-#igenes <- rbind(activation, inhibition)
-##igenes <- c('CD274', 'CD3E', 'GZMB', 'IFNG', 'IL2', 'LAG3', 'PDCD1', 'PRF1', 'TGFB1', 'TIGIT')
-#goi_i <- goi %>% 
-# # filter(gene %in% igenes) 
-#  right_join(igenes)
-
-hgnc <- read_tsv(hgnc_f) %>%
-  janitor::clean_names()
-
 ```
 
 ```{r stage_emat_qc, include=FALSE} 

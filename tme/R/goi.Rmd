@@ -9,22 +9,14 @@ library(dplyr)
 library(knitr)
 library(tibble)
 library(tidyr)
+
 library(stringr)
 library(plotly)
 library(DT)
+library(corrplot)
 
 source('../src/munge.R')
 source('../src/visualization.R')
-
-pal_3grp <- c("red","#113C63","grey50","grey81")
-
-boxplot_goi <- function(df){
-    ax <- list(title = '')
-    fig <- plot_ly(df,
-                    x = ~gene, y = ~bcTPM, color = ~Source, 
-                    type='box', colors=pal_3grp, width=1200) %>%
-      layout(boxmode = "group", xaxis=ax)
-}
 
 ```
 
@@ -32,7 +24,7 @@ boxplot_goi <- function(df){
 
 ### Reporting Table
 
-```{r goi_config}
+```{r goi_config, eval=FALSE}
 cn_f <- '../test_data/PACT056_T_196454/PACT056_T_196454_segments.txt'
 ea_f <- '../test_data/PACT056_T_196454/PACT056_T_196454_baseline_oncotator_results_Annotated.tsv'
 ```
@@ -44,17 +36,8 @@ pact <- dat[, grep('^PACT', names(dat))]
 pact <- pact[, names(pact)!=sid]
 tcga <- dat[, grep('^TCGA', names(dat))]
 gtex <- dat[, grep('^GTEX', names(dat))]
-#my_sam=dat[, grep(sam_id, names(dat))]
 
-#PUT YOUR sid HERE
 esample=dat[,  grep(sid, names(dat))]
-
-#left join data 
-#gene_info=as.data.frame(row.names(exp_data2))
-#names(gene_info)=c("gene")
-#gene_info2=left_join(gene_info,report,by=c("gene"="Gene_Name"))
-#drop columns
-#gene_info3=gene_info2[,!(names(gene_info2) %in% c("TPM","Priortity"))]
 
 ```
 
@@ -78,10 +61,6 @@ for (i in 1:dim(dat)[1]){
     zt=zscore(t2)
     zg=zscore(g2)
     
-    # Get sample zscor and percentiles
-    #zps=sprintf("%1.2f",tail(zp, n=1))
-    #zts=sprintf("%1.2f",tail(zt, n=1))
-    #zgs=sprintf("%1.2f",tail(zg, n=1))
     zps=tail(zp, n=1)
     zts=tail(zt, n=1)
     zgs=tail(zg, n=1)
@@ -102,8 +81,6 @@ for (i in 1:dim(dat)[1]){
     
     my_row=c()
     my_tpm=2^s2
-    #my_tpm=sprintf("%1.2f",(2^s2))
-    #s2=sprintf("%1.2f",s2)
    
     rs_row=cbind(gene_info,my_tpm,s2,zps,zts,zgs,zpp,ztp,zgp)
     rs_dat=rbind(rs_dat,rs_row)
@@ -117,7 +94,6 @@ cn_o <- read_tsv(cn_f)
 cn <- cn_o
 
 ea_o <- read_tsv(ea_f)
-#ea_cols = c('Hugo_Symbol', 'Chromosome', 'Start_position', 'End_position', 'Protein_Change')
 ea_cols = c('Hugo_Symbol', 'Protein_Change')
 ea <- ea_o %>%
   mutate(Chromosome=paste0('chr',Chromosome)) %>%
@@ -126,7 +102,7 @@ ea <- ea_o %>%
   distinct()
 
 # Get gene positions for intersect
-ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37, verbose=TRUE)
+ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37)#, verbose=TRUE)
 ens_canonical <- c(seq(1:22), 'X', 'Y', 'MT')
 genes <- c(goi$gene)
 bm <- getBM(attributes=c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),
@@ -155,6 +131,7 @@ cols = c("Gene","Alias","Category", "Mutation", "CNt", "bcTPM","log2(bcTPM)","Z-
 goi_dat <- g_m %>%
   full_join(rs_dat) %>%
   dplyr::select(all_of(cols))
+  
 
 ```
 
@@ -190,7 +167,7 @@ dat <- df_goi %>%
 ```{r goi_agg_presentation, echo=FALSE, warning=FALSE, message=FALSE}
 ##get a list
 df <- dat %>%
-  filter(role == 'Ag presentation') 
+  filter(plot_cat == 'Ag presentation') 
 
 fig <- boxplot_goi(df)
 fig
@@ -200,7 +177,7 @@ fig
 
 ```{r goi_Receptor}
 df <- dat %>%
-  filter(role == 'Receptor')
+  filter(plot_cat == 'Receptor')
 
 fig <- boxplot_goi(df)
 fig
@@ -210,16 +187,17 @@ fig
 
 ```{r goi_co-inhibitor}
 df <- dat %>%
-  filter(role == 'Co-inhibitor')
+  filter(plot_cat == 'Coinhibitor')
 
 fig <- boxplot_goi(df)
 fig
 ```
-####  Co-stimulators
+
+####  Co-stimulator
 
 ```{r goi_Co-stimulator}
 df <- dat %>%
-  filter(role == 'Co-stimulator')
+  filter(plot_cat == 'Costimulator')
 
 fig <- boxplot_goi(df)
 fig
@@ -228,7 +206,7 @@ fig
 
 ```{r goi_Chemokine}
 df <- dat %>%
-  filter(role == 'Chemokine')
+  filter(plot_cat == 'Chemokine')
 
 fig <- boxplot_goi(df)
 fig
@@ -238,7 +216,28 @@ fig
 
 ```{r goi_Chemokine_receptors}
 df <- dat %>%
-  filter(role == 'Chemokine receptors')
+  filter(plot_cat == 'ChemokineR')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+
+#### IFNG
+
+```{r goi_ifng}
+df <- dat %>%
+  filter(plot_cat == 'IFNG')
+
+fig <- boxplot_goi(df)
+fig
+```
+
+#### TGFB
+
+```{r goi_tgfb}
+df <- dat %>%
+  filter(plot_cat == 'TGFB')
 
 fig <- boxplot_goi(df)
 fig
@@ -248,7 +247,7 @@ fig
 
 ```{r goi_other}
 df <- dat %>%
-  filter(role == 'Other')
+  filter(plot_cat == 'Other')
 
 fig <- boxplot_goi(df)
 fig
@@ -256,18 +255,19 @@ fig
 
 ### {-}
 
-## Correlation Matrix
+### Correlation Matrix
 
-Correlations among `r ncol(emat)` `r pt_dat[['TCGA Study Code']]` PACT samples
+Correlations among key genes for `r pt_dat[['TCGA Study Code']]` PACT samples (n=`r sum(grepl('^PACT', colnames(emat)))`).
 
-```{r goi_corrplot, eval=FALSE}
+```{r goi_corrplot}
 shortlist <- goi %>%
-  filter(!is.na(priority)) %>%
+  filter(!is.na(priority),
+         !grepl('Chemokine', category)) %>%
   pull(gene) 
 
 dat <- emat[rownames(emat) %in% shortlist, grepl('^PACT', colnames(emat))]
 novar <- apply(dat, 1, var) == 0
 dat <- dat[!novar, ]
 xcor <- cor(t(dat))
-corrplot(xcor, type = 'upper', method = 'square', order='hclust', hclust.method='ward.D2', tl.col='black', tl.cex=0.5)
+corrplot(xcor, type = 'upper', method = 'square', order='hclust', hclust.method='ward.D2', tl.col='black', tl.cex=0.75)
 ```

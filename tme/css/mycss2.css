@@ -26,8 +26,8 @@ h1,h2,h3,h4,h5,h6,legend{
 }
 
 #content {
-    max-width: 1500px !important;
-    margin-left: 300px !important;
+    max-width: 2000px !important;
+    margin-left: 200px !important;
 }
 
 a:hover{
@@ -41,6 +41,7 @@ a:visited{
 #sidebar {
     color: #D9AB16;
     background: #113458;
+    width: 200px
 }
 
 #sidebar h2 {
@@ -56,3 +57,5 @@ a:visited{
     background-color: #3F4548;
     color: #FFFFFF;
 }
+
+

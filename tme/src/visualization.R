@@ -28,7 +28,7 @@ link_cbioportal <- function(gene){
     return(text_spec(gene, link = link, tooltip = 'Open gene in cBioPortal'))
 }
 
-dt_quantile_ramp <- function(df, cols, gene_name_col = 'Gene', caption="None"){
+dt_quantile_ramp <- function(df, cols, caption="None",  gene_name_col = 'Gene'){
     df$Gene <- sapply(df[[gene_name_col]], link_gene_string)
     if(caption == "None"){
         dt <- datatable(df,
@@ -63,3 +63,32 @@ dt_quantile_ramp <- function(df, cols, gene_name_col = 'Gene', caption="None"){
     }
     return(dt)
 }
+
+boxplot_goi <- function(df){
+    pal_3grp <- c("red","#113C63","grey50","grey81")
+    ax <- list(title = '')
+    fig <- plot_ly(df,
+                    x = ~gene, y = ~bcTPM, color = ~Source, 
+                    type='box', colors=pal_3grp, width=1400) %>%
+      layout(boxmode = "group", xaxis=ax)
+}
+
+heatmap_annot <- function(sid, emat, subtype_df='None'){
+    # Sample annot
+    sids <- colnames(emat)
+    annCol <- data.frame(
+        Sample = factor(if_else(sids == sid, sid, 'Other')),
+        row.names=colnames(emat)
+    )
+
+    # Subtype annot
+    if(subtype_df != 'None'){
+        df <- subtype_df[rownames(annCol),] %>%
+            dplyr::select(Subtype) 
+        annCol <- merge(annCol, df, by="row.names",all.x=TRUE) %>%
+            column_to_rownames('Row.names')
+        annCol <- annCol[colnames(emat), ]
+    }
+    return(annCol)
+}
+
