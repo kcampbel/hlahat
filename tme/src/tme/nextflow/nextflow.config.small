@@ -1,0 +1,6 @@
+params {
+    input = null
+    outdir = "output"
+    publish_dir_mode = "symlink"
+}
+includeConfig './conf/modules.config'

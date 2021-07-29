@@ -13,20 +13,23 @@ library(tibble)
 library(tidyr)
 
 library(yaml)
-source('../src/munge.R')
+library(here)
+
+source(here('munge.R'))
+
 ```
 
 
 ```{r stage_input_config, eval=FALSE}
-manifest_f <- '../test_data/PACT056_T_196454/manifest.yml'
+manifest_f <- 'test_data/PACT056_T_196454/manifest.yml'
 xena_root <- '/Users/csmith/Documents/References/xena'
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.parquet.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/exprs_combat_ColonRectum_hgnc.tsv.gz')
 bctpm_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz')
 #mat_f <- file.path(xena_root, 'subsets/PactTcgaTargetGtex_rsem_gene_tpm/testpc_combat_Lung_hgnc.tsv.gz')
-meta_f <- file.path('../test_data/meta_pact_xena.tsv')
-goi_f <- '../data/pact_goi.tsv'
-hgnc_f <- '../data/hgnc_biomart.tsv.gz'
+meta_f <- file.path('test_data/meta_pact_xena.tsv')
+goi_f <- 'src/tme/data/pact_goi.tsv'
+hgnc_f <- 'src/tme/data/hgnc_biomart.tsv.gz'
 
 ```
 
@@ -34,9 +37,9 @@ hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 ```{r stage_input_manifest}
 manifest <- read_yaml(manifest_f)
 pt_dat <- data.frame(
+  'PACT ID' = manifest$pipeline$pact_id,
   'Patient' = manifest$pipeline$patient_info$patient.id,
   'Sample' = manifest$pipeline$patient_info$sample.id,
-  'PACT ID' = manifest$pipeline$pact_id,
   'Study' = manifest$pipeline$patient_info$study.id,
   'TCGA Study Code' = manifest$pipeline$patient_info$patient.tumorType,
   #'Panel' = manifest$pipeline$panel,
@@ -70,18 +73,30 @@ if(!any(grepl(sid, colnames(emat)))){
 ```
 
 ```{r stage_input_metadata}
-meta_o <- read_tsv(meta_f) %>%
-  janitor::clean_names() 
+meta_o <- read.delim(meta_f) %>%
+  janitor::clean_names()
 meta <- meta_o %>%
   filter(specimen_id %in% colnames(emat)) %>%
   unite('study_tumor_normal', study, tumor_normal, remove=FALSE) %>%
   mutate(study_tumor_normal = factor(study_tumor_normal)) %>%
   mutate(study = factor(study, levels=c('GTEX', 'PACT', 'TCGA')))
 
-goi <- read_tsv(goi_f) %>%
+goi_o <- read.delim(goi_f) %>%
   mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
   #dplyr::select(-category) %>%
   distinct() 
+
+hotspots <- read.delim(hotspots_f) 
+hotspots_goi <- hotspots %>%
+  filter(!hgnc_symbol %in% goi_o$gene) %>%
+  dplyr::select(gene=hgnc_symbol) %>%
+  left_join(hgnc %>% dplyr::select(gene=approved_symbol, alias=alias_symbol)) %>%
+  distinct()
+hotspots_goi <- hotspots_goi[!duplicated(hotspots_goi$gene),]
+hotspots_goi$category <- 'Hotspot'
+goi <- full_join(goi_o, hotspots_goi)
+
+
 ```
 
 ```{r stage_emat_qc, include=FALSE} 
@@ -96,7 +111,6 @@ abline(v=thresh, col='red')
 
 # Subset matrices
 emat <- dat[keep, ] 
-emat_goi <- emat[rownames(emat) %in% goi$gene, ]
 
 df_goi <- emat %>% 
   rownames_to_column('gene') %>%

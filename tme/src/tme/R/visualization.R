@@ -6,8 +6,12 @@ dt_opts <- list(
     #fixedColumns = list(leftColumns = 3), scrollX = TRUE# FixedHeader
     #deferRender = TRUE, scrollY = 200, scroller = TRUE # Scroller
 )
+dt_caption <- function(caption){
+    htmltools::tags$caption(caption, style="font-size:16px")
+}
 
-link_gene_string <- function(String, source = link_cbioportal, gois = NULL, collapser = ', '){
+
+link_gene_string <- function(String, source = link_gepia, gois = NULL, collapser = ', '){
     ### Add html links to gene names 
     genes <- strsplit(String,'[ ]?,[ ]?')[[1]]
     if(!is.null(gois)){
@@ -28,8 +32,16 @@ link_cbioportal <- function(gene){
     return(text_spec(gene, link = link, tooltip = 'Open gene in cBioPortal'))
 }
 
-dt_quantile_ramp <- function(df, cols, caption="None",  gene_name_col = 'Gene'){
+link_gepia <- function(gene){
+    ### Helper function for link_gene_string
+    require(kableExtra)
+    link <- paste0('http://gepia.cancer-pku.cn/detail.php?gene=', gene)
+    return(text_spec(gene, link = link, tooltip = 'Open gene in GEPIA'))
+}
+
+dt_quantile_ramp <- function(df, cols, caption="None",  gene_name_col = 'Gene', pageLength = 10){
     df$Gene <- sapply(df[[gene_name_col]], link_gene_string)
+    dt_opts$pageLength <- pageLength
     if(caption == "None"){
         dt <- datatable(df,
                         extensions = dt_ext,
@@ -38,10 +50,7 @@ dt_quantile_ramp <- function(df, cols, caption="None",  gene_name_col = 'Gene'){
                         escape = FALSE
                         )
     } else {
-        title <- htmltools::tags$caption(
-          caption,
-          style="font-size:16px"#; font-weight:bold"
-        )
+        title <- dt_caption(caption)
         dt <- datatable(df, 
                         caption=title,
                         extensions = dt_ext,

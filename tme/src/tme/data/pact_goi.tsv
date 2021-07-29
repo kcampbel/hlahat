@@ -1,6 +1,6 @@
 gene	alias	category	plot_cat	priority	role	checkpoint	category_orig	priority_orig	notes	checkpoint2	category3	role_orig
 B2M	B2M	Ag presentation	Ag presentation	A	Ag presentation	Other	Ag presentation	A		Other	Ag presentation	Ag presentation
-CALR	CALR	Ag presentation	Ag presentation	B	Ag presentation	Other	Ag presentation	B		Other	Ag presentation	Ag presentation
+CALR	calreticulin	Ag presentation	Ag presentation	B	Ag presentation	Other	Ag presentation	B		Other	Ag presentation	Ag presentation
 HLA-A	HLA-A	Ag presentation	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA		Other	Ag presentation	Ag presentation
 HLA-B	HLA-B	Ag presentation	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA		Other	Ag presentation	Ag presentation
 HLA-C	HLA-C	Ag presentation	Ag presentation	NA	Ag presentation	Other	Ag presentation	NA		Other	Ag presentation	Ag presentation
@@ -10,7 +10,6 @@ TAP2	TAP2	Ag presentation	Ag presentation	A	Ag presentation	Other	Ag presentatio
 TAPBP	tapasin	Ag presentation	Ag presentation	D	Ag presentation	Other						Ag presentation
 PDIA3	ERp57	Ag presentation	Ag presentation	D	Ag presentation	Other						Ag presentation
 CANX	calnexin	Ag presentation	Ag presentation	D	Ag presentation	Other						Ag presentation
-CALR	calreticulin	Ag presentation	Ag presentation	D	Ag presentation	Other						Ag presentation
 ERAP1	ARTS-1	Ag presentation	Ag presentation	B	Ag presentation	Other	PeptidetrimminginER	B		NA	Ag presentation	Ag presentation
 ERAP2	LRAP	Ag presentation	Ag presentation	B	Ag presentation	Other	PeptidetrimminginER	NA		NA	Ag presentation	Ag presentation
 CCL11	Eotaxin	Chemokine	Chemokine	C	Chemokine	Other	Chemokine	C		NA	Chemokine	Chemokine

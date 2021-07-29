@@ -13,9 +13,10 @@ library(tidyr)
 
 library(yaml)
 library(kableExtra)
+library(here)
 
-source('../src/munge.R')
-source('../src/visualization.R')
+source(here('munge.R'))
+source(here('visualization.R'))
 ```
 
 ## Patient Summary
@@ -26,11 +27,21 @@ tcga_tpm_percentile_max <- .75
 ```
 
 ```{r summary_pttable}
+pt_tab <- pt_dat
+muts <- goi_tab %>%
+  filter(!is.na(Mutation),
+         Gene %in% hotspots$hgnc_symbol) %>%
+  
+  pull(Gene) %>%
+  sort()
+pt_tab$`Hotspots (SNV)` <- paste(muts, collapse=', ')
+
 if(exists('subtype')){
-  pt_dat$Subtype <- subtype
+  pt_tab$Subtype <- subtype
 }
 
-pt_dat %>% 
+pt_tab %>% 
+  t() %>%
   knitr::kable('html') %>%
   kable_styling(full_width = F, font_size = 16, position = 'left')
 
@@ -42,6 +53,7 @@ priority_goi <- goi %>%
   pull(gene)
 
 summary_goi_tab <- goi_tab %>%
+  dplyr::select(Gene, Alias, Category, Mutation, CNt, `Percentile PACT`, `Percentile TCGA`, `Percentile GTEX`) %>%
   filter(`Percentile TCGA` < tcga_tpm_percentile_min | `Percentile TCGA` > tcga_tpm_percentile_max,
          Gene %in% priority_goi
   ) %>%
@@ -53,6 +65,6 @@ caption = paste0('Selected genes of interest with low (<',
                  tcga_tpm_percentile_max,
                  ') gene expression relative to TCGA.'
 )
-dt_quantile_ramp(summary_goi_tab, c('Percentile PACT', 'Percentile TCGA'), caption)
+dt_quantile_ramp(summary_goi_tab, c('Percentile PACT', 'Percentile TCGA'), caption, pageLength=999)
 
 ```

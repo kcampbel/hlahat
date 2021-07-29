@@ -15,7 +15,7 @@ library(NMF)
 ```
 
 ```{r cellcomp_config, eval=FALSE}
-xcell_celltypes <- '../data/celltypes.txt'
+xcell_celltypes <- config$xcell_celltypes_f
 
 ```
 
@@ -23,7 +23,7 @@ xcell_celltypes <- '../data/celltypes.txt'
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
 
 xcell <- xCellAnalysis(as.matrix(emat_pact))
-xcell_t  <-  read.table(xcell_celltypes, header=TRUE, sep="\t")
+xcell_t  <-  read.delim(xcell_celltypes_f)
 xcell_lym <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Lymphocytes"],]
 xcell_nonhem <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Non-Hematopoietic"],]
 xcell_nonlym <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Non-lymphocytes"],]
@@ -31,10 +31,9 @@ xcell_nonlym <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="N
 
 ## Cellular Composition {.tabset .tabset-fade}
 
-### Lymphocytes
-
 Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
 
+### Lymphocytes
 ```{r cellcomp_lym, fig.width=16, fig.height=8}
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, xcell_lym, subtype_df)
@@ -48,9 +47,6 @@ aheatmap(xcell_lym, scale = "row", annCol=annCol)
 ```
 
 ### Myeloid
-
-Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
-
 ```{r cellcomp_nonlym, fig.width=16, fig.height=8}
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, xcell_nonlym, subtype_df)
@@ -63,9 +59,6 @@ aheatmap(xcell_nonlym, scale = "row",  annCol=annCol)
 ```
 
 ### Stroma/Epithelial
-
-Cellular composition was calculated using gene set enrichment analysis with X-cell [(Aran et al. Genome Biology 2017)](https://link.springer.com/epdf/10.1186/s13059-017-1349-1?author_access_token=DVtns3PR3raQv61Z6RD4Ym_BpE1tBhCbnbw3BuzI2RO7SD-w75iAhrQ7gjSGzw_zJO6jHEpDqZzy8CsttNZVysUprXQi0WGX-FRCguKfv2d96DcweRBG2ni-01x6T6bpU3-cfZ5nkfzCQeNeg-mMUQ%3D%3D)
-
 ```{r cellcomp_nonhem, fig.width=16, fig.height=8}
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, xcell_nonhem, subtype_df)
@@ -77,4 +70,28 @@ aheatmap(xcell_nonhem, scale = "row", annCol=annCol)
 
 ```
 
-##
+### Cell types
+```{r cellcomp_celltypes}
+xcell_t %>%
+  dplyr::select(`Full.name`, `Cell.types`, Group, Subgroup) %>%
+datatable(
+        extensions = dt_ext,
+        options = dt_opts,
+        rownames=FALSE,
+        escape = FALSE
+        )
+
+```
+
+### Data
+```{r cellcomp_data}
+xcell %>%
+datatable(
+        extensions = dt_ext,
+        options = dt_opts,
+        rownames=TRUE,
+        escape = FALSE
+        )
+```
+
+## {-}

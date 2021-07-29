@@ -14,7 +14,7 @@ library(plotly)
 
 ## Transcriptome
 
-Transcriptome-wide gene expression of `r sid`, PACT, TCGA and GTEX using the top 1000 most highly variable genes.
+Transcriptome-wide gene expression of `r sid`, PACT, TCGA and GTEX using the top 1000 most highly variable genes. An abnormal gene expression profile is indicated when the sample is distant from the PACT and TCGA tumor samples. 
 ```{r pca_calc}
 dat <- emat
 dat_var <- sort(apply(dat, 1, var), decreasing=TRUE)
