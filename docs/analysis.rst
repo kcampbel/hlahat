@@ -406,14 +406,14 @@ Allelic imbalance is quantified using the following formula: **LD = log2(A) - lo
 
 The following command can be used (in docker container kcampbel/hlahat_r:v4)::
 
-  Rscript /code/generate_ald.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --normal_depth_cutoff=15 --normal_pileups=${normal_name}.fixpileups.txt --normal_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
+  Rscript /code/generate_ld.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --normal_depth_cutoff=15 --normal_pileups=${normal_name}.fixpileups.txt --normal_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
 
 .. note::
     If tumor DNA data is being evaluated (particularly WES), it is recommended to include the patient-matched normal data. Assuming that these datasets were generated simultaneously, the matched-normal WES data should reflect similar challenges in bait capture as the tumor WES. Consider using this approach in the case of hybridized capture approaches for RNAseq, as well.
 
 This command can also be used in the absence of matched normal data. This is recommended for RNAseq data that does not include a hybridized capture step::
 
-  Rscript /code/generate_ald.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
+  Rscript /code/generate_ld.R --tumor_depth_cutoff=15 --tumor_pileups=${tumor_name}.fixpileups.txt --tumor_flagstat=${tumor_name}.flagstat.txt --out_prefix=${tumor_name}
 
 
 ##########################################
