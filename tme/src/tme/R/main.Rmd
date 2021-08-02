@@ -74,12 +74,24 @@ for(ii in seq_along(config)){
   message(paste0(names(config)[[ii]], ':', config[[ii]]))
   assign(names(config)[ii], config[[ii]])
 }
-message(paste('meta_f:', params$meta_f))
-assign('meta_f', params$metadata)
+message(paste('meta_f:', params$metadata_f))
+assign('meta_f', params$metadata_f)
 message(paste('bctpm_f:', params$bctpm_f))
 assign('bctpm_f', params$bctpm_f)
 message(paste('counts_f:', params$counts_f))
 assign('counts_f', params$counts_f)
+
+# Check input files exist
+fls <- c(
+  params$metadata_f,
+  params$bctpm_f,
+  params$counts_f
+)
+for(ii in fls){
+  if(!file.exists(ii)){
+    stop(paste(ii, 'does not exist'))
+  }
+}
 
 ```
 

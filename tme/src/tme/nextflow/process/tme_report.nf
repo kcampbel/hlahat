@@ -27,44 +27,27 @@ process TME_REPORT {
     outfile = meta.study + '_' + meta.patient_id + '_' + meta.dob + '_BINF_' + meta.specimen_id + '_' + timestamp + '_tme_v0.1.html' 
     """
     cp -Lr "${params.rmd}" .
-    R -e \
-     rmarkdown::render\\(' \
+    echo '\
+     rmarkdown::render( \
      input="R/main.Rmd", \
-     output_dir="../", \
      output_file="../${outfile}", \
      params=list( \
       config_yml="../${config}", \
       metadata_f="../${metadata}", \
       counts_f="../${counts}", \
       bctpm_f="../${bctpm}") \
-     )'
+     )' > run.R
+
+    echo '\
+     rmarkdown::render( \
+     input="R/main.Rmd", \
+     output_file="../${outfile}", \
+     params=list( \
+      config_yml="../${config}", \
+      metadata_f="../${metadata}", \
+      counts_f="../${counts}", \
+      bctpm_f="../${bctpm}") \
+     )' >> run.R
+    Rscript run.R
     """
 }
-/*
-    R -e \
-     rmarkdown::render\\(' \
-     input="${params.rmd}", \
-     output_dir="./", \
-     params=list(config_yml="${config_yml}") \
-     )'
-
-#    R -e \
-#     rmarkdown::render\\(' \
-#     input="${params.rmd}", \
-#     output_dir="./", \
-#     params=list\\( \
-#      config_yml="${config_yml}", \
-#      metadata_f="${metadata}", \
-#      bctpm_f="${bctpm}" \
-#       ) \
-#     \)'
-    # Execute again using cache to run summary Rmd 
-#    R -e \
-#     rmarkdown::render(' \
-#     input="${params.rmd}", \
-#     output_file="${outfile}", \
-#     output_dir="${workflow.workDir}", \
-#     params=list(config_yml="${config_yml}") \
-#     )'
-#    mv main.html $outfile
-*/

@@ -45,7 +45,7 @@ log.info "========================================="
 include { STAGE_INPUT } from './process/stage_input' addParams( params.modules["tme_report"] )
 include { TME_REPORT } from './process/tme_report' addParams( params.modules["tme_report"] )
 
-// CSV input
+// Sample input
 include { create_tme_channel } from './lib/functions.nf'
 Channel.from(ch_input)
     .splitCsv(sep: '\t', header: true)
@@ -54,6 +54,7 @@ Channel.from(ch_input)
     //.view { it }
     .set { ch_input }
 
+// External files input
 Channel.fromList(
     [
         file(params.metadata),

@@ -29,7 +29,7 @@ tcga_tpm_percentile_max <- .75
 ```{r summary_pttable}
 pt_tab <- pt_dat
 muts <- goi_tab %>%
-  filter(!is.na(Mutation),
+  filter(!is.na(`Mutation (AA)`),
          Gene %in% hotspots$hgnc_symbol) %>%
   
   pull(Gene) %>%
@@ -53,7 +53,7 @@ priority_goi <- goi %>%
   pull(gene)
 
 summary_goi_tab <- goi_tab %>%
-  dplyr::select(Gene, Alias, Category, Mutation, CNt, `Percentile PACT`, `Percentile TCGA`, `Percentile GTEX`) %>%
+  dplyr::select(Gene, Alias, Category, `Mutation (AA)`, CNt, `Percentile PACT`, `Percentile TCGA`, `Percentile GTEX`) %>%
   filter(`Percentile TCGA` < tcga_tpm_percentile_min | `Percentile TCGA` > tcga_tpm_percentile_max,
          Gene %in% priority_goi
   ) %>%

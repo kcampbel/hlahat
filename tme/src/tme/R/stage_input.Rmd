@@ -81,6 +81,9 @@ meta <- meta_o %>%
   mutate(study_tumor_normal = factor(study_tumor_normal)) %>%
   mutate(study = factor(study, levels=c('GTEX', 'PACT', 'TCGA')))
 
+hgnc <- read.delim(hgnc_f) %>%
+  janitor::clean_names()
+
 goi_o <- read.delim(goi_f) %>%
   mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
   #dplyr::select(-category) %>%

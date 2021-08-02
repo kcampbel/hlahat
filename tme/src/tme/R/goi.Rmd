@@ -112,6 +112,7 @@ vars <- vars_o %>%
   distinct()
 
 # Get gene positions for intersect
+genes <- unique(c(goi$gene))
 ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37)#, verbose=TRUE)
 ens_canonical <- c(seq(1:22), 'X', 'Y', 'MT')
 bm <- getBM(attributes=c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),

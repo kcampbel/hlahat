@@ -43,10 +43,6 @@ hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 ```{r pathway_munge}
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
 
-# hgnc
-hgnc <- read.delim(hgnc_f) %>%
-  janitor::clean_names()
-
 #read pathway file as list of lists
 inlist <- strsplit(readLines(geneset_f), "[[:space:]]+")
 pathways <- lapply(inlist, tail, n = -1)

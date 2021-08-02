@@ -7,6 +7,7 @@ import yaml
 import logging
 from importlib.resources import files
 from tme import R, data
+from tme.fileio import package_file_path
 from tme.search import locate
 
 def parse_args(args=None):
@@ -17,18 +18,11 @@ def parse_args(args=None):
     
     return parser.parse_args(args)
 
-def package_file_path(package, filename):
-    filepath = files(package).joinpath(filename)
-    if filepath.exists():
-        return str(filepath.absolute())
-    else:
-        return None
-
 def tme_config(specimen_id, input_folder):
     def _find_file(input_folder, fn):
         hits = list(locate(fn, input_folder))
         if len(hits) != 1:
-            raise Exception(f'{specimen_id} has >1 input files:\n{hits}')
+            raise ValueError(f'{specimen_id} has >1 input files:\n{hits}')
         else:
             return hits[0]
 
@@ -36,9 +30,8 @@ def tme_config(specimen_id, input_folder):
     config = {
     'goi_f': package_file_path(data, 'pact_goi.tsv'),
     'geneset_f': package_file_path(data, 'genesets.txt'),
-    'hgnc_f': package_file_path(data, 'hgnc_biomart.tsv.gz'),
     'xcell_celltypes_f': package_file_path(data, 'xcell_types.txt'),
-    'hotspots_f': package_file_path(data, 'chang2007_hotspots.tsv'),
+    'hotspots_f': package_file_path(data, 'chang2017_hotspots.tsv'),
     }
     params = yaml.safe_load(files(data).joinpath('tme_report_params.yml').read_text())
     config.update(params)

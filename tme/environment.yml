@@ -13,13 +13,14 @@ dependencies:
   - bioconductor-genomicranges
   - bioconductor-gsva
   - ipykernel
-  - nextflow=>20.10
+  - nextflow=21.04
   - pkg-config=0.29.2
   - pandas
+  - pip
   - pyaml
   - python=3.9
   - r-arrow
-  - r-base=4.1
+  - r-base=4.0.3
   - r-corrplot
   - r-devtools
   - r-dt
@@ -40,6 +41,5 @@ dependencies:
   - r-xcell
   - r-yaml
   - rclone
-  - pip
   - pip:
     - -e .
