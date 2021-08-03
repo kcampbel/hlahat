@@ -1,4 +1,2 @@
-gtf_tsv_f: /home/csmith/git/bioinfo-fio/tme/src/tme/data/Homo_sapiens.GRCh37.87.tsv.gz
-hgnc_f: /home/csmith/git/bioinfo-fio/tme/src/tme/data/hgnc_complete_set_2021-07-01.txt.gz
 tcga_tpm_percentile_max: 0.75
 tcga_tpm_percentile_min: 0.25

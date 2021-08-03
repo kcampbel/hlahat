@@ -28,6 +28,7 @@ setup(
         'console_scripts': [
             'tme_report.py=tme.bin.tme_report:main',
             'stage_input_tme.py=tme.bin.stage_input_tme:main',
+            'prepare_ref_data.py=prepare_ref_data:main',
         ],
     },
 )

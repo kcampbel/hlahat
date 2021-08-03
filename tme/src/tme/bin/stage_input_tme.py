@@ -32,6 +32,8 @@ def tme_config(specimen_id, input_folder):
     'geneset_f': package_file_path(data, 'genesets.txt'),
     'xcell_celltypes_f': package_file_path(data, 'xcell_types.txt'),
     'hotspots_f': package_file_path(data, 'chang2017_hotspots.tsv'),
+    'gtf_tsv_f': package_file_path(data, 'Homo_sapiens.GRCh37.87.tsv.gz'),
+    'hgnc_f': package_file_path(data, 'hgnc_complete_set_2021-07-01.txt.gz'),
     }
     params = yaml.safe_load(files(data).joinpath('tme_report_params.yml').read_text())
     config.update(params)

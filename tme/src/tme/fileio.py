@@ -28,16 +28,16 @@ def get_file(src, dest, attempts=3, force=False):
     if not force and os.path.exists(fn):
         logging.info(f'{fn} found. Set force in {__name__} to overwrite.')
     else:
-        filename, msg = urllib.request.urlretrieve(src, fn)
-    #ii = 1
-    #while ii < attempts:
-        #try:
-        #    filename, msg = urllib.request.urlretrieve(src, fn)
-        #    break
-        #except:
-        #    ii +=1
-        #    logging.info(f'Retrying for the {ii}/{attempts} time')
-    urllib.request.urlcleanup()
+        #filename, msg = urllib.request.urlretrieve(src, fn)
+        ii = 1
+        while ii < attempts:
+            try:
+                filename, msg = urllib.request.urlretrieve(src, fn)
+                break
+            except:
+                ii +=1
+                logging.info(f'Retrying for the {ii}/{attempts} time')
+        urllib.request.urlcleanup()
     return fn
 
 def get_file_if_remote2(src, dest, attempts=3):
