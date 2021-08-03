@@ -3,6 +3,7 @@ Writes a pipeline yaml from epic manifest and pipeline data
 """
 import argparse
 import os
+import re
 import yaml
 import logging
 from importlib.resources import files
@@ -18,11 +19,13 @@ def parse_args(args=None):
     
     return parser.parse_args(args)
 
-def tme_config(specimen_id, input_folder):
-    def _find_file(input_folder, fn):
+def tme_config(specimen_id:str, input_folder:str):
+    def _find_file(input_folder, fn, pattern:str = None):
         hits = list(locate(fn, input_folder))
+        if pattern:
+            hits = [x for x in hits if re.search(pattern, x)]
         if len(hits) != 1:
-            raise ValueError(f'{specimen_id} has >1 input files:\n{hits}')
+            raise ValueError(f'{specimen_id} has != 1 input file:\n{fn} {hits}')
         else:
             return hits[0]
 
@@ -41,10 +44,11 @@ def tme_config(specimen_id, input_folder):
     # EPIC inputs
     # Sequenza copy number segments file
     fn = f'{specimen_id}_segments.txt'
-    cn_f = _find_file(input_folder, fn)
+    # Exclude segments files in the alt directories
+    cn_f = _find_file(input_folder, fn, pattern='^((?!alt).)*$')
 
     # Epipope annotator
-    fn = f'{specimen_id}_oncotator_results_Annotated.tsv'
+    fn = f'{specimen_id}*_oncotator_results_Annotated.tsv'
     vars_f = _find_file(input_folder, fn)
 
     config.update(
