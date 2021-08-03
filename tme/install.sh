@@ -1,4 +1,4 @@
-conda env create -f environment.yml --force 
+conda env create -f environment.yml --force &&
 set +eu && \
     . $(conda info --base)/etc/profile.d/conda.sh && \
     conda activate tme && \
