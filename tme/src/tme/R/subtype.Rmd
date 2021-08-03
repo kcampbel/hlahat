@@ -13,7 +13,6 @@ library(tidyr)
 library(CMSclassifier)
 library(limma)
 library(edgeR)
-library(biomaRt)
 ```
 
 ```{r subtype_emat}
@@ -30,19 +29,14 @@ emat_counts <- emat_counts_o
 # Subset tumor type samples from emat
 dat <- emat_counts[, colnames(emat_counts) %in% meta$specimen_id]
 
-# Get Entrez IDs 
-ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37)#, verbose=TRUE)
-bm <- getBM(attributes = c('ensembl_gene_id', 'entrezgene_id'), filters = 'ensembl_gene_id', 
-            values=rownames(dat), mart=ens)
-
 edat <- dat %>%
   rownames_to_column('ensembl_gene_id') %>%
-  inner_join(bm) %>%
-  filter(!is.na(entrezgene_id)) %>%
-  group_by(entrezgene_id) %>%
+  inner_join(hgnc %>% dplyr::select(ensembl_gene_id, entrez_id)) %>%
+  filter(!is.na(entrez_id)) %>%
+  group_by(entrez_id) %>%
   summarize_if(is.numeric, sum) %>%
   ungroup() %>%
-  column_to_rownames('entrezgene_id')
+  column_to_rownames('entrez_id')
 
 # Normalize counts
 dge <- edgeR::DGEList(edat)

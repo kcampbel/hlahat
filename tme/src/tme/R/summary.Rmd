@@ -31,9 +31,9 @@ pt_tab <- pt_dat
 muts <- goi_tab %>%
   filter(!is.na(`Mutation (AA)`),
          Gene %in% hotspots$hgnc_symbol) %>%
-  
   pull(Gene) %>%
   sort()
+
 pt_tab$`Hotspots (SNV)` <- paste(muts, collapse=', ')
 
 if(exists('subtype')){

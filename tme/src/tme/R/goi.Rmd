@@ -14,7 +14,6 @@ library(stringr)
 library(plotly)
 library(DT)
 library(corrplot)
-library(biomaRt)
 library(here)
 
 source(here('munge.R'))
@@ -87,7 +86,8 @@ for (i in 1:dim(dat)[1]){
     ens_gene=row.names(dat)[i]
     gene_info <- goi %>% 
       filter(gene==ens_gene) %>%
-      dplyr::select(gene, alias, category)
+      dplyr::select(gene, alias, category) %>%
+      distinct()
     
     my_row=c()
     my_tpm=2^s2
@@ -103,8 +103,9 @@ names(rs_dat)=c("Gene","Alias","Category","bcTPM","log2(bcTPM)","Z-score PACT","
 cn_o <- read.delim(cn_f)
 cn <- cn_o
 
-vars_o <- read.delim(vars_f)
-vars_cols = c('Hugo_Symbol', 'Protein_Change')
+vars_o <- read.delim(vars_f) %>%
+  mutate(gene=Hugo_Symbol)
+vars_cols = c('gene', 'Protein_Change')
 vars <- vars_o %>%
   mutate(Chromosome=paste0('chr',Chromosome)) %>%
   filter(!is.na(Protein_Change)) %>%
@@ -113,45 +114,39 @@ vars <- vars_o %>%
 
 # Get gene positions for intersect
 genes <- unique(c(goi$gene))
-ens <- useEnsembl(biomart='genes', dataset='hsapiens_gene_ensembl', GRCh=37)#, verbose=TRUE)
-ens_canonical <- c(seq(1:22), 'X', 'Y', 'MT')
-bm <- getBM(attributes=c('hgnc_symbol', 'chromosome_name', 'start_position', 'end_position'),
-            filters='hgnc_symbol', mart=ens, 
-            values=genes) %>%
-  filter(chromosome_name %in% ens_canonical) %>%
-  mutate(chromosome=str_replace(chromosome_name, 'MT', 'M'),
-         chromosome = paste0('chr', chromosome)
-         ) %>%
-  left_join(vars, by=c('hgnc_symbol'='Hugo_Symbol'))
+
+bm <- gtf %>%
+  filter(gene %in% genes) %>%
+  left_join(vars, by='gene')
 
 ## Hotspots
 # Hotspot vars that match protein change
 hotspots_pc <- hotspots %>%
   filter(report_any_mutation == 'False') %>%
-  dplyr::select(hgnc_symbol, Protein_Change)
+  dplyr::select(gene, Protein_Change)
 bm_hot_pc <- bm %>% inner_join(hotspots_pc)
 
 # Hotspot vars where all mutations are to be reported
 hotspots_any <- hotspots %>% 
   filter(report_any_mutation == 'True') %>%
-  dplyr::select(hgnc_symbol, Protein_Change)
+  dplyr::select(gene, Protein_Change)
 bm_hot_any <- bm %>%
-  filter(hgnc_symbol %in% hotspots_any$hgnc_symbol,
+  filter(gene %in% hotspots_any$gene,
          !is.na(Protein_Change)
   )
 
 bm_hot_all <- rbind(bm_hot_pc, bm_hot_any)
-keep <- c(goi_o$gene, bm_hot_all$hgnc_symbol)
-bm_final <- bm %>% filter(hgnc_symbol %in% keep)
+keep <- c(goi_o$gene, bm_hot_all$gene)
+bm_final <- bm %>% filter(gene %in% keep)
 
 # Intersect copy number and vars
 cnRanges <- GenomicRanges::makeGRangesFromDataFrame(cn, seqnames.field='chromosome', 
         start.field="start.pos", end.field="end.pos", keep.extra.columns=TRUE)
 gRanges = GenomicRanges::makeGRangesFromDataFrame(bm_final, seqnames.field='chromosome', 
-        start.field="start_position", end.field="end_position", keep.extra.columns=TRUE)
+        start.field="start", end.field="end", keep.extra.columns=TRUE)
 
 g_m <- findoverlaps_metadata(gRanges, cnRanges) %>%
-  dplyr::rename(Gene=hgnc_symbol) %>%
+  dplyr::rename(Gene=gene) %>%
   dplyr::select(Gene, "Mutation (AA)"=Protein_Change, CNt)
 
 ```
@@ -167,8 +162,9 @@ goi_dat <- g_m %>%
 Hotspot somatic mutations are from [Chang et al. 2017](https://cancerdiscovery.aacrjournals.org/content/8/2/174)
 ```{r goi_hotspot_DT}
 hotspot_tab <- bm_hot_all %>%
-  inner_join(vars_o, by=c('hgnc_symbol' = 'Hugo_Symbol', 'Protein_Change')) %>%
-  dplyr::select(Gene=hgnc_symbol, `Mutation (CDS)`=cDNA_Change, `Mutation (AA)`=Protein_Change,`Class`=Variant_Classification, CNt=CN_total)
+  inner_join(vars_o, by=c('gene', 'Protein_Change')) %>%
+  arrange(gene) %>%
+  dplyr::select(Gene=gene, `Mutation (CDS)`=cDNA_Change, `Mutation (AA)`=Protein_Change,`Class`=Variant_Classification, CNt=CN_total) 
 hotspot_tab$Gene <- sapply(hotspot_tab[['Gene']], link_gene_string)
   
 title = dt_caption("Hotspot somatic mutations and their copy number states (CNt)")

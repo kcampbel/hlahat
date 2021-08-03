@@ -75,6 +75,7 @@ if(!any(grepl(sid, colnames(emat)))){
 ```{r stage_input_metadata}
 meta_o <- read.delim(meta_f) %>%
   janitor::clean_names()
+
 meta <- meta_o %>%
   filter(specimen_id %in% colnames(emat)) %>%
   unite('study_tumor_normal', study, tumor_normal, remove=FALSE) %>%
@@ -82,20 +83,25 @@ meta <- meta_o %>%
   mutate(study = factor(study, levels=c('GTEX', 'PACT', 'TCGA')))
 
 hgnc <- read.delim(hgnc_f) %>%
+  mutate(gene=symbol) %>%
   janitor::clean_names()
+
+gtf <- read.delim(gtf_tsv_f) %>%
+  mutate(gene = gene_name)
 
 goi_o <- read.delim(goi_f) %>%
   mutate(alias = ifelse(is.na(alias), gene, alias)) %>%
   #dplyr::select(-category) %>%
   distinct() 
 
-hotspots <- read.delim(hotspots_f) 
+hotspots <- read.delim(hotspots_f) %>%
+  mutate(gene=hgnc_symbol)
+
 hotspots_goi <- hotspots %>%
-  filter(!hgnc_symbol %in% goi_o$gene) %>%
-  dplyr::select(gene=hgnc_symbol) %>%
-  left_join(hgnc %>% dplyr::select(gene=approved_symbol, alias=alias_symbol)) %>%
+  filter(!gene %in% goi_o$gene) %>%
+  left_join(hgnc %>% dplyr::select(gene, alias=alias_symbol)) %>%
+  mutate(alias = sapply(alias, function(x) str_split(x, '\\|', simplify=TRUE)[1])) %>%
   distinct()
-hotspots_goi <- hotspots_goi[!duplicated(hotspots_goi$gene),]
 hotspots_goi$category <- 'Hotspot'
 goi <- full_join(goi_o, hotspots_goi)
 

@@ -51,9 +51,10 @@ here::i_am("main.Rmd")
 
 ```{r test_local, eval=FALSE}
 params <- list(
-  config_yml = '/Users/csmith/Documents/fio/tme.yml',
-  metadata = '/Users/csmith/git/bioinfo-fio/tme/test_data/meta_pact_xena.tsv',
-  bctpm_f = '/Users/csmith/Documents/References/xena/subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz'
+  config_yml = '/Users/csmith/git/bioinfo-fio/tme/test_data/tme.yml',
+  bctpm_f = '/Users/csmith/Documents/References/xena/subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz',
+  counts_f = '/Users/csmith/git/bioinfo-fio/tme/test_data/pact_rsem_raw.exprs.gid.tsv.gz',
+  metadata_f = '/Users/csmith/git/bioinfo-fio/tme/test_data/meta_pact_xena.tsv'
 )
 ```
 

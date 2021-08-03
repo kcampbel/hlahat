@@ -6,7 +6,6 @@ channels:
   - r
   - nodefaults
 dependencies:
-  - bioconductor-biomart
   - bioconductor-deseq2
   - bioconductor-edger
   - bioconductor-limma

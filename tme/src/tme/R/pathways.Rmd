@@ -71,18 +71,6 @@ enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, p
 
 ## {.tabset}
 
-### All
-```{r pathway_heatmap, fig.width=16, fig.height=8}
-if(exists('subtype_df')){
-    annCol <- heatmap_annot(sid, emat_pact, subtype_df)
-} else {
-    annCol <- heatmap_annot(sid, emat_pact)
-}
-
-aheatmap(enrich, scale = "row", annCol=annCol)
-
-```
-
 ### Immune system
 ```{r pathway_immune, fig.width=16, fig.height=8}
 rows = c(
@@ -178,6 +166,18 @@ aheatmap(mat, scale = "row", annCol=annCol)
 
 ```
 Thorsson et al. (2018). The Immune Landscape of Cancer. Immunity, 48(4), 812-830.e14. [doi: 10.1016/j.immuni.2018.03.023](https://pubmed.ncbi.nlm.nih.gov/29628290/)
+
+### All
+```{r pathway_heatmap, fig.width=16, fig.height=8}
+if(exists('subtype_df')){
+    annCol <- heatmap_annot(sid, emat_pact, subtype_df)
+} else {
+    annCol <- heatmap_annot(sid, emat_pact)
+}
+
+aheatmap(enrich, scale = "row", annCol=annCol)
+
+```
 
 ### Data
 ```{r pathway_data}

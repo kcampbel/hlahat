@@ -2,7 +2,7 @@ symbol_check <- function(query, target, ref){
     # Gene symbol checker
     # Useful for replacing geneset symbols with those in the gene expression matrix.
     # Searches ref for query and returns the replacement symbols found in target.
-    # Ref is the hgnc database, which must have columns 'approved_symbol', 'alias_symbol', 'previous_symbol'
+    # Ref is the hgnc database, which must have columns 'symbol', 'alias_symbol', 'prev_symbol'
     # 
     # Args:
     #     query(vector): gene symbols to process
@@ -26,14 +26,14 @@ symbol_check <- function(query, target, ref){
     map_l = list()
     for(gene in not_in_target){
         df <- hgnc %>% 
-          filter(approved_symbol %in% gene | alias_symbol %in% gene | previous_symbol %in% gene) %>%
+          filter(symbol %in% gene | alias_symbol %in% gene | prev_symbol %in% gene) %>%
           mutate(query = gene,
-                 approved = approved_symbol %in% target,
-                 alias = alias_symbol %in% target,
-                 previous = previous_symbol %in% target)
-        for(ii in c('approved', 'alias', 'previous')){
+                 symbol_bool = symbol %in% target,
+                 alias_symbol_bool = alias_symbol %in% target,
+                 prev_symbol_bool = prev_symbol %in% target)
+        for(ii in c('symbol_bool', 'alias_symbol_bool', 'prev_symbol_bool')){
             if(any(df[[ii]])){
-                hit = pull_symbol(df, ii, paste0(ii, '_symbol'))
+                hit = pull_symbol(df, ii, str_replace(ii, '_bool', ''))
                 if(length(hit) != 0){
                   break
 		}
