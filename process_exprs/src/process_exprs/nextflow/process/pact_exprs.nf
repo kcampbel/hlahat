@@ -23,9 +23,10 @@ process SAMPLE_TO_PACT_EMAT {
 
     output:
     tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_hgnc_tpm_updated), emit: pact_emat_updated
+    path ".command*"
 
     script:
-    outpath                = "./pact_emat"
+    outpath               = "./pact_emat"
     metadata_tsv_updated  = outpath + '/' + metadata_tsv.toString()
     pact_emat_log_updated = outpath + '/' + pact_emat_log.toString()
     pact_hgnc_tpm_updated = outpath + '/' + pact_hgnc_tpm.toString()

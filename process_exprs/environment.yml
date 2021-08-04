@@ -13,6 +13,7 @@ dependencies:
   - python=3.9
   - pandas
   - pyyaml
+  - rclone
   - s3fs=0.3
   - pip:
     - -e .

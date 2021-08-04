@@ -9,34 +9,25 @@ VERSION = 0.1
 
 /*
 ========================================================================================
-    VALIDATE & PRINT PARAMETER SUMMARY
-========================================================================================
-
-WorkflowMain.initialise(workflow, params, log)
-
-/*
-========================================================================================
     VALIDATE INPUTS
 ========================================================================================
 */
 // Check input path parameters to see if they exist
 checkPathParamList = [
     params.input 
-    //params.xena_hgnc_tpm, params.bc_emat_log, params.blacklist
-    // params.fasta, params.transcript_fasta, params.additional_fasta,
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
+params.email = [:]
 // Header log info
 log.info "========================================="
 log.info "Process RNAseq expression matrices v${VERSION}"
 log.info "Nextflow Version:	$workflow.nextflow.version"
 log.info "Command Line:		$workflow.commandLine"
 log.info "========================================="
-//log.info "$PYTHONPATH"
 
 /*
 ========================================================================================
@@ -44,7 +35,6 @@ log.info "========================================="
 ========================================================================================
 */
 include { UPDATE_PACT_EMAT } from './workflow/update_pact_emat' addParams( params.modules["update_pact_emat"] )
-include { HELLOWORLD       } from './workflow/helloworld'       addParams( params.modules["pact_emat"] )
 include { BATCH_CORRECT     } from './workflow/batch_correct'     addParams( params.modules["batch_correct"] )
 
 // CSV input
