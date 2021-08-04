@@ -108,7 +108,7 @@ vars_o <- read.delim(vars_f) %>%
 vars_cols = c('gene', 'Protein_Change')
 vars <- vars_o %>%
   mutate(Chromosome=paste0('chr',Chromosome)) %>%
-  filter(!is.na(Protein_Change)) %>%
+  filter(Protein_Change != "") %>%
   dplyr::select(all_of(vars_cols)) %>%
   distinct()
 
@@ -200,7 +200,7 @@ dt_quantile_ramp(goi_tab, c('Percentile PACT', 'Percentile TCGA'), caption)
 
 ####  Ag presentation
 
-```{r goi_bar_munge,  echo=FALSE, warning=FALSE, message=FALSE}
+```{r goi_bar_munge}
 dat <- df_goi %>% 
   mutate(Source = if_else(specimen_id == sid, sid, as.character(study))) %>%
   mutate(Source = factor(Source, levels=c(sid, "PACT", "TCGA", "GTEX"))) %>%

@@ -59,7 +59,6 @@ title: "`r report_title`"
 ---
 
 ```{r stage_input_datain_mat}
-#, cache.lazy = FALSE}
 if(grepl('parquet', bctpm_f)){
     emat_o <- read_parquet(bctpm_f)
 } else {
@@ -109,15 +108,15 @@ goi <- full_join(goi_o, hotspots_goi)
 
 ```
 
-```{r stage_emat_qc, include=FALSE} 
+```{r stage_emat_qc, include=FALSE}
 dat <- emat 
 rmax <- apply(dat, 1, max)
-phist <- hist(rmax, breaks=100)
 thresh = -9.5
 keep <- names(rmax[rmax > thresh])
 warning(paste0('Removing ', nrow(dat) - length(keep), ' genes with less than a max(', thresh, ') expression'))
-plot(phist)
-abline(v=thresh, col='red')
+#phist <- hist(rmax, breaks=100)
+#plot(phist)
+#abline(v=thresh, col='red')
 
 # Subset matrices
 emat <- dat[keep, ] 

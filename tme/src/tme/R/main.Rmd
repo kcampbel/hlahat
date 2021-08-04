@@ -37,6 +37,7 @@ opts_chunk$set(echo=FALSE,
                warning=FALSE,
 	             cache=TRUE,
 	             #cache=FALSE,
+               cache.lazy=FALSE,
                cache_rebuild=TRUE,
                cache.path='tme_report_cache/html/',
                fig.path='tme_report_files/figure-html/'
