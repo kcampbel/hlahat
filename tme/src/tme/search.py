@@ -30,28 +30,6 @@ def replace_element_dict(x, dictionary):
             out[element] = dictionary[pattern]
     return(out)
 
-def compare_col(query, db, column):
-    """ Compares column of query tsv to db tsv
-    @ Chad C Smith
-
-    Compares a column of query to db and returns unique differences
- 
-    .param query(tsv): query file
-    .param db(tsv): database file to compare against
-    .param column(str): column name to compare 
-    
-    .rettype(list): Names of items in query that differ from db
-    """
-    dbDF = pd.read_csv(db, sep='\t')
-    queryDF = pd.read_csv(query, sep='\t', header=0, names=dbDF.columns)
-
-    queryu = queryDF[column].unique()
-    dbu = dbDF[column].unique()
-
-    hitl = np.in1d(queryu, dbu)
-    out = sorted(queryu[~hitl])
-    return(out)
-
 def locate(pattern, root=os.curdir):
     '''Locate all files matching supplied filename pattern in and below
     supplied root directory.'''
