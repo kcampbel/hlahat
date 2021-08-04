@@ -23,9 +23,10 @@ process PACT_XENA {
         
     output:
     tuple val(meta), path(bc_log_updated), path(bc_tpm_updated), emit: bc_emat_updated
+    path ".command*"
 
     script:
-    outpath = 'bc_emat_updated'
+    outpath = './bc_emat'
     bc_tpm_updated = outpath + '/' + 'PactTcgaGtex_' + primary_site + '_hgnc_bctpm.tsv.gz'
     bc_log_updated = outpath + '/' + bc_emat_log.toString()
 

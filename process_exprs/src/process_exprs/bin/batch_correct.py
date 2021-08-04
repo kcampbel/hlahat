@@ -13,7 +13,7 @@ import argparse
 import logging
 from datetime import datetime
 from process_exprs.combat import combat
-from process_exprs.fileio import read_exprs, write_exprs, get_extension
+from commonLib.lib.fileio import read_exprs, write_exprs, get_extension
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)

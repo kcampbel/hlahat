@@ -1,6 +1,5 @@
 """PACT Process RNAseq expression matrices
 """
-
 from setuptools import setup, find_packages
 import pathlib
 
@@ -19,13 +18,14 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.9',
     ],
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where = 'src'),  # Required
-    python_requires='>=3.6, <4',
+    python_requires='>=3.9, <4',
     entry_points={  # Optional
         'console_scripts': [
+            'process_expression.py=process_exprs.bin.process_expression:main',
             'batch_correct.py=process_exprs.bin.batch_correct:main',
             'counts2mat.py=process_exprs.bin.counts2mat:main',
             'timestamp_exprs.py=process_exprs.bin.timestamp_exprs:main',

@@ -8,7 +8,7 @@ import argparse
 import logging
 import time
 import re
-from process_exprs.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
+from commonLib.lib.fileio import read_exprs, write_exprs, get_extension, file_time, append_basename
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -78,7 +78,6 @@ def main():
     exprs_log.to_csv(fp, sep='\t', index=False)
 
     logging.info(f'{os.path.basename(__file__)} finished')
-
 
 if __name__ == '__main__':
     main()

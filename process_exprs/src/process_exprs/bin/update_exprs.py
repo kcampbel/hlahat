@@ -12,7 +12,7 @@ from datetime import datetime
 import yaml
 import re
 from process_exprs.process import counts2mat, manifest_to_meta
-from process_exprs.fileio import read_exprs, write_exprs, get_extension, file_time
+from commonLib.lib.fileio import get_extension, file_time, read_exprs, write_exprs
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -66,16 +66,16 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #        [
-#        '--manifest', '/home/csmith/git/bioinfo-fio/tme/test/manifest.PACT004_T_560351F.yml',
-#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset.tsv',
-#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
-#        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/tme/data/tcga_gtex.tsv',
-#        #'--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
-#        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
-#        '--exprs_log', '/home/csmith/git/bioinfo-fio/tme/test/pact_eset_log.tsv',
-#        '-o', '/tmp/stage_esets',
+#        '--manifest', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/manifest.PACT004_T_560351F.yml',
+#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset.tsv',
+#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset_20210625T165418.tsv', # Has PACT004
+#        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/process_exprs/src/process_exprs/data/tcga_gtex.tsv',
+#        #'--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
+#        '--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding.tsv',
+#        '--exprs_log', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/pact_eset_log.tsv',
+#        '-o', '/tmp/updat_exprs',
 #        #'-o', '/tmp/stage_esets',
-#        '/home/csmith/git/bioinfo-fio/tme/test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
+#        '/home/csmith/git/bioinfo-fio/process_exprs/test_data/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
 #        #'-f', 
 #        ]
 #    )
@@ -135,7 +135,7 @@ def main():
         prefix, ext = get_extension(args.exprs)
         fp = f'{args.outpath}/{os.path.basename(args.exprs)}'
         logging.info(f'Writing {fp}')
-        write_exprs(exprs, fp, compression='gzip')
+        write_exprs(exprs_new, fp, compression='gzip')
         timestamp = file_time(fp)
 
         # Log
