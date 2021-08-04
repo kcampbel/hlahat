@@ -40,19 +40,3 @@ def get_file(src, dest, attempts=3, force=False):
         urllib.request.urlcleanup()
     return fn
 
-def get_file_if_remote2(src, dest, attempts=3):
-    if re.match(r'http://|https://|ftp://', src):
-        fn = f'{dest}/{os.path.basename(src)}'
-        logging.info(f'Downloading {src} to {fn}')
-        ii = 1
-        while ii <= attempts:
-            try:
-                filename, msg = urllib.request.urlretrieve(src, fn)
-                break
-            except:
-                ii +=1
-                logging.info(f'Retrying for the {ii}/{attempts} time')
-        urllib.request.urlcleanup()
-    else:
-        fn = src
-    return fn

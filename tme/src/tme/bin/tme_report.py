@@ -50,7 +50,6 @@ def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra
     return cmd
 
 def main():
-#    logging.info(f'Starting {os.path.basename(__file__)}')
     args = parse_args()
 #    args = parse_args([
 #        './test_data/PACT056_T_196454/manifest.yml',
@@ -67,28 +66,27 @@ def main():
             raise FileNotFoundError(k)
 
     # Write nextflow tsv
+    cols = ['pact_id', 'patient_info_patient_id', 'patient_info_study_id', 
+            'patient_info_dob', 'patient_info_patient_tumorType', ]
     mf_d = yaml.safe_load(open(args.manifest))
     mf_d = mf_d['pipeline']
     mf_df = pd.json_normalize(mf_d, sep='_')
+    mf_df.columns = mf_df.columns.str.replace('.', '_', regex=False)
+    mf_df = mf_df[cols]
+
     mf_df.insert(0, 'sample', mf_d['pact_id'])
     mf_df['manifest'] = os.path.abspath(args.manifest)
     mf_df['input_folder'] = os.path.abspath(args.input_dir)
-    mf_df.columns = mf_df.columns.str.replace('.', '_', regex=False)
     mf_df.to_csv(args.nextflow_tsv, sep='\t', index=False)
 
     # Run nextflow
     cmd = nextflow_cmd(args.nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
-    tme_rmd = R.__path__[0]
-    #tme_rmd = package_file_path(R, 'main.Rmd')
+    tme_rmd = package_file_path(R, '')
     cmd.extend(['--rmd', tme_rmd])
     if args.dryrun:
         print(' '.join(cmd))
     else:
         job = sb.run(cmd)
-#        if job.return_code == 0:
-#            logging.info('Pipeline completed')
-#        else:
-#            logging.info(f'Pipeline failed: {job.return_code}')
 
 if __name__ == "__main__":
     main()
