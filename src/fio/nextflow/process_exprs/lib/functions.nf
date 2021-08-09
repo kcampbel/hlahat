@@ -57,3 +57,16 @@ def saveFiles(Map args) {
         }
     }
 }
+
+def create_pe_channel(LinkedHashMap row) {
+    def meta = [:]
+    meta.id              = row.sample
+    meta.specimen_id     = row.pact_id
+    meta.patient_id      = row.patient_info_patient_id
+    meta.study           = row.patient_info_study_id
+    meta.dob             = row.patient_info_dob
+    meta.tcga_study_code = row.patient_info_patient_tumorType
+
+    array = [ meta, file(row.manifest), row.primary_site, file(row.gene_counts)]
+    return array
+}

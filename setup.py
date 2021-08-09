@@ -25,11 +25,13 @@ setup(
     python_requires='>=3.9, <4',
     entry_points={  # Optional
         'console_scripts': [
+            'run_fio.py=fio.bin.run_fio:main',
             'process_expression.py=process_exprs.bin.process_expression:main',
             'batch_correct.py=process_exprs.bin.batch_correct:main',
             'counts2mat.py=process_exprs.bin.counts2mat:main',
             'timestamp_exprs.py=process_exprs.bin.timestamp_exprs:main',
             'update_exprs.py=process_exprs.bin.update_exprs:main',
+            'stage_input_pe.py=process_exprs.bin.stage_input_pe:main',
             'tme_report.py=tme.bin.tme_report:main',
             'stage_input_tme.py=tme.bin.stage_input_tme:main',
             'prepare_ref_data.py=prepare_ref_data:main',

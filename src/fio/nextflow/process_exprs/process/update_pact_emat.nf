@@ -7,9 +7,9 @@ include { saveFiles; getSoftwareName } from '../lib/functions'
 params.options = [:]
 params.pact_emat_s3 = false
 
-process SAMPLE_TO_PACT_EMAT {
+process UPDATE_PACT_EMAT {
  //   label 'process_medium'
-    tag "${meta}"
+    tag "${meta.id}"
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: {
@@ -18,12 +18,15 @@ process SAMPLE_TO_PACT_EMAT {
     conda params.conda_basedir + params.conda_envt
 
     input:
-    tuple val(meta), path(gene_counts), path(manifest), val(primary_site)
-    tuple path(pact_gid_tpm), path(pact_hgnc_tpm), path(tcga_gtex_map), path(pact_emat_log)
+    tuple val(meta), path(manifest), val(primary_site), path(gene_counts)
+    tuple path(pact_gid_counts), path(pact_gid_tpm), path(pact_hgnc_tpm), path(tcga_gtex_map), path(pact_emat_log)
     path metadata_tsv 
 
     output:
-    tuple val(meta), path(metadata_tsv_updated), path(pact_emat_log_updated), path(pact_hgnc_tpm_updated), emit: pact_emat_updated
+    tuple val(meta), path(metadata_tsv_updated), path(pact_hgnc_tpm_updated), emit: pact_hgnc_tpm_updated
+    tuple val(meta), path(metadata_tsv_updated), path(pact_gid_counts_updated), emit: pact_gid_counts_updated
+    path pact_gid_tpm_updated
+    path pact_emat_log_updated
     path ".command*"
 
     script:
@@ -32,6 +35,7 @@ process SAMPLE_TO_PACT_EMAT {
     pact_emat_log_updated = outpath + '/' + pact_emat_log.toString()
     pact_hgnc_tpm_updated = outpath + '/' + pact_hgnc_tpm.toString()
     pact_gid_tpm_updated  = outpath + '/' + pact_gid_tpm.toString()
+    pact_gid_counts_updated  = outpath + '/' + pact_gid_counts.toString()
     if( params.pact_emat_s3 )
         """
         update_exprs.py ${gene_counts}\
@@ -58,6 +62,17 @@ process SAMPLE_TO_PACT_EMAT {
         --exprs ${pact_gid_tpm_updated}\
         --exprs_log ${pact_emat_log_updated}\
         -o ${params.pact_emat_s3}
+
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_gid_counts}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log_updated}\
+        -o ${outpath}
+
+        timestamp_exprs.py\
+        --exprs ${pact_gid_counts_updated}\
+        --exprs_log ${pact_emat_log_updated}\
+        -o ${params.pact_emat_s3}
         """
     else
         """
@@ -74,5 +89,12 @@ process SAMPLE_TO_PACT_EMAT {
         --manifest ${manifest}\
         --exprs_log ${pact_emat_log_updated}\
         -o ${outpath}
+
+        update_exprs.py ${gene_counts}\
+        --exprs ${pact_gid_counts}\
+        --manifest ${manifest}\
+        --exprs_log ${pact_emat_log_updated}\
+        -o ${outpath}
+
         """
 }

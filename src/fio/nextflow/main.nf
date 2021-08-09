@@ -23,12 +23,6 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 params.email = [:]
-params.metadata = [:] // Xena, PACT metadata tsv
-params.bctpm = [:] // Batch corrected TPM matrix
-params.counts = [:] // PACT raw counts matrix
-//params.metadata = '/Users/csmith/git/bioinfo-fio/tme/test_data/meta_pact_xena.tsv'
-//params.counts = '/Users/csmith/git/bioinfo-fio/tme/test_data/pact_rsem_raw.exprs.gid.tsv.gz'
-//params.bctpm = '/Users/csmith/Documents/References/xena/subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz'
 
 // Header log info
 log.info "========================================="
@@ -45,36 +39,51 @@ log.info "========================================="
 include { PROCESS_EXPRS } from './process_exprs/workflow/process_exprs'
 include { TME           } from './tme/workflow/tme'
 
-// PROCESS_EXPRS
 Channel.from(ch_input)
     .splitCsv(sep: '\t', header: true)
-    .map{ row-> tuple(
-        row.sample, 
-        row.gene_counts,
-        row.manifest,
-        row.primary_site
-        ) }
-   // .groupTuple(by: [0])
-    .set { ch_process_exprs } 
+    .set { ch_input }
+
+// PROCESS_EXPRS
+//Channel.from(ch_input)
+//    .splitCsv(sep: '\t', header: true)
+//    .map{ row-> tuple(
+//        row.sample, 
+//        row.manifest,
+//        row.primary_site,
+//        row.gene_counts
+//        ) }
+//   // .groupTuple(by: [0])
+//    .set { ch_process_exprs } 
 
 
 // TME
-include { create_tme_channel } from './tme/lib/functions.nf'
-Channel.from(ch_input)
-    .splitCsv(sep: '\t', header: true)
-    .map { create_tme_channel(it) }
-    //.groupTuple(by: [0])
-    //.view { it }
-    .set { ch_tme }
+//Channel.from(ch_input)
+//    .splitCsv(sep: '\t', header: true)
+// //   .map { create_tme_channel(it) }
+//    //.groupTuple(by: [0])
+//    //.view { it }
+//    .set { ch_tme }
 
 workflow FIO {
     PROCESS_EXPRS (
-        ch_process_exprs,
+        ch_input
+        //ch_process_exprs
     )
 
-    TME (
-        ch_tme
-    )
+//    bc_hgnc_tpm = PROCESS_EXPRS.out.bc_hgnc_tpm  
+//    pact_gid_counts = PROCESS_EXPRS.out.pact_gid_counts
+//    Channel.fromList(
+//        [
+//            file(bc_hgnc_tpm[0]), // metadata
+//            file(bc_hgnc_tpm[-1]), // batch corrected tpms emat
+//            file(pact_gid_counts[-1]) // PACT raw count emat 
+//        ])
+//        .collect { it }
+//        .set { ch_emats }
+//    TME (
+//        ch_tme,
+//        ch_emats
+//    )
 }
 
 workflow.onComplete {

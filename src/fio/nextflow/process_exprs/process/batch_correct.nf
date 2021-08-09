@@ -7,9 +7,9 @@ include { saveFiles; getSoftwareName } from '../lib/functions'
 params.options = [:]
 params.bc_emat_s3 = false
 
-process PACT_XENA {
+process BATCH_CORRECT {
  //   label 'process_medium'
-    tag "${meta}"
+    tag "${meta.id}"
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: {
@@ -18,12 +18,12 @@ process PACT_XENA {
     conda params.conda_basedir + params.conda_envt
 
     input:
-    tuple val(meta), path(gene_counts), path(manifest), val(primary_site)
-    tuple val(meta), path(metadata_tsv), path(pact_emat_log), path(pact_hgnc_tpm)
+    tuple val(meta), path(manifest), val(primary_site), path(gene_counts)
+    tuple val(meta), path(metadata_tsv), path(pact_hgnc_tpm)
     tuple path(xena_hgnc_tpm), path(bc_emat_log), path(blacklist)
         
     output:
-    tuple val(meta), path(bc_log_updated), path(bc_tpm_updated), emit: bc_emat_updated
+    tuple val(meta), path(bc_log_updated), path(bc_tpm_updated), emit: bc_hgnc_tpm_updated
     path ".command*"
 
     script:

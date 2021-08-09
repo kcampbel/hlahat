@@ -18,7 +18,7 @@ process TME_REPORT {
 
     input:
     tuple val(meta), path(config)
-    tuple path(metadata), path(bctpm), path(counts)
+    tuple path(metadata), path(bc_tpm_hgnc), path(pact_counts_gid)
 
     output:
     path "*.html"
@@ -35,8 +35,8 @@ process TME_REPORT {
      params=list( \
       config_yml="../${config}", \
       metadata_f="../${metadata}", \
-      counts_f="../${counts}", \
-      bctpm_f="../${bctpm}") \
+      counts_f="../${pact_counts_gid}", \
+      bctpm_f="../${bc_tpm_hgnc}") \
      )' > run.R
 
     echo '\
@@ -46,8 +46,8 @@ process TME_REPORT {
      params=list( \
       config_yml="../${config}", \
       metadata_f="../${metadata}", \
-      counts_f="../${counts}", \
-      bctpm_f="../${bctpm}") \
+      counts_f="../${pact_counts_gid}", \
+      bctpm_f="../${bc_tpm_hgnc}") \
      )' >> run.R
     Rscript run.R
     """

@@ -1,26 +1,43 @@
-""" TME Input stager
-Writes a pipeline yaml from epic manifest and pipeline data
-"""
+""" FIO Pipeline """
+import pandas as pd
 import argparse
 import os
-import re
+import subprocess as sb
 import yaml
 import logging
-import pandas as pd
 from importlib.resources import files
-from process_exprs import data
-from commonLib.fileio import check_paths_exist, package_file_path
-from commonLib.search import locate
+from process_exprs import data 
+from commonLib.lib.fileio import check_paths_exist, package_file_path
+from commonLib.lib.search import locate
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('manifest', help='EPIC pipeline sample manifest')
-    parser.add_argument('input_folder', help='EPIC pipeline input folder')
+    parser.add_argument('input_dir', help='EPIC pipeline input path')
     parser.add_argument('-o', '--outfile', default='process_exprs.tsv', help='Pipeline tsv to write')
     
     return parser.parse_args(args)
 
-def pipeline_config(specimen_id:str, tcga_study_code, input_folder:str):
+def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra:bool):
+    cmd = [
+        'nextflow', 'run', script, 
+        '--input', input_tsv,
+    ]
+    if params_file:
+        cmd.extend([ '-params-file', params_file])
+    if tracing:
+        cmd.extend([
+            '-with-report',
+            '-with-timeline',
+            '-with-dag'
+        ])
+    if extra:
+        args = extra.strip("\"'").split(',')
+        cmd.extend(args)
+
+    return cmd
+
+def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str):
     def _find_file(input_folder, fn, pattern:str = None):
         hits = list(locate(fn, input_folder))
         if pattern:
@@ -61,14 +78,12 @@ def manifest2tsv(manifest:dict):
     return(df)
 
 def main():
+    logging.info(f'Starting {os.path.basename(__file__)}')
     args = parse_args()
 #    args = parse_args([
 #        './test_data/PACT056_T_196454/manifest.yml',
-#        './test_data',
-#        '--nextflow-tsv', '/tmp/input.tsv',
-#        '--tracing',
-#        '-e', "'-bg,--resume'",
-#        '-n'
+#        './test_data/PACT056_T_196454',
+#        '-o', '/tmp/process_exprs.tsv'
 #    ])
     # Check inputs exist
     exists = check_paths_exist([args.manifest, args.input_dir])
@@ -82,13 +97,16 @@ def main():
     df = manifest2tsv(mf_d)
     df['manifest'] = os.path.abspath(args.manifest)
     df['input_folder'] = os.path.abspath(args.input_dir)
+    tcga_study_code = mf_d['pipeline']['patient_info']['patient.tumorType']
 
-    ## Pipeline config
-    config = pipeline_config(df['sample'], args.input_folder)
-    df['gene_counts'] = config['counts']
-    df['primary_site'] = config('primary_site')
+    ## process_exprs
+    pe_cfg = process_exprs_config(df['sample'].iloc[0], tcga_study_code, args.input_dir)
+    df['primary_site'] = pe_cfg['primary_site']
+    df['gene_counts'] = pe_cfg['counts']
 
+    logging.info(f'Writing {args.outfile}')
     df.to_csv(args.outfile, sep='\t', index=False)
+    logging.info(f'{os.path.basename(__file__)} finished')
 
 if __name__ == "__main__":
     main()
