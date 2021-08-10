@@ -111,15 +111,15 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #        [
-#            './test/eset_xena_hgnc_proteincoding.tsv',
-#            './test/eset_pact_hgnc_proteincoding.tsv',
+#            './test_data/eset_xena_hgnc_proteincoding_colon.tsv.gz',
+#            './test_data/eset_pact_hgnc_proteincoding.tsv.gz',
 ##            './test/eset_xena_geneid_proteincoding.tsv',
 ##            './test/eset_pact_geneid_proteincoding.tsv',
 #            '--batch_name', 'study',
-#            '--metadata_tsv', './test/meta_eset.tsv',
-#            '--exprs_log', './test/bc_exprs_log.tsv',
-#            '--blacklist', './test/blacklist.txt',
-#            '--primary_site', 'Ovary',
+#            '--metadata_tsv', './test_data/meta_pact_xena_notestsamples.tsv',
+#            '--exprs_log', './process_exprs/test_data/bc_exprs_log.tsv',
+#            '--blacklist', './test_data/blacklist.txt',
+#            '--primary_site', 'ColonRectum',
 #            '-o', '/tmp/batch_correct/bc.tsv',
 #        ])
 
@@ -128,7 +128,7 @@ def main():
     meta = pd.read_table(args.metadata_tsv, index_col='specimen_id')
     meta = meta[
         (meta.primary_site.isin(args.primary_site)) &
-        (meta.sample_type != 'Cell Line') &
+        (meta.xena_sample_type != 'Cell Line') &
         (meta.study.isin(['TCGA', 'GTEX', 'PACT']))
     ]
     if not meta.primary_site.isin(primary_site).all():
@@ -167,6 +167,9 @@ def main():
 
     # Combat
     exprs_m = np.log2(exprs_m + 0.001)
+    if not args.formula:
+        if (meta[meta.study=='TCGA'].tumor_normal == 'Normal').any():
+            args.formula = '~ tumor_normal'
     out = combat_split(exprs_m, meta=meta_m, split_name='primary_site', batch_name=args.batch_name, formula=args.formula)
 
     dn = os.path.dirname(args.outfile)
@@ -174,7 +177,7 @@ def main():
         os.makedirs(dn, exist_ok=True)
     fp = args.outfile
     logging.info(f'Writing {fp}')
-    write_exprs(exprs_m, fp, compression='gzip')
+    write_exprs(out, fp, compression='gzip')
 
     # Log file
     if args.exprs_log:

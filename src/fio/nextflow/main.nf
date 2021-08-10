@@ -12,17 +12,19 @@ VERSION = 0.1
     VALIDATE INPUTS
 ========================================================================================
 */
-params.conda_basedir = file(params.condaprefix).getParent() 
 
 // Check input path parameters to see if they exist
 checkPathParamList = [
-    params.input 
+    params.input
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 params.email = [:]
+
+// Conda enviroment location
+params.conda_basedir = file(params.condaprefix).getParent() 
 
 // Header log info
 log.info "========================================="
@@ -43,47 +45,15 @@ Channel.from(ch_input)
     .splitCsv(sep: '\t', header: true)
     .set { ch_input }
 
-// PROCESS_EXPRS
-//Channel.from(ch_input)
-//    .splitCsv(sep: '\t', header: true)
-//    .map{ row-> tuple(
-//        row.sample, 
-//        row.manifest,
-//        row.primary_site,
-//        row.gene_counts
-//        ) }
-//   // .groupTuple(by: [0])
-//    .set { ch_process_exprs } 
-
-
-// TME
-//Channel.from(ch_input)
-//    .splitCsv(sep: '\t', header: true)
-// //   .map { create_tme_channel(it) }
-//    //.groupTuple(by: [0])
-//    //.view { it }
-//    .set { ch_tme }
-
 workflow FIO {
     PROCESS_EXPRS (
         ch_input
-        //ch_process_exprs
     )
-
-//    bc_hgnc_tpm = PROCESS_EXPRS.out.bc_hgnc_tpm  
-//    pact_gid_counts = PROCESS_EXPRS.out.pact_gid_counts
-//    Channel.fromList(
-//        [
-//            file(bc_hgnc_tpm[0]), // metadata
-//            file(bc_hgnc_tpm[-1]), // batch corrected tpms emat
-//            file(pact_gid_counts[-1]) // PACT raw count emat 
-//        ])
-//        .collect { it }
-//        .set { ch_emats }
-//    TME (
-//        ch_tme,
-//        ch_emats
-//    )
+    
+    TME (
+        PROCESS_EXPRS.out.pe_input,
+        PROCESS_EXPRS.out.emats
+    )
 }
 
 workflow.onComplete {

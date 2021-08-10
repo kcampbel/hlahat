@@ -52,7 +52,8 @@ def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False):
                     .drop_duplicates().primary_site.unique()[0]
     row.update({
         'primary_site': primary_site,
-        'study': 'PACT'
+        'study': 'PACT',
+        'tumor_normal': 'Tumor',
         })
     tmp = pd.DataFrame([row]).set_index('specimen_id')
     out = pd.concat([meta, tmp])
@@ -69,7 +70,7 @@ def main():
 #        '--manifest', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/manifest.PACT004_T_560351F.yml',
 #        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset.tsv',
 #        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset_20210625T165418.tsv', # Has PACT004
-#        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/process_exprs/src/process_exprs/data/tcga_gtex.tsv',
+#        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/src/process_exprs/data/tcga_gtex.tsv',
 #        #'--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
 #        '--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding.tsv',
 #        '--exprs_log', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/pact_eset_log.tsv',
@@ -79,6 +80,7 @@ def main():
 #        #'-f', 
 #        ]
 #    )
+
 
     # S3
 #    args = parse_args(

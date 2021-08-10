@@ -1,21 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-    PACT RNAseq batch correction
+    PACT Expression Matrix Updater and Batch Correction
 ========================================================================================
 */
-// CSV input
-//Channel.from(ch_input)
-//    .splitCsv(sep: '\t', header: true)
-//    .map{ row-> tuple(
-//        row.sample, 
-//        row.gene_counts,
-//        row.manifest,
-//        row.primary_site
-//        ) }
-//   // .groupTuple(by: [0])
-//    .set { ch_input } 
-
 params.pact_tcga_gtex_map = [:]
 
 // PACT RNAseq expression matrix
@@ -41,7 +29,7 @@ ch_batch_correct = Channel.fromPath(
 // Pact/Xena metadata
 ch_metadata_tsv = file(params.metadata_tsv)
 
-include { STAGE_INPUT      } from '../process/stage_input_pe'      addParams( params.modules["stage_input"] )
+include { STAGE_INPUT      } from '../process/stage_input'      addParams( params.modules["stage_input"] )
 include { UPDATE_PACT_EMAT } from '../process/update_pact_emat' addParams( params.modules["update_pact_emat"] )
 include { BATCH_CORRECT    } from '../process/batch_correct'    addParams( params.modules["batch_correct"] )
 
@@ -57,12 +45,9 @@ workflow PROCESS_EXPRS {
     STAGE_INPUT.out.tsv
       .splitCsv(sep: '\t', header: true)
       .map { create_pe_channel(it) }
-    //.groupTuple(by: [0])
-    //  .view { it }
       .set { ch_pe_input }
 
     UPDATE_PACT_EMAT (
-        //ch_input,
         ch_pe_input,
         ch_pact_emat,
         ch_metadata_tsv
@@ -76,6 +61,8 @@ workflow PROCESS_EXPRS {
         )
     
     emit:
-    pact_gid_counts = UPDATE_PACT_EMAT.out.pact_gid_counts_updated // tuple val(meta), path(metadata_tsv_updated), path(pact_gid_counts_updated)
-    bc_hgnc_tpm = BATCH_CORRECT.out.bc_hgnc_tpm_updated // val(meta), path(bc_log_updated), path(bc_tpm_updated)
+    emats = BATCH_CORRECT.out.bc_hgnc_tpm_updated
+      .join(UPDATE_PACT_EMAT.out.pact_gid_counts_updated)
+      .collect { it[3,2,-1] }
+    pe_input = ch_input // meta, bc_log_updated, bc_tpm_updated, metadata_tsv  
 }

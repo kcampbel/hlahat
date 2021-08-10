@@ -4,6 +4,7 @@ Writes a pipeline yaml from epic manifest and pipeline data
 import argparse
 import os
 import re
+import pandas as pd
 import yaml
 import logging
 from importlib.resources import files
@@ -15,7 +16,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('input_folder', help='EPIC pipeline input folder')
-    parser.add_argument('-o', '--outfile', default='tme.yml', help='Pipeline yml to write')
+    parser.add_argument('-o', '--outdir', default=os.getcwd(), help='Output directory')
     
     return parser.parse_args(args)
 
@@ -59,25 +60,42 @@ def tme_config(specimen_id:str, input_folder:str):
     )
     return config
 
+def manifest2tsv(manifest:dict):
+    cols = ['pact_id', 'patient_info_patient_id', 'patient_info_study_id', 
+            'patient_info_dob', 'patient_info_patient_tumorType']
+    mf_d = manifest['pipeline']
+    df = pd.json_normalize(mf_d, sep='_')
+    df.columns = df.columns.str.replace('.', '_', regex=False)
+    df = df[cols]
+    df.insert(0, 'sample', mf_d['pact_id'])
+    return(df)
+
 def main():
     logging.info(f'Starting {os.path.basename(__file__)}')
     args = parse_args()
 #    args = parse_args([
 #        './test_data/PACT056_T_196454/manifest.yml',
 #        './test_data',
-#		'-o', '/tmp/PACT056_T_196454_tme.yml',
+#		'-o', '/tmp',
 #    ])
     mf_d = yaml.safe_load(open(args.manifest))
-    mf_d['manifest_f'] = os.path.abspath(args.manifest)
     specimen_id = mf_d['pipeline']['pact_id']
+    tme_tsv = f'{args.outdir}/{specimen_id}_tme.tsv'
+    tme_yml = f'{args.outdir}/{specimen_id}_tme.yml'
 
+    # Write tsv
+    df = manifest2tsv(mf_d)
+    df['config'] = tme_yml
+    logging.info(f'Writing {tme_tsv}')
+    df.to_csv(tme_tsv, sep='\t', index=False)
+
+    # Write yml
+    mf_d['manifest_f'] = os.path.abspath(args.manifest)
     config = tme_config(specimen_id, args.input_folder)
     config.update(mf_d)
     
-    if not args.outfile:
-        args.outfile = f'{specimen_id}_tme.yaml'
-    logging.info(f'Writing {args.outfile}')
-    stream = open(args.outfile, 'w')
+    logging.info(f'Writing {tme_yml}')
+    stream = open(tme_yml, 'w')
     yaml.dump(config, stream)
     stream.close()
 

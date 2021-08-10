@@ -8,7 +8,7 @@ params.options = [:]
 
 process STAGE_INPUT {
  //   label 'process_medium'
-    tag "${meta.id}"
+    tag "${meta}"
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: {
@@ -20,7 +20,8 @@ process STAGE_INPUT {
     tuple val(meta), path(manifest), path(input_folder)
 
     output:
-    tuple val(meta), path("*.yml"), emit: tme_config
+    path '*.tsv', emit: tsv
+    path '*.yml'
 
     script:
     """

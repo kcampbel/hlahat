@@ -75,6 +75,6 @@ def create_tme_channel(LinkedHashMap row) {
     meta.dob             = row.patient_info_dob
     meta.tcga_study_code = row.patient_info_patient_tumorType
 
-    array = [ meta, file(row.manifest), file(row.input_folder) ]
+    array = [ meta, file(row.config) ]
     return array
 }

@@ -13,7 +13,7 @@ from tme.fileio import package_file_path, get_file
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
-    parser.add_argument('--install_config', default=package_file_path(data, 'install.yml'), help='GTF file')
+    parser.add_argument('--install_config', default=package_file_path(data, 'install.yml'), help='References yml')
     #parser.add_argument('--params', default=package_file_path(data, 'tme_report_params.yml'), help='TME parameters yaml')
     parser.add_argument('--outpath', default=package_file_path(data, ""), help='GTF file')
     

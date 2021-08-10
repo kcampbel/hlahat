@@ -67,7 +67,7 @@ if(grepl('parquet', bctpm_f)){
 emat <- emat_o
 
 if(!any(grepl(sid, colnames(emat)))){
-  stop(paste0('ERROR:', sid, 'not found in expression matrix'))
+  stop(paste('ERROR:', sid, 'not found in', bctpm_f))
 }
 
 ```
