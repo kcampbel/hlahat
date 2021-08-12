@@ -146,6 +146,52 @@ aheatmap(mat, scale = "row", annCol=annCol)
 
 ```
 
+### Immunotherapy Response
+```{r pathway_physiology, fig.width=16, fig.height=8}
+rows = c(
+ "MHCI",
+ "MHCII",
+ "Co-activation_molecules",
+ "Effector_cells",
+ "Effector_cell_traffic",
+ "NK_cells",
+ "T_cells",
+ "B_cells",
+ "M1_signature",
+ "Th1_signature",
+ "Antitumor_cytokines",
+ "Checkpoint_molecules",
+ "Treg",
+ "Treg_and_Th2_traffic",
+ "Neutrophil_signature",
+ "Granulocyte_traffic",
+ "Immune_Suppression_by_Myeloid_Cells",
+ "Myeloid_cells_traffic",
+ "Tumor-associated_Macrophages",
+ "Macrophage_and_DC_traffic",
+ "Th2_signature",
+ "Protumor_cytokines",
+ "Cancer-associated_fibroblasts",
+ "Matrix",
+ "Matrix_remodeling",
+ "Angiogenesis_CC",
+ "Endothelium",
+ "Tumor_proliferation_rate",
+ "EMT_signature"
+)
+  
+mat <- enrich[rows, ]
+if(exists('subtype_df')){
+    annCol <- heatmap_annot(sid, mat, subtype_df)
+} else {
+    annCol <- heatmap_annot(sid, mat)
+}
+
+aheatmap(mat, scale = "row", annCol=annCol)
+
+```
+Bagaev et al. (2021). Conserved pan-cancer microenvironment subtypes predict response to immunotherapy, Cancer Cell, 39, 845-865 [doi: 10.1016/j.ccell.2021.04.014](https://pubmed.ncbi.nlm.nih.gov/34019806/)
+
 ### Immune Landscape of Cancer
 ```{r pathway_thorsson, fig.width=16, fig.height=8}
 rows = c(
