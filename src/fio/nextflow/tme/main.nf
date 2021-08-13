@@ -15,20 +15,21 @@ VERSION = 0.1
 */
 
 // Check input path parameters to see if they exist
+params.email = [:]
+params.metadata = [:] // Xena, PACT metadata tsv
+params.bc_tpm_hgnc = [:] // Batch corrected TPM matrix
+params.pact_gid_counts = [:] // PACT raw counts matrix
+
 checkPathParamList = [
-    params.input 
+    params.input, params.metadata, params.bc_tpm_hgnc, params.pact_gid_counts 
 ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-params.email = [:]
-params.metadata = [:] // Xena, PACT metadata tsv
-params.bctpm = [:] // Batch corrected TPM matrix
-params.counts = [:] // PACT raw counts matrix
-//params.metadata = '/Users/csmith/git/bioinfo-fio/tme/test_data/meta_pact_xena.tsv'
-//params.counts = '/Users/csmith/git/bioinfo-fio/tme/test_data/pact_rsem_raw.exprs.gid.tsv.gz'
-//params.bctpm = '/Users/csmith/Documents/References/xena/subsets/PactTcgaTargetGtex_rsem_gene_tpm/test_combat_ColonRectum_hgnc.tsv.gz'
+
+// Conda enviroment location
+params.conda_basedir = file(params.condaprefix).getParent() 
 
 // Header log info
 log.info "========================================="
@@ -42,36 +43,27 @@ log.info "========================================="
     NAMED WORKFLOW FOR PIPELINE
 ========================================================================================
 */
-include { STAGE_INPUT } from './process/stage_input' addParams( params.modules["tme_report"] )
-include { TME_REPORT } from './process/tme_report' addParams( params.modules["tme_report"] )
+include { TME } from './workflow/tme'
 
 // Sample input
-include { create_tme_channel } from './tme/lib/functions.nf'
 Channel.from(ch_input)
     .splitCsv(sep: '\t', header: true)
-    .map { create_tme_channel(it) }
-    //.groupTuple(by: [0])
-    //.view { it }
-    .set { ch_input }
+    .set { ch_input } // tuple val(meta), file(manifest), path(input_dir)
 
 // External files input
-Channel.fromList(
+Channel.fromPath(
     [
-        file(params.metadata),
-        file(params.bctpm),
-        file(params.counts)
+        params.metadata,
+        params.bc_tpm_hgnc,
+        params.pact_gid_counts
     ])
-    //.view { it }
     .collect { it }
-    .set { ch_bctpm }
+    .set { ch_emats }
 
-workflow TME {
-   // STAGE_INPUT (
-   //     ch_input
-   // )
-    TME_REPORT (
-        STAGE_INPUT.out.tme_config, // val(meta), path(*.yml)
-        ch_bctpm
+workflow MAIN {
+    TME (
+        ch_input,
+        ch_emats
     )
 }
 
@@ -100,7 +92,7 @@ workflow.onComplete {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-    TME ()
+    MAIN ()
 }
 
 /*

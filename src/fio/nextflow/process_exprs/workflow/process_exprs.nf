@@ -9,20 +9,20 @@ params.pact_tcga_gtex_map = [:]
 // PACT RNAseq expression matrix
 ch_pact_emat = Channel.fromPath( 
     [
-        file(params.pact_gid_counts),
-        file(params.pact_gid_tpm),
-        file(params.pact_hgnc_tpm),
-        file(params.tcga_gtex_map),
-        file(params.pact_emat_log)
+        params.pact_gid_counts,
+        params.pact_gid_tpm,
+        params.pact_hgnc_tpm,
+        params.tcga_gtex_map,
+        params.pact_emat_log
     ]
 ).collect()
 
 // Batch correction
 ch_batch_correct = Channel.fromPath(
     [
-        file(params.xena_hgnc_tpm),
-        file(params.bc_emat_log),
-        file(params.blacklist)
+        params.xena_hgnc_tpm,
+        params.bc_emat_log,
+        params.blacklist
     ]
 ).collect()
 
@@ -63,6 +63,6 @@ workflow PROCESS_EXPRS {
     emit:
     emats = BATCH_CORRECT.out.bc_hgnc_tpm_updated
       .join(UPDATE_PACT_EMAT.out.pact_gid_counts_updated)
-      .collect { it[3,2,-1] }
+      .collect { it[3,2,-1] } // tuple path(metadata), path(bc_tpm_hgnc), path(pact_counts_gid)
     pe_input = ch_input // meta, bc_log_updated, bc_tpm_updated, metadata_tsv  
 }

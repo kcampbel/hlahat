@@ -14,9 +14,10 @@ from commonLib.lib.search import locate
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
+    parser.add_argument('pipeline', type=str, default=package_file_path(nextflow, 'main.nf'),
+        choices=['fio', 'tme', 'process_exprs'], help='Pipeline to run')
     parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
-    parser.add_argument('-s', '--nextflow-script', default=package_file_path(nextflow, 'main.nf'), help='Nextflow pipeline script')
     parser.add_argument('-tsv', '--nextflow-tsv', default='input.tsv', help='Nextflow input tsv to write')
     parser.add_argument('-p', '--nextflow-params', help='Nextflow parameters file')
     parser.add_argument('-e', '--extra', help='Comma separated list of extra args')
@@ -47,6 +48,7 @@ def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra
 def main():
     args = parse_args()
 #    args = parse_args([
+#        'fio',
 #        './test_data/PACT056_T_196454/manifest.yml',
 #        './test_data/PACT056_T_196454',
 #        '--nextflow-tsv', '/tmp/input.tsv',
@@ -73,12 +75,21 @@ def main():
     df.to_csv(args.nextflow_tsv, sep='\t', index=False)
 
     ## Nextflow command
-    cmd = nextflow_cmd(args.nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
-
-    # process_exprs
-    cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
-    # tme
-    cmd.extend(['--rmd', package_file_path(tme_R, '')])
+    if args.pipeline == 'fio':
+        nextflow_script = package_file_path(nextflow, 'main.nf')
+        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        # process_exprs
+        cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
+        # tme
+        cmd.extend(['--rmd', package_file_path(tme_R, '')])
+    if args.pipeline == 'tme':
+        nextflow_script = package_file_path(nextflow, 'tme/main.nf')
+        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        cmd.extend(['--rmd', package_file_path(tme_R, '')])
+    if args.pipeline == 'process_exprs':
+        nextflow_script = package_file_path(nextflow, 'process_exprs/main.nf')
+        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
 
     if args.dryrun:
         print(' '.join(cmd))
