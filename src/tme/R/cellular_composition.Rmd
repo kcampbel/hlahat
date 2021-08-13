@@ -22,7 +22,7 @@ xcell_celltypes <- config$xcell_celltypes_f
 ```{r cellcomp_xcell, results='hide'}
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
 
-xcell <- xCellAnalysis(as.matrix(emat_pact))
+xcell <- xCellAnalysis(as.matrix(emat_pact), parallel.sz=threads)
 xcell_t  <-  read.delim(xcell_celltypes_f)
 xcell_lym <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Lymphocytes"],]
 xcell_nonhem <- xcell[row.names(xcell) %in% xcell_t$Cell.types[xcell_t$Group=="Non-Hematopoietic"],]

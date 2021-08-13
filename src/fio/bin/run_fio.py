@@ -23,6 +23,7 @@ def parse_args(args=None):
     parser.add_argument('-e', '--extra', help='Comma separated list of extra args')
     parser.add_argument('-t', '--tracing', action='store_true', help='Enable Nextflow report file generation')
     parser.add_argument('-n', '--dryrun', action='store_true', help='Dry run')
+    parser.add_argument('--email', help='Email address for pipeline messaging')
     
     return parser.parse_args(args)
 
@@ -90,6 +91,8 @@ def main():
         nextflow_script = package_file_path(nextflow, 'process_exprs/main.nf')
         cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
         cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
+    if args.email:
+        cmd.extend(['--email', args.email])
 
     if args.dryrun:
         print(' '.join(cmd))
