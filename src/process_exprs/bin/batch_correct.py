@@ -123,6 +123,25 @@ def main():
 #            '-o', '/tmp/batch_correct/bc.tsv',
 #        ])
 
+    #root = '/mnt/CBdata/data/data/Workspace/Users/csmith/fio/work/cc/24be176a53648e8a718299cfbe7962'
+#    root = '/home/csmith/git/bioinfo-fio/test_data'
+#    args = parse_args(
+#        [
+#            '/media/nfs/data/References/xena/TcgaTargetGtex_rsem_hgnc_tpm.parquet.gz',
+#            f'{root}/pact_rsem_tpm.exprs.hgnc.tsv.gz',
+#            #f'{root}/eset_xena_hgnc_proteincoding_colon.tsv.gz',
+#            #f'{root}/eset_pact_hgnc_proteincoding.tsv.gz',
+#            '--batch_name', 'study',
+#            '--primary_site', 'ColonRectum',
+#            '--metadata_tsv', 
+#            f'{root}/meta_pact_xena.tsv',
+#            '--exprs_log',
+#            f'{root}/bc_exprs_log.tsv',
+#            '-o', '/tmp/exprs.tsv.gz'
+#        ]
+#    )
+
+    logging.info(args)
     # Metadata
     primary_site = args.primary_site[0].split(',')
     meta = pd.read_table(args.metadata_tsv, index_col='specimen_id')

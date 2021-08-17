@@ -53,6 +53,7 @@ def main():
 #        '-o', 's3://pact-research/csmith/tme/test/timestamp_exprs',
 #        ]
 #    )
+    logging.info(args)
     # Expression set
     exprs = read_exprs(args.exprs, index_col=0)
     timestamp = file_time(args.exprs)

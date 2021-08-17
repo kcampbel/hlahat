@@ -23,17 +23,19 @@ def parse_args(args=None):
     parser.add_argument('--metadata_tsv', help='Specimen metadata')
     parser.add_argument('--tcga_gtex_map', help='TCGA to GTEX metadata mapping file')
     parser.add_argument('-o', '--outpath', default='rev', help='Output path')
-    parser.add_argument('-f', '--force', action='store_true', help='Force overwrite of samples with the same name')
+    parser.add_argument('-f', '--force', action='store_true', help='Force overwrite of samples with the same name are present')
+    parser.add_argument('-p', '--passthrough', action='store_true', help='Output without overwrite if samples with the same name are present')
 
     return parser.parse_args(args)
 
-def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False):
+def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False, passthrough:bool = False):
     """ Update metadata flat file 
         Args:
             manifest(dict): EPIC manifest
             meta(pandas): metadata df
             tcga_gtex(pandas): TCGA to GTEX mapping df
             force(bool): Force update if True
+            passthrough(bool): leave existing entry in meta if True
 
         Returns:
             pandas or None if specimen_id is found and force=False
@@ -41,9 +43,12 @@ def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False):
     row = manifest_to_meta(manifest)
     specimen_id = row['specimen_id']
     if meta.index.isin([specimen_id]).any():
-        if force:
-            logging.info(f'--force enabled. Dropping {sampleId} from metadata')
-            meta = exprs.drop(specimen_id, axis=0)
+        if force and not passthrough:
+            logging.info(f'--force enabled. Overwriting {specimen_id} in metadata')
+            meta = meta.drop(specimen_id, axis=0)
+        elif passthrough:
+            logging.info(f'--passthrough enabled. Retaining existing data for {specimen_id} in metadata')
+            return(meta)
         else:
             logging.warning(f'{specimen_id} already exists in metadata. Set --force to overwrite.')
             return None
@@ -67,39 +72,43 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #        [
-#        '--manifest', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/manifest.PACT004_T_560351F.yml',
-#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset.tsv',
-#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/meta_eset_20210625T165418.tsv', # Has PACT004
+#        '--exprs', '/home/csmith/git/bioinfo-fio/test_data/eset_pact_geneid_proteincoding.tsv', # Has PACT004 but not PACT056
+##        #'/home/csmith/git/bioinfo-fio/test_data/PACT004_T_560351F/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
+##        '/home/csmith/git/bioinfo-fio/test_data/PACT004_T_560351F/RNA_PACT004_T_560351F_tumor_rna.genes.onegene.tsv',
+##        '--manifest', '/home/csmith/git/bioinfo-fio/test_data/PACT004_T_560351F/manifest.PACT004_T_560351F.yml',
+#        '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/RNA_PACT056_T_196454_tumor_rna.genes.tsv',
+#        '--manifest', '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/manifest.yml',
+#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/test_data/meta_pact_xena.tsv',
 #        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/src/process_exprs/data/tcga_gtex.tsv',
-#        #'--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
-#        '--exprs', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/eset_pact_geneid_proteincoding.tsv',
-#        '--exprs_log', '/home/csmith/git/bioinfo-fio/process_exprs/test_data/pact_eset_log.tsv',
+#        '--exprs_log', '/home/csmith/git/bioinfo-fio/test_data/pact_eset_log.tsv',
 #        '-o', '/tmp/updat_exprs',
-#        #'-o', '/tmp/stage_esets',
-#        '/home/csmith/git/bioinfo-fio/process_exprs/test_data/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
-#        #'-f', 
+#        #'--passthrough',
+#        '-f', 
 #        ]
 #    )
-
 
     # S3
 #    args = parse_args(
 #        [
-#        '--manifest', '/home/csmith/git/bioinfo-fio/tme/test/manifest.PACT004_T_560351F.yml',
-#        #'--metadata_tsv', 's3://pact-research/csmith/tme/test/meta_eset.tsv',
-#        #'--metadata_tsv', 's3://pact-research/csmith/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
-#        #'--tcga_gtex_map', 's3://pact-research/csmith/tme/data/tcga_gtex.tsv',
-#        #'--exprs', 's3://pact-research/csmith/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
-#        #'--exprs', 's3://pact-research/csmith/tme/test/eset_pact_geneid_proteincoding.tsv',
-#        '--exprs', 's3://pact-research/csmith/tme/test/eset_pact_geneid_proteincoding.parquet.gz',
-#        '--exprs_log', 's3://pact-research/csmith/tme/test/pact_eset_log.tsv',
-#        #'-o', 's3://pact-research/csmith/tme/test/output',
+#        '--manifest', '/home/csmith/git/bioinfo-fio/test/manifest.PACT004_T_560351F.yml',
+#        #'--metadata_tsv', 's3://pact-research/csmith/test/meta_eset.tsv',
+#        #'--metadata_tsv', 's3://pact-research/csmith/test/meta_eset_20210625T165418.tsv', # Has PACT004
+#        #'--tcga_gtex_map', 's3://pact-research/csmith/data/tcga_gtex.tsv',
+#        #'--exprs', 's3://pact-research/csmith/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
+#        #'--exprs', 's3://pact-research/csmith/test/eset_pact_geneid_proteincoding.tsv',
+#        '--exprs', 's3://pact-research/csmith/test/eset_pact_geneid_proteincoding.parquet.gz',
+#        '--exprs_log', 's3://pact-research/csmith/test/pact_eset_log.tsv',
+#        #'-o', 's3://pact-research/csmith/test/output',
 #        #'-o', '/tmp/stage_esets',
 #        '-o', '/tmp/rev',
-#        '/home/csmith/git/bioinfo-fio/tme/test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
+#        '/home/csmith/git/bioinfo-fio/test/RNA_PACT004_T_560351F_tumor_rna.genes.tsv',
 #        #'-f', 
 #        ]
 #    )
+    logging.info(args)
+    if args.force and args.passthrough:
+        raise Exception('Cannot pass --force and --passthrough')
+
     manifest = yaml.safe_load(open(args.manifest))
     mf = manifest_to_meta(manifest)
     specimen_id = mf['specimen_id']
@@ -110,18 +119,17 @@ def main():
             raise Exception(f'--tcga_gtex_map required for metadata update. Exiting...')
         meta = pd.read_csv(args.metadata_tsv, sep='\t', index_col=0)
         tcga_gtex = pd.read_csv(args.tcga_gtex_map, sep='\t')
-        meta_new = update_metadata_tsv(manifest, meta, tcga_gtex, args.force)
+        meta_new = update_metadata_tsv(manifest, meta, tcga_gtex, args.force, args.passthrough)
     else:
         meta_new = 'namespace' 
 
     # Check exprs for updates
     exprs = read_exprs(args.exprs, index_col=0)
     exprs_new = counts2mat(counts=args.counts, metric='TPM', gene_name=exprs.index.name, exprs=exprs,
-        force=args.force)
+        force=args.force, passthrough=args.passthrough)
     
     # Write if exprs and manifest have been updated
     if exprs_new is not None and meta_new is not None:
-        logging.info(f'Updating exprs for {specimen_id}')
         # Write outputs
         if not os.path.exists(args.outpath):
             os.makedirs(args.outpath, exist_ok=True)

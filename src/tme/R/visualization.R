@@ -91,7 +91,7 @@ heatmap_annot <- function(sid, emat, subtype_df='None'){
     )
 
     # Subtype annot
-    if(subtype_df != 'None'){
+    if(is.data.frame(subtype_df)){
         df <- subtype_df[rownames(annCol),] %>%
             dplyr::select(Subtype) 
         annCol <- merge(annCol, df, by="row.names",all.x=TRUE) %>%

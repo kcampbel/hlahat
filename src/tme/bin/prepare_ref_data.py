@@ -28,6 +28,8 @@ def main():
 #        '--outpath', '/tmp'
 #        ]
 #    )
+    logging.info(args)
+
     ref = dict()
     install_config = yaml.safe_load(open(args.install_config))
     # Disable writing to params file for now

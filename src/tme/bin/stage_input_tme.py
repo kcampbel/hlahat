@@ -16,11 +16,12 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('input_folder', help='EPIC pipeline input folder')
+    parser.add_argument('-t' ,'--threads', default=8, help='Number of threads')
     parser.add_argument('-o', '--outdir', default=os.getcwd(), help='Output directory')
     
     return parser.parse_args(args)
 
-def tme_config(specimen_id:str, input_folder:str):
+def tme_config(specimen_id:str, input_folder:str, threads:int):
     def _find_file(input_folder, fn, pattern:str = None):
         hits = list(locate(fn, input_folder))
         if pattern:
@@ -34,10 +35,12 @@ def tme_config(specimen_id:str, input_folder:str):
     config = {
     'goi_f': package_file_path(data, 'pact_goi.tsv'),
     'geneset_f': package_file_path(data, 'genesets.txt'),
+    'geneset_meta_f': package_file_path(data, 'genesets_meta.tsv'),
     'xcell_celltypes_f': package_file_path(data, 'xcell_types.txt'),
     'hotspots_f': package_file_path(data, 'chang2017_hotspots.tsv'),
     'gtf_tsv_f': package_file_path(data, 'Homo_sapiens.GRCh37.87.tsv.gz'),
     'hgnc_f': package_file_path(data, 'hgnc_complete_set_2021-07-01.txt.gz'),
+    'threads': threads,
     }
     params = yaml.safe_load(files(data).joinpath('tme_report_params.yml').read_text())
     config.update(params)
@@ -78,6 +81,8 @@ def main():
 #        './test_data',
 #		'-o', '/tmp',
 #    ])
+    logging.info(args)
+
     mf_d = yaml.safe_load(open(args.manifest))
     specimen_id = mf_d['pipeline']['pact_id']
     tme_tsv = f'{args.outdir}/{specimen_id}_tme.tsv'
@@ -91,7 +96,7 @@ def main():
 
     # Write yml
     mf_d['manifest_f'] = os.path.abspath(args.manifest)
-    config = tme_config(specimen_id, args.input_folder)
+    config = tme_config(specimen_id, args.input_folder, args.threads)
     config.update(mf_d)
     
     logging.info(f'Writing {tme_yml}')
