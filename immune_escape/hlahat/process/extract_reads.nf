@@ -13,6 +13,7 @@ process EXTRACT_READS {
         saveAs: {
             filename -> saveFiles(filename:filename, options:[:], publish_dir:params.publish_dir)
             }
+    //conda params.conda_basedir + params.conda_envt
 
     input:
     tuple val(meta), path(reads1), path(reads2)
@@ -20,14 +21,12 @@ process EXTRACT_READS {
 
     output:
     tuple val(meta), path("*.extracted*.fq.gz"), emit: reads
+    path ".command*"
 
     script:
     def software = getSoftwareName(task.process)
     if ( meta.seqtype.equals('tumor_rna') )
     """
-    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:/opt/samtools/bin:$PATH
-    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-    
     /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix}/genotype_genome \
         -p ${task.cpus} \
         -1 ${reads1} -2 ${reads2} \
@@ -36,9 +35,6 @@ process EXTRACT_READS {
     """
     else
     """
-    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:/opt/samtools/bin:$PATH
-    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
-    
     /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py --base ${hisat_prefix}/genotype_genome \
         -p ${task.cpus} \
         -1 ${reads1} -2 ${reads2} \

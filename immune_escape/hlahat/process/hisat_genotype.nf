@@ -16,6 +16,7 @@ process HISAT_GENOTYPE {
         saveAs: {
             filename -> saveFiles(filename:filename, options:[:], publish_dir:params.publish_dir)
             }
+    //conda params.conda_basedir + params.conda_envt
 
     input:
     tuple val(meta), path(reads)
@@ -23,6 +24,7 @@ process HISAT_GENOTYPE {
 
     output:
     tuple val(meta), path("*.report") , emit: hisatgt_report
+    path ".command*"
 
     when:
     meta.seqtype.equals('normal_dna')
@@ -32,8 +34,6 @@ process HISAT_GENOTYPE {
 
     if ( meta.seqtype.equals('tumor_rna') )
     """
-    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:/opt/samtools/bin:$PATH
-    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
     /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix}/genotype_genome \
         -p ${task.cpus} \
         -1 ${reads[0]} -2 ${reads[1]} \
@@ -42,8 +42,6 @@ process HISAT_GENOTYPE {
     """
     else
     """
-    export PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_scripts:/opt/samtools/bin:$PATH
-    export PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
     /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py --genotype-genome ${hisat_prefix}/genotype_genome \
         -p ${task.cpus} \
         -1 ${reads[0]} -2 ${reads[1]} \

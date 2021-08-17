@@ -16,6 +16,7 @@ process PATIENT_REFERENCE {
         saveAs: {
             filename -> saveFiles(filename:filename, options:[:], publish_dir:params.publish_dir)
             }
+    //conda params.conda_basedir + params.conda_envt
 
     input:
     tuple val(meta), path(hisatgt_report)
@@ -26,6 +27,7 @@ process PATIENT_REFERENCE {
     //tuple val(meta), path("*custom_hla.fasta"), path("*custom_hla.allelic_differences.bed"), emit: patient_reference
     tuple val(meta.specimen_id), path("*top_hlatypes.tsv") , emit: top_hlatypes
     //path "*hlatypes.tsv" 
+    path ".command*"
 
     shell:
     def software = getSoftwareName(task.process)

@@ -14,6 +14,7 @@ process ALIGN_HLA_READS {
         saveAs: {
             filename -> saveFiles(filename:filename, options:[:], publish_dir:params.publish_dir)
             }
+    //conda params.conda_basedir + params.conda_envt
 
     input:
     tuple val(meta), path(reads), path(hla_fasta), path(hla_bed)
@@ -21,7 +22,8 @@ process ALIGN_HLA_READS {
     //tuple path(hla_fasta), path(hla_bed)
 
     output:
-    tuple val(meta), path("*.bam"), path("*.bam.bai"), emit:hla_bam
+    tuple val(meta), path("*.bam"), path("*.bam.bai"), emit: bam
+    path ".command*"
 
     script:
     def software = getSoftwareName(task.process)
