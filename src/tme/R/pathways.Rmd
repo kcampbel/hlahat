@@ -43,6 +43,9 @@ hgnc_f <- '../data/hgnc_biomart.tsv.gz'
 ```{r pathway_munge}
 emat_pact <- as.matrix(emat[, grepl('^PACT', colnames(emat))])
 
+# Pathway metadata
+geneset_meta <- read.delim(geneset_meta_f)
+
 #read pathway file as list of lists
 inlist <- strsplit(readLines(geneset_f), "[[:space:]]+")
 pathways <- lapply(inlist, tail, n = -1)
@@ -65,7 +68,7 @@ for(set_name in names(pathways)){
 
 ```{r pathway_gsva, results='hide'}
 #enrich <- gsva(as.matrix(emat), pathways, method="zscore", verbose=FALSE, parallel.sz=4)
-enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, parallel.sz=4)
+enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, parallel.sz=threads)
 
 ```
 
@@ -73,18 +76,10 @@ enrich <- gsva(as.matrix(emat_pact), pathways, method="ssgsea", verbose=FALSE, p
 
 ### Immune system
 ```{r pathway_immune, fig.width=16, fig.height=8}
-rows = c(
-  "TNFA_SIGNALING_VIA_NFKB",
-  "TGF_BETA_SIGNALING",
-  "IL6_JAK_STAT3_SIGNALING",
-  "INTERFERON_GAMMA_RESPONSE",
-  "INTERFERON_ALPHA_RESPONSE",
-  "EPITHELIAL_MESENCHYMAL_TRANSITION",
-  "INFLAMMATORY_RESPONSE",
-  "IL2_STAT5_SIGNALING",
-  "tcell_inflamed_gep",
-  "KEGG_ANTIGEN_PROCESSING_AND_PRESENTATION"
-)
+rows <- geneset_meta %>%
+  filter(category =='immune') %>%
+  pull(gene_set) 
+
 mat <- enrich[rows, ]
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, mat, subtype_df)
@@ -98,16 +93,10 @@ aheatmap(mat, scale = "row", annCol=annCol)
 
 ### Driver
 ```{r pathway_driver, fig.width=16, fig.height=8}
-rows = c(
-  "P53_PATHWAY",
-  "KRAS_SIGNALING_UP",
-  "KRAS_SIGNALING_DN",
-  "KRAS_SIGNALING_UP",
-  "KRAS_SIGNALING_DN",
-  "WNT_BETA_CATENIN_SIGNALING",
-  "PI3K_AKT_MTOR_SIGNALING",
-  "MYC_TARGETS_V1"
-)
+rows <- geneset_meta %>%
+  filter(category =='driver') %>%
+  pull(gene_set) 
+
 mat <- enrich[rows, ]
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, mat, subtype_df)
@@ -121,19 +110,9 @@ aheatmap(mat, scale = "row", annCol=annCol)
 
 ### Physiology
 ```{r pathway_physiology, fig.width=16, fig.height=8}
-rows = c(
-  "UV_RESPONSE_UP",
-  "UV_RESPONSE_DN",
-  "ANGIOGENESIS",
-  "MSI_DOWN",
-  "HYPOXIA",
-  "DNA_REPAIR",
-  "APOPTOSIS",
-  "UNFOLDED_PROTEIN_RESPONSE",
-  "MYC_TARGETS_V1",
-  "GLYCOLYSIS",
-  "REACTIVE_OXYGEN_SPECIES_PATHWAY"
-)
+rows <- geneset_meta %>%
+  filter(category =='physiology') %>%
+  pull(gene_set) 
   
 mat <- enrich[rows, ]
 if(exists('subtype_df')){
@@ -146,15 +125,30 @@ aheatmap(mat, scale = "row", annCol=annCol)
 
 ```
 
+### Immunotherapy Response
+```{r pathway_bagaev, fig.width=16, fig.height=8}
+rows <- geneset_meta %>%
+  filter(category =='bagaev') %>%
+  pull(gene_set) 
+  
+mat <- enrich[rows, ]
+if(exists('subtype_df')){
+    annCol <- heatmap_annot(sid, mat, subtype_df)
+} else {
+    annCol <- heatmap_annot(sid, mat)
+}
+
+aheatmap(mat, scale = "row", annCol=annCol)
+
+```
+Bagaev et al. (2021). Conserved pan-cancer microenvironment subtypes predict response to immunotherapy, Cancer Cell, 39, 845-865 [doi: 10.1016/j.ccell.2021.04.014](https://pubmed.ncbi.nlm.nih.gov/34019806/)
+
 ### Immune Landscape of Cancer
-```{r pathway_thorsson, fig.width=16, fig.height=8}
-rows = c(
-  "Module3_IFN_score",
-  "LIexpression_score",
-  "CSF1_response",
-  "CHANG_CORE_SERUM_RESPONSE_UP",
-  "TGFB_score_21050467"
-)
+```{r pathway_rthorsson, fig.width=16, fig.height=8}
+rows <- geneset_meta %>%
+  filter(category =='thorsson') %>%
+  pull(gene_set) 
+
 mat <- enrich[rows, ]
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, mat, subtype_df)
@@ -168,7 +162,7 @@ aheatmap(mat, scale = "row", annCol=annCol)
 Thorsson et al. (2018). The Immune Landscape of Cancer. Immunity, 48(4), 812-830.e14. [doi: 10.1016/j.immuni.2018.03.023](https://pubmed.ncbi.nlm.nih.gov/29628290/)
 
 ### All
-```{r pathway_heatmap, fig.width=16, fig.height=8}
+```{r pathway_heatmap, fig.width=16, fig.height=12}
 if(exists('subtype_df')){
     annCol <- heatmap_annot(sid, emat_pact, subtype_df)
 } else {
@@ -177,6 +171,17 @@ if(exists('subtype_df')){
 
 aheatmap(enrich, scale = "row", annCol=annCol)
 
+```
+
+### Metadata
+```{r pathway_metadata}
+geneset_meta %>%
+datatable(
+        extensions = dt_ext,
+        options = dt_opts,
+        rownames=FALSE,
+        escape = FALSE
+        )
 ```
 
 ### Data
