@@ -14,8 +14,8 @@ from commonLib.lib.search import locate
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
-    parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
+    parser.add_argument('-m' ,'--manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('-s', '--nextflow-script', default=package_file_path(nextflow, 'main.nf'), help='Nextflow pipeline script')
     parser.add_argument('-tsv', '--nextflow-tsv', default='input.tsv', help='Nextflow input tsv to write')
     parser.add_argument('-p', '--nextflow-params', help='Nextflow parameters file')
@@ -44,26 +44,49 @@ def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra
 
     return cmd
 
+def fio_config(input_folder:str):
+    def _find_file(input_folder, fn, pattern:str = None):
+        hits = list(locate(fn, input_folder))
+        if pattern:
+            hits = [x for x in hits if re.search(pattern, x)]
+        if len(hits) != 1:
+            raise ValueError(f'!= 1 input file:\n{fn} {hits}')
+        else:
+            return hits[0]
+
+    # Manifest
+    fn = f'manifest*.yml'
+    manifest_f = _find_file(input_folder, fn)
+ 
+    config = {
+        'manifest_f': manifest_f
+    }
+    return config
+
 def main():
     args = parse_args()
 #    args = parse_args([
-#        './test_data/PACT056_T_196454/manifest.yml',
 #        './test_data/PACT056_T_196454',
 #        '--nextflow-tsv', '/tmp/input.tsv',
 #        '--tracing',
 #        '-e', "'-bg,--resume'",
-#        '-n'
+#        '-n',
+#        '--manifest', './test_data/manifest_for_testing.yml',
 #    ])
     # Check inputs exist
-    exists = check_paths_exist([args.manifest, args.input_dir])
+    exists = check_paths_exist([args.input_dir])
     for k,v in exists.items():
         if not v:
             raise FileNotFoundError(k)
 
     ## Write nextflow input tsv
     # Manifest
+    config = fio_config(args.input_dir)
+    if not args.manifest:
+        args.manifest = config['manifest_f']
     mf_d = yaml.safe_load(open(args.manifest))
     sample = mf_d['pipeline']['pact_id']
+
     row = {
         'sample': mf_d['pipeline']['pact_id'],
         'manifest': os.path.abspath(args.manifest),
