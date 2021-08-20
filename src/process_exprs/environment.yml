@@ -3,18 +3,16 @@ name: process_exprs
 channels:
   - bioconda
   - conda-forge
-  - r
   - nodefaults
 dependencies:
   - fastparquet
+  - gtfparse
   - numpy
-  - nextflow=21.04
   - patsy
   - pip
   - python=3.9
   - pandas
   - pyyaml
-  - rclone
   - s3fs=0.3
   - pip:
     - -e ../

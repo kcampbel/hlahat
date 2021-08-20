@@ -117,7 +117,7 @@ def main():
 ##            './test/eset_pact_geneid_proteincoding.tsv',
 #            '--batch_name', 'study',
 #            '--metadata_tsv', './test_data/meta_pact_xena_notestsamples.tsv',
-#            '--exprs_log', './process_exprs/test_data/bc_exprs_log.tsv',
+#            '--exprs_log', './test_data/bc_exprs_log.tsv',
 #            '--blacklist', './test_data/blacklist.txt',
 #            '--primary_site', 'ColonRectum',
 #            '-o', '/tmp/batch_correct/bc.tsv',
@@ -172,8 +172,8 @@ def main():
 
     if args.blacklist:
         logging.info(f'Checking for blacklisted samples from {args.blacklist}')
-        blacklist = [x.strip() for x in open(args.blacklist)]
-        dropme = exprs_m.filter(items = blacklist, axis=1).columns.to_list()
+        blacklist = pd.read_csv(args.blacklist)
+        dropme = exprs_m.filter(items = blacklist['specimen_id'], axis=1).columns.to_list()
         if dropme:
             logging.info(f'Blacklisting {dropme}')
             exprs_m.drop(dropme, axis=1, inplace=True)

@@ -18,9 +18,9 @@ process BATCH_CORRECT {
     conda params.conda_basedir + params.conda_envt
 
     input:
-    tuple val(meta), path(manifest), val(primary_site), path(gene_counts)
-    tuple val(meta), path(metadata_tsv), path(pact_hgnc_tpm)
-    tuple path(xena_hgnc_tpm), path(bc_emat_log), path(blacklist)
+    tuple val(meta), path(manifest), val(primary_site), path(gene_counts), path(multiqc)
+    tuple val(meta), path(metadata_tsv), path(pact_hgnc_tpm), path(blacklist)
+    tuple path(xena_hgnc_tpm), path(bc_emat_log)
         
     output:
     tuple val(meta), path(bc_log_updated), path(bc_tpm_updated), emit: bc_hgnc_tpm_updated

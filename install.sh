@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -x
 #FIO
-conda env create -f conda/fio.yml --force &&
-#curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &&
-#unzip awscliv2.zip &&
-#sudo ./aws/install
+conda env create -f conda/fio.yml --force 
 
 # PROCESS_EXPRS
 conda env create -f conda/process_exprs.yml --force 

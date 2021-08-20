@@ -12,7 +12,8 @@ from datetime import datetime
 import yaml
 import re
 from process_exprs.process import counts2mat, manifest_to_meta
-from commonLib.lib.fileio import get_extension, file_time, read_exprs, write_exprs
+from process_exprs import data
+from commonLib.lib.fileio import get_extension, file_time, read_exprs, write_exprs, package_file_path
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -21,10 +22,13 @@ def parse_args(args=None):
     parser.add_argument('--exprs', required=True, help='Gene expression matrix to update')
     parser.add_argument('--exprs_log', help='Update log file')
     parser.add_argument('--metadata_tsv', help='Specimen metadata')
-    parser.add_argument('--tcga_gtex_map', help='TCGA to GTEX metadata mapping file')
+    parser.add_argument('--multiqc', help='Multiqc json for QC check')
+    parser.add_argument('--blacklist', help='Blacklist file to update if fail')
     parser.add_argument('-o', '--outpath', default='rev', help='Output path')
     parser.add_argument('-f', '--force', action='store_true', help='Force overwrite of samples with the same name are present')
     parser.add_argument('-p', '--passthrough', action='store_true', help='Output without overwrite if samples with the same name are present')
+    parser.add_argument('--config', default=package_file_path(data, 'pipeline.yml'), help='YAML with QC thresholds')
+    parser.add_argument('--tcga_gtex_map', help='TCGA to GTEX metadata mapping file')
 
     return parser.parse_args(args)
 
@@ -64,9 +68,47 @@ def update_metadata_tsv(manifest:dict, meta, tcga_gtex, force:bool = False, pass
     out = pd.concat([meta, tmp])
     return(out)
 
+def multiqc_json_to_df(sample_id:str, multiqc:dict, cutoffs:dict):
+    dat = multiqc['report_saved_raw_data']
+    yaml_map = {
+        'pe_antisense': dat['multiqc_rseqc_infer_experiment'][f'{sample_id}.rseqc_infer_experiment.txt'],
+        'pe_sense': dat['multiqc_rseqc_infer_experiment'][f'{sample_id}.rseqc_infer_experiment.txt'],
+        #'failed': dat['multiqc_rseqc_infer_experiment'][f'{sample_id}.rseqc_infer_experiment.txt'],
+        'PCT_PF_READS_ALIGNED': dat['multiqc_picard_AlignmentSummaryMetrics'][sample_id],
+        'PCT_CODING_BASES': dat['multiqc_picard_RnaSeqMetrics'][sample_id],
+        'PCT_RIBOSOMAL_BASES': dat['multiqc_picard_RnaSeqMetrics'][sample_id],
+    }
+
+    out = pd.DataFrame()
+    for k, v in cutoffs.items():
+        observed = yaml_map[k][k]
+        direction = v[0]
+        threshold = float(v[1::])
+        if direction == '>':
+            pass_ = observed > threshold
+        elif direction == '>=':
+            pass_ = observed >= threshold
+        elif direction == '<':
+            pass_ = observed < threshold
+        elif direction == '<=':
+            pass_ = observed <= threshold
+        elif direction == '==':
+            pass_ = observed == threshold
+        else:
+            raise ValueError(f'No directionality specified for {k}:{v}. Format must be metric: <>=value')
+
+        row = {
+            'metric': k,
+            'threshold': v,
+            'observed': observed,
+            'pass': pass_,
+        }
+        tmp = pd.DataFrame([row])
+        out = pd.concat([out, tmp]).round(3)
+
+    return(out)
+
 def main():
-    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
 
     args = parse_args()
@@ -79,6 +121,9 @@ def main():
 #        '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/RNA_PACT056_T_196454_tumor_rna.genes.tsv',
 #        '--manifest', '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/manifest.yml',
 #        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/test_data/meta_pact_xena.tsv',
+#        '--blacklist', '/home/csmith/git/bioinfo-fio/test_data/blacklist.txt',
+#        #'--multiqc', '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/multiqc_data.json',
+#        '--multiqc', '/home/csmith/git/bioinfo-fio/test_data/PACT056_T_196454/multiqc_data_fail.json',
 #        '--tcga_gtex_map', '/home/csmith/git/bioinfo-fio/src/process_exprs/data/tcga_gtex.tsv',
 #        '--exprs_log', '/home/csmith/git/bioinfo-fio/test_data/pact_eset_log.tsv',
 #        '-o', '/tmp/updat_exprs',
@@ -133,6 +178,35 @@ def main():
         # Write outputs
         if not os.path.exists(args.outpath):
             os.makedirs(args.outpath, exist_ok=True)
+        # Check QC
+        if args.multiqc:
+            # Load YAML and compare to QC results
+            mqc = yaml.safe_load(open(args.multiqc))
+            config = yaml.safe_load(open(args.config))
+            config = config['exprs_qc']
+            rna_tumor = manifest['pipeline']['rna']['tumor']
+            qc_df = multiqc_json_to_df(rna_tumor, mqc, config)
+            blacklist = pd.read_csv(args.blacklist)
+            logging.info(f'Sample QC:\n{qc_df}')
+            if (qc_df['pass'] == False).any():
+                logging.warning(f'{specimen_id} failed QC')
+                # Add to blacklist
+                if args.blacklist:
+                    if not blacklist.specimen_id.isin([specimen_id]).any():
+                        logging.info(f'Adding {specimen_id} to blacklist')
+                        tmp = pd.DataFrame([{'specimen_id': specimen_id}])
+                        blacklist = pd.concat([blacklist, tmp])
+                    else:
+                        logging.info(f'{specimen_id} already in {args.blacklist}. Skipping')
+                else:
+                    logging.warning(f'Skipping blacklist update as --blacklist is not set.')
+            fp = f'{args.outpath}/{os.path.basename(args.blacklist)}'
+            blacklist.to_csv(fp, index=False)
+
+            # Write QC tsv
+            fp = f'{args.outpath}/exprs_qc.tsv'
+            logging.info(f'Writing {fp}')
+            qc_df.to_csv(fp, sep='\t', index=False)
 
         if args.metadata_tsv:
             # Metadata

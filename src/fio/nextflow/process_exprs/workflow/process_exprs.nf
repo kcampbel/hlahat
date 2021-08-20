@@ -13,7 +13,8 @@ ch_pact_emat = Channel.fromPath(
         params.pact_gid_tpm,
         params.pact_hgnc_tpm,
         params.tcga_gtex_map,
-        params.pact_emat_log
+        params.pact_emat_log,
+        params.blacklist
     ]
 ).collect()
 
@@ -22,7 +23,6 @@ ch_batch_correct = Channel.fromPath(
     [
         params.xena_hgnc_tpm,
         params.bc_emat_log,
-        params.blacklist
     ]
 ).collect()
 
@@ -30,6 +30,7 @@ ch_batch_correct = Channel.fromPath(
 ch_metadata_tsv = file(params.metadata_tsv)
 
 include { STAGE_INPUT      } from '../process/stage_input'      addParams( params.modules["stage_input"] )
+include { QC_CHECK         } from '../process/qc_check'         addParams( params.modules["qc"] )
 include { UPDATE_PACT_EMAT } from '../process/update_pact_emat' addParams( params.modules["update_pact_emat"] )
 include { BATCH_CORRECT    } from '../process/batch_correct'    addParams( params.modules["batch_correct"] )
 
@@ -56,7 +57,7 @@ workflow PROCESS_EXPRS {
     // Batch correction
     BATCH_CORRECT (
         ch_pe_input,
-        UPDATE_PACT_EMAT.out.pact_hgnc_tpm_updated, // tuple val(meta), path(metadata_tsv_updated), path(pact_hgnc_tpm_updated)
+        UPDATE_PACT_EMAT.out.pact_hgnc_tpm_updated, // tuple val(meta), path(metadata_tsv_updated), path(pact_hgnc_tpm_updated), path(blacklist)
         ch_batch_correct
         )
     

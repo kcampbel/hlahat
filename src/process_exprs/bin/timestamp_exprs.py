@@ -15,6 +15,7 @@ def parse_args(args=None):
     parser.add_argument('--exprs', required=True, help='Gene expression matrix file')
     parser.add_argument('--exprs_log', required=True, help='Log file')
     parser.add_argument('--metadata_tsv', help='Metadata file')
+    parser.add_argument('--blacklist', help='Blacklist file')
     parser.add_argument('-o', '--outpath', required=True, help='Output path (e.g. s3://)')
 
     return parser.parse_args(args)
@@ -33,14 +34,15 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #        [
-#        '--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding.tsv',
-#        '--exprs_log', '/home/csmith/git/bioinfo-fio/tme/test/pact_eset_log.tsv',
-#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset.tsv',
-#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/tme/test/meta_eset_20210625T165418.tsv', # Has PACT004
-#        #'--exprs', '/home/csmith/git/bioinfo-fio/tme/test/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
+#        '--exprs', '/home/csmith/git/bioinfo-fio/test_data/eset_pact_geneid_proteincoding.tsv',
+#        '--exprs_log', '/home/csmith/git/bioinfo-fio/test_data/pact_eset_log.tsv',
+#        '--metadata_tsv', '/home/csmith/git/bioinfo-fio/test_data/meta_pact_xena.tsv',
+#        #'--metadata_tsv', '/home/csmith/git/bioinfo-fio/test_data/meta_eset_20210625T165418.tsv', # Has PACT004
+#        #'--exprs', '/home/csmith/git/bioinfo-fio/test_data/eset_pact_geneid_proteincoding_20210625T165418.tsv', # Has PACT004
+#        '--blacklist', '/home/csmith/git/bioinfo-fio/test_data/blacklist.txt',
 #        '-o', '/tmp/update_exprs',
 #        ]
-#    )
+    )
 
     # S3
 #    args = parse_args(
@@ -71,6 +73,13 @@ def main():
         logging.info(f'Writing {fp} and {fp_orig}')
         meta.to_csv(fp, sep='\t')
         meta.to_csv(fp_orig, sep='\t')
+
+    if args.blacklist:
+        blacklist = pd.read_csv(args.blacklist, sep='\t')
+        fp_orig, fp = rev_filename(args.blacklist, timestamp, args.outpath)
+        logging.info(f'Writing {fp} and {fp_orig}')
+        blacklist.to_csv(fp, sep='\t')
+        blacklist.to_csv(fp_orig, sep='\t')
 
     # Log
     exprs_log = pd.read_csv(args.exprs_log, sep='\t')

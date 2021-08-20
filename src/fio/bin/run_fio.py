@@ -19,7 +19,6 @@ def parse_args(args=None):
     parser.add_argument('input_dir', help='EPIC pipeline input path')
     parser.add_argument('-m' ,'--manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('-s', '--nextflow-script', default=package_file_path(nextflow, 'main.nf'), help='Nextflow pipeline script')
-    parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('-tsv', '--nextflow-tsv', default='input.tsv', help='Nextflow input tsv to write')
     parser.add_argument('-p', '--nextflow-params', help='Nextflow parameters file')
     parser.add_argument('-e', '--extra', help='Comma separated list of extra args')

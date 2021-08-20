@@ -183,7 +183,7 @@ dmypy.json
 cython_debug/
 
 # Misc
-*/work
-*/test
+test_data/
 .vscode/
-*/trash
+trash/
+log/

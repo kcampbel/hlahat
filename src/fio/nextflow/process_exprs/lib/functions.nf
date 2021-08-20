@@ -67,6 +67,6 @@ def create_pe_channel(LinkedHashMap row) {
     meta.dob             = row.patient_info_dob
     meta.tcga_study_code = row.patient_info_patient_tumorType
 
-    array = [ meta, file(row.manifest), row.primary_site, file(row.gene_counts)]
+    array = [ meta, file(row.manifest), row.primary_site, file(row.gene_counts), file(row.multiqc)]
     return array
 }

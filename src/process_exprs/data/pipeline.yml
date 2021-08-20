@@ -1,0 +1,10 @@
+install:
+  gtf: "http://ftp.ensembl.org/pub/grch37/current/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz"
+  
+exprs_qc:
+  pe_antisense: '>0.15'
+  pe_sense: '<0.055'
+  PCT_PF_READS_ALIGNED: '>0.5'
+  PCT_CODING_BASES: '>50'
+  PCT_RIBOSOMAL_BASES: '<15'
+

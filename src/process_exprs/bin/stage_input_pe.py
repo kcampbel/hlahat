@@ -1,4 +1,6 @@
-""" FIO Pipeline """
+""" Nextflow stage process_exprs 
+Generates a tsv for input into the process_exprs nextflow pipeline
+"""
 import pandas as pd
 import argparse
 import os
@@ -60,10 +62,16 @@ def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str)
     # Xena primary site
     tg = pd.read_csv(config['tcga_gtex_map'], sep='\t')
     primary_site = tg[tg.tcga_study_code==tcga_study_code].primary_site.unique()[0]
+
+    # Multiqc
+    fn = 'multiqc_data.json'
+    multiqc_f = _find_file(input_folder, fn)
+
     config.update(
         {
             'counts': counts_f,
             'primary_site': primary_site,
+            'multiqc': multiqc_f,
         })
     return config
 
@@ -103,6 +111,7 @@ def main():
     pe_cfg = process_exprs_config(df['sample'].iloc[0], tcga_study_code, args.input_dir)
     df['primary_site'] = pe_cfg['primary_site']
     df['gene_counts'] = pe_cfg['counts']
+    df['multiqc'] = pe_cfg['multiqc']
 
     logging.info(f'Writing {args.outfile}')
     df.to_csv(args.outfile, sep='\t', index=False)
