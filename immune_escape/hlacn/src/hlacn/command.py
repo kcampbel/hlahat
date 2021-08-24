@@ -18,7 +18,7 @@ def bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv):
 
 def fitSequenza_cmd(specimen_id:str, varsFile:str, outputDir:str, altMode:str, sequenzaModelRData:str, sequenzaTools:str):
     cmd = [
-        package_file_path(bin, 'fitSequenzaModel_hla.R'),
+        package_file_path(bin, 'fitSequenzaModel.R'),
         '-i', specimen_id,
         '-v', varsFile,
         '-o', outputDir,

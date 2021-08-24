@@ -16,6 +16,7 @@ dependencies:
   - r-base=3.6.1
   - r-optparse
   - r-sequenza=3.0.0
+  - r-sessioninfo
   - sequenza-utils=3.0.0
   - pip
   - pip:

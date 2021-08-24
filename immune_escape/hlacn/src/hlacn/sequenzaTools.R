@@ -143,10 +143,10 @@ mutSeg_cn <- function(id, vars, sequenzaExtractRData, cellularity, ploidy,
     # Call mutation copy number 
     if(snp) {
         if(method == 'segCNt'){
-            print('Using segCNt and snp depth.ratio')
+            message(Sys.time(), "::Using segCNt and snp depth.ratio")
         }
         if(method == 'segDR'){
-            print('Using segment depth.ratio')
+            message(Sys.time(), "::Using segment depth.ratio")
         }
         snp.cn = data.frame()
         for(ii in 1:nrow(mutTable)){

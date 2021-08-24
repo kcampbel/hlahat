@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-''' Generates SNPs from IMGT alignments
-'''
+""" IMGT SNP finder
+
+Determines SNPs for input HLA alleles using a custom IMGT alignment where the reference
+genome HLA types are the reference alleles. See imgt_reference_creator.py to produce the custom 
+alignment.
+"""
 import sys
 import pandas as pd
 import pickle
@@ -13,9 +17,7 @@ from hlacn import data
 
 
 def parse_args(args=None):
-    parser = argparse.ArgumentParser(
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description='IMGT allele to SNP finder')
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('alleles', nargs='+', help='Query alleles or a tsv')
     parser.add_argument('-i', '--imgt_alignments', 
         default=package_file_path(data, 'imgt_aln_gen.p'),
