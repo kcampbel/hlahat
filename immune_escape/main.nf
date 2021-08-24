@@ -43,10 +43,10 @@ params.email = null
 include { HLA_HAT } from './hlahat/workflow/hla_hat'
 include { HLA_CN } from './hlacn/workflow/hla_cn'
 workflow IMMUNE_ESCAPE {
-    HLA_HAT ()
- //   HLA_CN (
+ //   HLA_HAT ()
+    HLA_CN (
  //       hisatgt_hlatypes = HLA_HAT.out.hisatgt_hlatypes
- //   )
+    )
 }
 
 workflow.onComplete {

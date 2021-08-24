@@ -27,18 +27,28 @@ def arr2snp(arr, alleles:list, gene_start:int = 0, chromosome:str = "chr6"):
     diffs = np.nonzero(arr != arr[0,:])
     
     out = pd.DataFrame()
-    for ii in np.transpose(diffs):
-        snp = arr[ii[0],ii[1]]
+    for row in np.transpose(diffs):
+        snp = arr[row[0],row[1]]
         if snp == '-':
             continue
+
+        allele = alleles[row[0]]
+        gene = allele.split('*')[0]
+        find_allele_other = [x for x in alleles if not re.search(allele, x) and re.match(gene, x)]
+        if not find_allele_other:
+            allele_other = allele
+        else:
+            allele_other = find_allele_other[0]
         row = {
             'chromosome': chromosome,
-            'position': ii[1] + gene_start,
+            'position': row[1] + gene_start,
             'snp': snp,
-            'allele': alleles[ii[0]],
+            'gene': gene,
+            'allele': allele,
+            'allele_other': allele_other,
             'allele.ref': alleles[0],
-            'pos_imgt': ii[1],
-            'base.ref': arr[0, ii[1]]
+            'pos_imgt': row[1],
+            'base.ref': arr[0, row[1]]
         }
         tmp = pd.DataFrame([row])
         out = pd.concat([out, tmp])
@@ -56,9 +66,9 @@ def hla_nearest(query:list, imgt:dict):
         imgt(dict): {locus:[alleles]}
         
     Returns:
-        List of nearest matches
+        Dict of query: nearest match
     """
-    out = list()
+    out = dict()
     for jj in query:
         locus = jj.split('*')[0]
         imgt_alleles = [x.name for x in imgt[locus]]
@@ -91,33 +101,33 @@ def hla_nearest(query:list, imgt:dict):
             logging.warning(f'{jj} not found in reference. Skipping...')
             continue
         else:
-            out.append(result)
+            out[result] = jj
     return(out)
 
-def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
+def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles:dict):
     """ Parse SNPs from IMGT alignment
     Args
         imgt_aln_gen(pickle): Alignments in {'locus':MultipleSequenceAlignment} format, where
             the first record in the MSA is the reference alignment
         ref_bed_df(pandas): Bed of HLA loci with strand information
         ref_gt_df(pandas): Reference genotypes
-        alleles(list): Query alleles
+        alleles(dict): allele_nearest: allele_genotyped
 
     Returns:
         pandas of SNPs and HLA types
     """
     # Remove loci from imgt alignments not in query
-    loci = {x[0] for x in alleles}
+    alleles_nearest, allele_gt = list(alleles.keys()), list(alleles.values())
+    loci = {x.split('*')[0] for x in alleles}
     for k in loci: 
         if k not in imgt_aln_gen.keys():
             del imgt_aln_gen[k]
             
-    
     out = pd.DataFrame()
     for k,v in imgt_aln_gen.items():
         # Subset alignment if alleles is specified, otherwise generate SNPs for all records
         allele_ref = ref_gt_df.loc[k].genotype
-        alleles_locus = [x for x in alleles if re.match(k, x)]
+        alleles_locus = [x for x in alleles_nearest if re.match(k, x)]
         alleles_sample = [x for x in alleles_locus if x != allele_ref]
         alleles_all = [allele_ref] + alleles_sample
 
@@ -143,6 +153,7 @@ def aln2snp(imgt_aln_gen, ref_bed_df, ref_gt_df, alleles):
         gene_start = ref_bed_df.loc[k].start
         df = arr2snp(arr, alleles=alleles_all, gene_start=gene_start)
         out = pd.concat([out, df], ignore_index=True)
-    out['gene'] = out.allele.str.split('*').str[0]
+    out['allele_gt'] = out.allele.apply(lambda x: alleles[x])
+
     return(out)
 

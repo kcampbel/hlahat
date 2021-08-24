@@ -1,3 +1,6 @@
+from importlib.resources import files
+from hlacn import bin
+from commonLib.lib.fileio import package_file_path
 
 def bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv):
     posFormat = "'%CHROM\t%POS\t%REF\t%ALT[\t%GT][\t%AD]\n'" 
@@ -15,7 +18,7 @@ def bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv):
 
 def fitSequenza_cmd(specimen_id:str, varsFile:str, outputDir:str, altMode:str, sequenzaModelRData:str, sequenzaTools:str):
     cmd = [
-        'fitSequenzaModel_hla.R',
+        package_file_path(bin, 'fitSequenzaModel_hla.R'),
         '-i', specimen_id,
         '-v', varsFile,
         '-o', outputDir,

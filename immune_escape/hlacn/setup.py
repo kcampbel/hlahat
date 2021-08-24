@@ -26,11 +26,11 @@ setup(
     python_requires='>=3.6, <4',
     entry_points={  # Optional
         'console_scripts': [
-            'compare_hla_typing.py=hlacn.bin.compare_hla_typing.py:main',
-            'hisatgenotype_to_tsv.py=hlacn.bin.hisatgenotype_to_tsv.py:main',
-            'imgt_reference_creator.py=hlacn.bin.imgt_reference_creator.py:main',
-            'imgt_snp_finder.py=hlacn.bin.imgt_snp_finder.py:main',
-            'snp2allele.py=hlacn.bin.snp2allele.py:main',
+            'compare_hla_typing.py=hlacn.bin.compare_hla_typing:main',
+            'hisatgenotype_to_tsv.py=hlacn.bin.hisatgenotype_to_tsv:main',
+            'imgt_reference_creator.py=hlacn.bin.imgt_reference_creator:main',
+            'imgt_snp_finder.py=hlacn.bin.imgt_snp_finder:main',
+            'snp2allele.py=hlacn.bin.snp2allele:main',
         ],
     },
 )

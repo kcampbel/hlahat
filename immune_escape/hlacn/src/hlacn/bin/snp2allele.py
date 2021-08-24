@@ -5,8 +5,11 @@ import pandas as pd
 import argparse
 import subprocess as sb
 import logging
+import numpy as np
+from commonLib.lib.fileio import package_file_path
 from hlacn.command import bcftools_cmd, fitSequenza_cmd
 from hlacn.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
+import hlacn
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
@@ -25,21 +28,23 @@ def main():
     args = parse_args()
 #    args = parse_args(
 #    [
-#        '-i', 'PACT125_T_202824',
-#        '-n', '/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_N_202825/PACT125_N_202825/PACT125_N_202825_normal_dna-final.bam',
-#        '-t' ,'/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT125_T_202824/PACT125_T_202824/PACT125_T_202824_tumor_dna-final.bam',
-#        '-g', '/media/nfs/data/References/hg19/hs37d5.chr/hs37d5.chr.fa',
-#        '-s', '/home/csmith/csmith/hla/sequenza/snp2allele/vaf/snps/DNA_PACT125_N_202825_snps.tsv',
-#        '-m', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/PACT125_T_202824_gamma80_kmin13_thin/out/sequenza/sequenzaModel.RData',
-#        '-o', '/media/nfs/data/Workspace/Users/csmith/hla/sequenza/snp2allele/vaf/test/snp_count_ratio_flipped',
+#        '-i', 'PACT056_T_196454',
+#        '-n', '/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT056_N_196450/PACT056_N_196450/PACT056_N_196450_normal_dna-final.bam',
+#        '-t' ,'/media/nfs/data/Workspace/Users/csmith/nf-GATK_Exome_Preprocess/asterand/PACT056_T_196454/PACT056_T_196454/PACT056_T_196454_tumor_dna-final.bam',
+#        '-g', '/media/nfs/data/References/hs37d5.chr/hs37d5.chr.fa',
+#        '-s', '/home/csmith/git/bioinfo-fio/immune_escape/hlacn/test_data/PACT056_T_196454/PACT056_N_196450_snps.tsv',
+#        '-m', '/home/csmith/git/bioinfo-fio/immune_escape/hlacn/test_data/PACT056_T_196454/sequenzaModel.RData',
+#        '-o', '/tmp/snp2allele'
 #    ])
+    logging.info(f'Starting {os.path.basename(__file__)}')
+
     specimen_id = args.specimen_id
     nBam = args.normal_dna_bam
     tBam = args.tumor_dna_bam
     snp_f = args.snp_tsv
     genome_fasta = args.genome_fasta
     sequenzaModelRData = args.sequenzaModelRData
-    outDir = f'{args.outDir}/{args.specimen_id}'
+    outDir = f'{args.outDir}'
     logDir = f'{outDir}/log'
 
     missing = list()
@@ -51,9 +56,6 @@ def main():
 
     if not os.path.exists(logDir):
         os.makedirs(logDir, exist_ok=True)
-
-    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(filename=f'{logDir}/snp2allele.log', format=formatter, filemode='w', level=logging.DEBUG)
 
     # BCFTOOLS
     ## Make SNP bed
@@ -93,7 +95,17 @@ def main():
     pos_imgt = pos_imgt.astype({'start': 'int32', 'end': 'int32'})
     logging.info(f'Dropping SNPs shared between alleles\n{pos_imgt.gene.value_counts()}')
 
-    # Normalize tumor VAF to normal
+    ## Normalize tumor VAF to normal
+    # Drop SNPs with no REF counts
+    tmp = pos_imgt[
+        (pos_imgt.nREF == 0) |
+        (pos_imgt.tREF == 0)
+    ]
+    if not tmp.empty:
+        nempty = tmp.shape[0]
+        cols = ["allele", "chromosome", "position", "obsVaf", "nREF", "tREF", "tALT", "nALT"]
+        logging.warning(f'{nempty} SNP(s) dropped due to zero ref counts: \n{tmp[cols]}')
+        pos_imgt = pos_imgt.drop(tmp.index)
     pos_imgt = vaf_normalize_to_normal(pos_imgt)
 
     # Equalize number of SNPs for each allele
@@ -108,15 +120,16 @@ def main():
         outputDir = outDir,
         altMode = 'n',
         sequenzaModelRData = sequenzaModelRData,
-        sequenzaTools = f'{os.path.dirname(__file__)}/../lib/sequenzaTools.R'
+        sequenzaTools = package_file_path(hlacn, 'sequenzaTools.R')
     )
     logging.info(' '.join(cmd))
     logfile = f'{logDir}/fitSequenza.log'
     handle = open(logfile, 'wt')
     job=sb.run(cmd, check=True, stdout=handle, stderr=sb.STDOUT)
     handle.close()
+
     allelesFile = f'{outDir}/alt1/{specimen_id}_alleles.tsv'
-    sb.run(['ln', '-fs', allelesFile, outDir], check=True)
+    sb.run(['ln', '-frs', allelesFile, outDir], check=True)
 
     logging.info(f'{specimen_id} finished.')
     logging.shutdown()

@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 
@@ -90,9 +91,18 @@ def flip_snps(df, vaf_col:str, prop:float = 0.5, new_col:str = 'obsVafNorm_flip'
         out = pd.concat([out, flipme])
     out['snp_flip'] = out.snp_flip.fillna(False)
     out[new_col] = np.where(out[new_col].isna(), out[vaf_col], out[new_col])
+    out['allele_flip'] = np.where(out.snp_flip, out.allele_other, out.allele)
     out.sort_index(inplace=True)
     return out
 
+def annotate_major_minor(df, hlatypes):
+    alleles = als_df.allele.unique().tolist()
+    allele_d = dict()
+    for ii in alleles:
+        gene=ii[0]
+        other_allele = [ x for x in alleles if not re.search(ii, x) and re.match(gene, x)]
+        allele_d[ii] =  other_allele[0]
+    allele_d
 
 
         
