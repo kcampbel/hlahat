@@ -13,9 +13,9 @@ import logging
 import numpy as np
 from commonLib.lib.fileio import package_file_path
 from commonLib.lib.munge import merge_indicator_rename
-from hlacn.command import bcftools_cmd, fitSequenza_cmd
-from hlacn.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
-import hlacn
+from pactescape.hlacn.command import bcftools_cmd, fitSequenza_cmd
+from pactescape.hlacn.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
+import pactescape.hlacn
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)

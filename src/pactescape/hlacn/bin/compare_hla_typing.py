@@ -8,7 +8,7 @@ import re
 import os
 import csv
 from collections import defaultdict, namedtuple, Counter
-from hlacn.imgt import hla_nearest
+from pactescape.hlacn.imgt import hla_nearest
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(

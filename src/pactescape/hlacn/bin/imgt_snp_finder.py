@@ -11,9 +11,9 @@ import pickle
 import argparse
 import os
 import logging
-from hlacn.imgt import arr2snp, aln2snp, hla_nearest
+from pactescape.hlacn.imgt import arr2snp, aln2snp, hla_nearest
 from commonLib.lib.fileio import package_file_path
-from hlacn import data
+from pactescape.hlacn import data
 
 
 def parse_args(args=None):

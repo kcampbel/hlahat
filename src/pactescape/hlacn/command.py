@@ -1,5 +1,5 @@
 from importlib.resources import files
-from hlacn import bin
+from pactescape.hlacn import bin
 from commonLib.lib.fileio import package_file_path
 
 def bcftools_cmd(nBam, tBam, posBed, genome_fa, posTsv):
