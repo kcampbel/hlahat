@@ -34,7 +34,11 @@ setup(
             'stage_input_pe.py=process_exprs.bin.stage_input_pe:main',
             'tme_report.py=tme.bin.tme_report:main',
             'stage_input_tme.py=tme.bin.stage_input_tme:main',
-            'prepare_ref_data.py=prepare_ref_data:main',
+            'prepare_ref_data.py=pactescape.hlacn.bin.prepare_ref_data:main',
+            'compare_hla_typing.py=pactescape.hlacn.bin.compare_hla_typing:main',
+            'imgt_reference_creator.py=pactescape.hlacn.bin.imgt_reference_creator:main',
+            'imgt_snp_finder.py=pactescape.hlacn.bin.imgt_snp_finder:main',
+            'snp2allele.py=pactescape.hlacn.bin.snp2allele:main',
         ],
     },
 )

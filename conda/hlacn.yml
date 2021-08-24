@@ -1,0 +1,22 @@
+name: hlacn
+channels:
+  - r
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bcftools=1.9
+  - bioconductor-copynumber=1.26.0
+  - biopython=1.78
+  - numpy
+  - pandas
+  - pyranges=0.0.100
+  - python=3.9.6
+  - r-base=3.6.1
+  - r-optparse
+  - r-sequenza=3.0.0
+  - r-sessioninfo
+  - sequenza-utils=3.0.0
+  - pip
+  - pip:
+    - -e ../
