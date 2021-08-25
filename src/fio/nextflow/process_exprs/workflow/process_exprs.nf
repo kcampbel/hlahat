@@ -30,7 +30,6 @@ ch_batch_correct = Channel.fromPath(
 ch_metadata_tsv = file(params.metadata_tsv)
 
 include { STAGE_INPUT      } from '../process/stage_input'      addParams( params.modules["stage_input"] )
-include { QC_CHECK         } from '../process/qc_check'         addParams( params.modules["qc"] )
 include { UPDATE_PACT_EMAT } from '../process/update_pact_emat' addParams( params.modules["update_pact_emat"] )
 include { BATCH_CORRECT    } from '../process/batch_correct'    addParams( params.modules["batch_correct"] )
 

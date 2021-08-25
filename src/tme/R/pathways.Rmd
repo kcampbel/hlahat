@@ -141,6 +141,7 @@ if(exists('subtype_df')){
 aheatmap(mat, scale = "row", annCol=annCol)
 
 ```
+
 Bagaev et al. (2021). Conserved pan-cancer microenvironment subtypes predict response to immunotherapy, Cancer Cell, 39, 845-865 [doi: 10.1016/j.ccell.2021.04.014](https://pubmed.ncbi.nlm.nih.gov/34019806/)
 
 ### Immune Landscape of Cancer
@@ -159,6 +160,7 @@ if(exists('subtype_df')){
 aheatmap(mat, scale = "row", annCol=annCol)
 
 ```
+
 Thorsson et al. (2018). The Immune Landscape of Cancer. Immunity, 48(4), 812-830.e14. [doi: 10.1016/j.immuni.2018.03.023](https://pubmed.ncbi.nlm.nih.gov/29628290/)
 
 ### All
