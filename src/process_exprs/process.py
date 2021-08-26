@@ -20,10 +20,10 @@ def counts2mat(counts:list, metric:str, gene_name:str, exprs, force:bool, passth
     # Add new samples
     added, skipped = list(), list()
     for ii in counts:
-        sampleId = os.path.basename(ii).split('_tumor')[0].strip('RNA_')
+        sampleId = os.path.basename(ii).split('RNA_')[-1].split('_tumor')[0]
         if exprs.columns.isin([sampleId]).any():
             if force and not passthrough:
-                logging.info(f'--force enabled. Overwriting {specimen_id} in emat')
+                logging.info(f'--force enabled. Overwriting {sampleId} in emat')
                 exprs = exprs.drop(sampleId, axis=1)
             if passthrough:
                 logging.info(f'--passthrough enabled. Retaining existing data for {sampleId} in emat')

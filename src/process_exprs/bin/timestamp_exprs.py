@@ -27,8 +27,6 @@ def rev_filename(filename, timestamp, outpath):
     return(fp_orig, fp)
 
 def main():
-    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
 
     args = parse_args()
@@ -42,7 +40,7 @@ def main():
 #        '--blacklist', '/home/csmith/git/bioinfo-fio/test_data/blacklist.txt',
 #        '-o', '/tmp/update_exprs',
 #        ]
-    )
+#    )
 
     # S3
 #    args = parse_args(

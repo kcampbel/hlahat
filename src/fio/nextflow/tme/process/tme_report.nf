@@ -22,6 +22,7 @@ process TME_REPORT {
 
     output:
     path "*.html"
+    path ".command*"
 
     script:
     timestamp =  generateTimestamp()

@@ -11,6 +11,7 @@ from process_exprs import data as pe_data
 from tme import R as tme_R
 from commonLib.lib.fileio import check_paths_exist, package_file_path
 from commonLib.lib.search import locate
+from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -18,34 +19,38 @@ def parse_args(args=None):
         choices=['fio', 'tme', 'process_exprs'], help='Pipeline to run')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
     parser.add_argument('-m' ,'--manifest', help='EPIC pipeline sample manifest')
-    parser.add_argument('-s', '--nextflow-script', default=package_file_path(nextflow, 'main.nf'), help='Nextflow pipeline script')
-    parser.add_argument('-tsv', '--nextflow-tsv', default='input.tsv', help='Nextflow input tsv to write')
-    parser.add_argument('-p', '--nextflow-params', help='Nextflow parameters file')
-    parser.add_argument('-e', '--extra', help='Comma separated list of extra args')
+    parser.add_argument('-o', '--output_dir', default='output', help='Output directory')
+    parser.add_argument('-tsv', '--tsv', help='Nextflow input tsv to write')
+    parser.add_argument('-p', '--params', help='Nextflow parameters file')
     parser.add_argument('-t', '--tracing', action='store_true', help='Enable Nextflow report file generation')
+    parser.add_argument('-bg', '--background', action='store_true', help='Run in background')
     parser.add_argument('-n', '--dryrun', action='store_true', help='Dry run')
+    parser.add_argument('--resume', action='store_true', help='Nextflow resume last job')
     parser.add_argument('--email', help='Email address for pipeline messaging')
-    parser.add_argument('--output_dir', default='output', help='Output directory')
+    parser.add_argument('--extra', help='Comma separated list of extra args')
     
     return parser.parse_args(args)
 
-def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra:bool):
+def nextflow_cmd(script:str, tsv:str, params:str, tracing:bool, background:bool, resume:bool, extra:bool, output_dir:str):
     cmd = [
         'nextflow', 'run', script, 
-        '--input', input_tsv,
+        '--input', tsv,
     ]
-    if params_file:
-        cmd.extend([ '-params-file', params_file])
+    if params:
+        cmd.extend([ '-params-file', params])
     if tracing:
         cmd.extend([
-            '-with-report',
-            '-with-timeline',
-            '-with-dag'
+            '-with-report', f'{output_dir}/report.html',
+            '-with-timeline', f'{output_dir}/timeline.html',
+            '-with-dag', f'{output_dir}/dag.html',
         ])
+    if background:
+        cmd.extend(['-bg'])
+    if resume:
+        cmd.extend(['-resume'])
     if extra:
         args = extra.strip("\"'").split(',')
         cmd.extend(args)
-
     return cmd
 
 def fio_config(input_folder:str):
@@ -67,17 +72,25 @@ def fio_config(input_folder:str):
     }
     return config
 
+def subset_args(args, keep:list):
+    return(argparse.Namespace(**{k: v for k, v in args._get_kwargs() if k in keep}))
+
 def main():
     args = parse_args()
 #    args = parse_args([
 #        'fio',
+##        'tme',
+##        'process_exprs',
 #        './test_data/PACT056_T_196454',
-#        '--nextflow-tsv', '/tmp/input.tsv',
+#        '--tsv', '/tmp/input.tsv',
 #        '--tracing',
-#        '-e', "'-bg,--resume'",
+#        '--resume',
+#        '-bg',
+#        '--resume',
 #        '-n',
 #        '--manifest', './test_data/manifest_for_testing.yml',
 #    ])
+    timestamp = get_timestamp().split('+')[0]
     # Check inputs exist
     exists = check_paths_exist([args.input_dir])
     for k,v in exists.items():
@@ -98,27 +111,32 @@ def main():
         'input_folder': os.path.abspath(args.input_dir)
     }
     df = pd.DataFrame([row])
-    df.to_csv(args.nextflow_tsv, sep='\t', index=False)
+    if not args.tsv:
+        args.tsv = f'input_{timestamp}.tsv'
+    df.to_csv(args.tsv, sep='\t', index=False)
 
     ## Nextflow command
+    keep = ['script', 'tsv', 'params', 'tracing', 'background', 'resume', 'extra', 'output_dir']
     if args.pipeline == 'fio':
-        nextflow_script = package_file_path(nextflow, 'main.nf')
-        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        args.script = package_file_path(nextflow, 'main.nf')
+        args_nf = subset_args(args, keep)
+        cmd = nextflow_cmd(**vars(args_nf))
         # process_exprs
         cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
         # tme
         cmd.extend(['--rmd', package_file_path(tme_R, '')])
     if args.pipeline == 'tme':
-        nextflow_script = package_file_path(nextflow, 'tme/main.nf')
-        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        args.script = package_file_path(nextflow, 'tme/main.nf')
+        args_nf = subset_args(args, keep)
+        cmd = nextflow_cmd(**vars(args_nf))
         cmd.extend(['--rmd', package_file_path(tme_R, '')])
     if args.pipeline == 'process_exprs':
-        nextflow_script = package_file_path(nextflow, 'process_exprs/main.nf')
-        cmd = nextflow_cmd(nextflow_script, args.nextflow_tsv, args.nextflow_params, args.tracing, args.extra)
+        args.script = package_file_path(nextflow, 'process_exprs/main.nf')
+        args_nf = subset_args(args, keep)
+        cmd = nextflow_cmd(**vars(args_nf))
         cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
     if args.email:
         cmd.extend(['--email', args.email])
-    cmd.extend(['--output', args.output_dir])
 
     if args.dryrun:
         print(' '.join(cmd))

@@ -11,12 +11,13 @@ from importlib.resources import files
 from process_exprs import data 
 from commonLib.lib.fileio import check_paths_exist, package_file_path
 from commonLib.lib.search import locate
+from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
-    parser.add_argument('-o', '--outfile', default='process_exprs.tsv', help='Pipeline tsv to write')
+    parser.add_argument('-o', '--outfile', help='Pipeline tsv to write')
     
     return parser.parse_args(args)
 
@@ -58,7 +59,7 @@ def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str)
     # Counts for sample
     fn = f'*{specimen_id}*.genes.tsv'
     counts_f = _find_file(input_folder, fn)
-
+    
     # Xena primary site
     tg = pd.read_csv(config['tcga_gtex_map'], sep='\t')
     primary_site = tg[tg.tcga_study_code==tcga_study_code].primary_site.unique()[0]
@@ -93,6 +94,7 @@ def main():
 #        './test_data/PACT056_T_196454',
 #        '-o', '/tmp/process_exprs.tsv'
 #    ])
+    timestamp = get_timestamp().split('+')[0]
     # Check inputs exist
     exists = check_paths_exist([args.manifest, args.input_dir])
     for k,v in exists.items():
@@ -114,6 +116,8 @@ def main():
     df['multiqc'] = pe_cfg['multiqc']
 
     logging.info(f'Writing {args.outfile}')
+    if not args.outfile:
+        args.outfile = f'process_exprs_{timestamp}.tsv'
     df.to_csv(args.outfile, sep='\t', index=False)
     logging.info(f'{os.path.basename(__file__)} finished')
 

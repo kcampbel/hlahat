@@ -29,7 +29,7 @@ ch_batch_correct = Channel.fromPath(
 // Pact/Xena metadata
 ch_metadata_tsv = file(params.metadata_tsv)
 
-include { STAGE_INPUT      } from '../process/stage_input'      addParams( params.modules["stage_input"] )
+include { STAGE_INPUT      } from '../process/stage_input'      addParams( params.modules["stage_input_pe"] )
 include { UPDATE_PACT_EMAT } from '../process/update_pact_emat' addParams( params.modules["update_pact_emat"] )
 include { BATCH_CORRECT    } from '../process/batch_correct'    addParams( params.modules["batch_correct"] )
 

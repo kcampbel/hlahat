@@ -7,7 +7,7 @@ params.rmd = [:] // tme_report.Rmd
     NAMED WORKFLOW FOR PIPELINE
 ========================================================================================
 */
-include { STAGE_INPUT } from '../process/stage_input' addParams( params.modules["tme_report"] )
+include { STAGE_INPUT } from '../process/stage_input' addParams( params.modules["stage_input_tme"] )
 include { TME_REPORT  } from '../process/tme_report'  addParams( params.modules["tme_report"] )
 
 include { create_tme_channel } from '../lib/functions.nf'

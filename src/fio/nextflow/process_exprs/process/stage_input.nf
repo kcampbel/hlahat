@@ -20,7 +20,8 @@ process STAGE_INPUT {
     tuple val(meta), path(manifest), path(input_folder)
 
     output:
-    path '*.tsv', emit: tsv
+    path "*.tsv", emit: tsv
+    path ".command*"
 
     script:
     """

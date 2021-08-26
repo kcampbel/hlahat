@@ -23,6 +23,7 @@ process TIMESTAMP_EMAT {
     val(outdir)
 
     output:
+    path ".command*"
 
     script:
     """

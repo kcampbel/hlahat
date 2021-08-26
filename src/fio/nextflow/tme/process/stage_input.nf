@@ -22,6 +22,7 @@ process STAGE_INPUT {
     output:
     path '*.tsv', emit: tsv
     path '*.yml'
+    path ".command*"
 
     script:
     """

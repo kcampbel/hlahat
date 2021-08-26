@@ -11,6 +11,7 @@ from importlib.resources import files
 from tme import R, data
 from tme.fileio import package_file_path
 from tme.search import locate
+from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -82,11 +83,12 @@ def main():
 #		'-o', '/tmp',
 #    ])
     logging.info(args)
+    timestamp = get_timestamp().split('+')[0]
 
     mf_d = yaml.safe_load(open(args.manifest))
     specimen_id = mf_d['pipeline']['pact_id']
-    tme_tsv = f'{args.outdir}/{specimen_id}_tme.tsv'
-    tme_yml = f'{args.outdir}/{specimen_id}_tme.yml'
+    tme_tsv = f'{args.outdir}/{specimen_id}_tme_{timestamp}.tsv'
+    tme_yml = f'{args.outdir}/{specimen_id}_tme_{timestamp}.yml'
 
     # Write tsv
     df = manifest2tsv(mf_d)

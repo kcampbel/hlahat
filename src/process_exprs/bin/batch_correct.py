@@ -14,6 +14,7 @@ import logging
 from datetime import datetime
 from process_exprs.combat import combat
 from commonLib.lib.fileio import read_exprs, write_exprs, get_extension
+from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -102,11 +103,8 @@ def combat_split(exprs, meta, split_name:str, batch_name:str, formula:str = None
     return(out)
 
 def main():
-    formatter = '%(asctime)s:%(levelname)s:%(name)s:%(funcName)s: %(message)s'
-    logging.basicConfig(format=formatter, level=logging.INFO)
     logging.info(f'Starting {os.path.basename(__file__)}')
-    now = datetime.now()
-    timestamp = now.strftime("%Y%m%dT%H%M%S")
+    timestamp = get_timestamp().split('+')[0]
 
     args = parse_args()
 #    args = parse_args(
@@ -122,24 +120,6 @@ def main():
 #            '--primary_site', 'ColonRectum',
 #            '-o', '/tmp/batch_correct/bc.tsv',
 #        ])
-
-    #root = '/mnt/CBdata/data/data/Workspace/Users/csmith/fio/work/cc/24be176a53648e8a718299cfbe7962'
-#    root = '/home/csmith/git/bioinfo-fio/test_data'
-#    args = parse_args(
-#        [
-#            '/media/nfs/data/References/xena/TcgaTargetGtex_rsem_hgnc_tpm.parquet.gz',
-#            f'{root}/pact_rsem_tpm.exprs.hgnc.tsv.gz',
-#            #f'{root}/eset_xena_hgnc_proteincoding_colon.tsv.gz',
-#            #f'{root}/eset_pact_hgnc_proteincoding.tsv.gz',
-#            '--batch_name', 'study',
-#            '--primary_site', 'ColonRectum',
-#            '--metadata_tsv', 
-#            f'{root}/meta_pact_xena.tsv',
-#            '--exprs_log',
-#            f'{root}/bc_exprs_log.tsv',
-#            '-o', '/tmp/exprs.tsv.gz'
-#        ]
-#    )
 
     logging.info(args)
     # Metadata
