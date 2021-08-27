@@ -26,16 +26,14 @@ setup(
     entry_points={  # Optional
         'console_scripts': [
             'fio=fio.__main__:main',
-            #'run_fio.py=fio.bin.run_fio:main',
             'batch_correct.py=process_exprs.bin.batch_correct:main',
             'counts2mat.py=process_exprs.bin.counts2mat:main',
             'timestamp_exprs.py=process_exprs.bin.timestamp_exprs:main',
             'update_exprs.py=process_exprs.bin.update_exprs:main',
             'stage_input_pe.py=process_exprs.bin.stage_input_pe:main',
             'stage_input_tme.py=tme.bin.stage_input_tme:main',
-            'prepare_ref_data.py=pactescape.hlacn.bin.prepare_ref_data:main',
+            'stage_input_hlacn.py=pactescape.hlacn.bin.stage_input_hlacn:main',
             'compare_hla_typing.py=pactescape.hlacn.bin.compare_hla_typing:main',
-            'imgt_reference_creator.py=pactescape.hlacn.bin.imgt_reference_creator:main',
             'imgt_snp_finder.py=pactescape.hlacn.bin.imgt_snp_finder:main',
             'snp2allele.py=pactescape.hlacn.bin.snp2allele:main',
         ],

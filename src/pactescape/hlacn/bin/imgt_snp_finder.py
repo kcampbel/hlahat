@@ -15,7 +15,6 @@ from pactescape.hlacn.imgt import arr2snp, aln2snp, hla_nearest
 from commonLib.lib.fileio import package_file_path
 from pactescape.hlacn import data
 
-
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('alleles', nargs='+', help='Query alleles or a tsv')

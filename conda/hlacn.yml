@@ -17,6 +17,7 @@ dependencies:
   - r-sequenza=3.0.0
   - r-sessioninfo
   - sequenza-utils=3.0.0
+  - pyyaml=5.4.1
   - pip
   - pip:
     - -e ../

@@ -13,9 +13,9 @@ import logging
 import numpy as np
 from commonLib.lib.fileio import package_file_path
 from commonLib.lib.munge import merge_indicator_rename
+import pactescape.hlacn as hlacn
 from pactescape.hlacn.command import bcftools_cmd, fitSequenza_cmd
 from pactescape.hlacn.munge import bcf_to_df, vaf_normalize_to_normal, flip_snps
-import pactescape.hlacn
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -26,7 +26,7 @@ def parse_args(args=None):
     parser.add_argument('-p', '--snp_tsv', required=True, help='IMGT SNPs tsv')
     parser.add_argument('-m', '--sequenzaModelRData', required=True, help='Sequenza model RData file')
     parser.add_argument('-s', '--solution', type=str, default=1, help='Sequenza solution to analyze')
-    parser.add_argument('-o', '--outDir', required=True, help='Output dir')
+    parser.add_argument('-o', '--output_dir', required=True, help='Output dir')
     
     return parser.parse_args(args)
 
@@ -67,8 +67,9 @@ def main():
     snp_f = args.snp_tsv
     genome_fasta = args.genome_fasta
     sequenzaModelRData = args.sequenzaModelRData
-    outDir = f'{args.outDir}'
-    logDir = f'{outDir}/log'
+    output_dir = f'{args.output_dir}'
+    prep_dir = f'{args.output_dir}/prep'
+    log_dir = f'{output_dir}/log'
 
     missing = list()
     for ii in [tBam, nBam, snp_f, sequenzaModelRData]:
@@ -77,8 +78,10 @@ def main():
     if missing:
         raise FileNotFoundError(missing)
 
-    if not os.path.exists(logDir):
-        os.makedirs(logDir, exist_ok=True)
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
+    if not os.path.exists(prep_dir):
+        os.makedirs(prep_dir, exist_ok=True)
 
     snp_qc, step = pd.DataFrame(), 0
     # BCFTOOLS
@@ -93,14 +96,14 @@ def main():
 
     snp_df = snp_df.rename(columns={'snp': 'alt', 'base.ref': 'ref'})
     snp_bed = snp_df.assign(start=snp_df.position-1).loc[:, ['chromosome', 'start', 'position']]
-    snp_bed_f = f'{outDir}/{specimen_id}_snps.bed'
+    snp_bed_f = f'{output_dir}/prep/{specimen_id}_snps.bed'
     snp_bed.to_csv(snp_bed_f, sep='\t', index=False, header=False)
 
     ## Run BCFtools
-    posTsv = f'{outDir}/{specimen_id}_pos.tsv'
+    posTsv = f'{output_dir}/prep/{specimen_id}_pos.tsv'
     cmd = bcftools_cmd(nBam, tBam, snp_bed_f, genome_fasta, posTsv)
     logging.info(cmd)
-    logfile = f'{logDir}/bcftools.log'
+    logfile = f'{log_dir}/bcftools.log'
     handle = open(logfile, 'wt')
     job = sb.run(cmd, stdout=handle, stderr=sb.STDOUT, shell=True, check=True)
     handle.close()
@@ -185,27 +188,27 @@ def main():
     logging.info(f'\n{cnt}')
     
     ## Fit SNPs
-    varsFile = f'{outDir}/{specimen_id}_workVars.tsv'
+    varsFile = f'{output_dir}/prep/{specimen_id}_workVars.tsv'
     pos_imgt.to_csv(varsFile, sep='\t', index=False)
     cmd = fitSequenza_cmd(
         specimen_id = specimen_id,
         varsFile = varsFile,
-        outputDir = outDir,
+        outputDir = output_dir,
         altMode = 'y',
         sequenzaModelRData = sequenzaModelRData,
         sequenzaTools = package_file_path(hlacn, 'sequenzaTools.R')
     )
     logging.info(' '.join(cmd))
-    logfile = f'{logDir}/fitSequenza.log'
+    logfile = f'{log_dir}/fitSequenza.log'
     handle = open(logfile, 'wt')
     job=sb.run(cmd, check=True, stdout=handle, stderr=sb.STDOUT)
     handle.close()
 
     # Copy the selected solution to the output directory for downstream analysis
-    allelesFile = f'{outDir}/alt{args.solution}/{specimen_id}_alleles.tsv'
+    allelesFile = f'{output_dir}/alt{args.solution}/{specimen_id}_alleles.tsv'
     if os.path.exists(allelesFile):
-        logging.info(f'Copying {allelesFile} to {outDir} for downstream analysis')
-        sb.run(['cp', '-f', allelesFile, outDir], check=True)
+        logging.info(f'Copying {allelesFile} to {output_dir} for downstream analysis')
+        sb.run(['cp', '-f', allelesFile, output_dir], check=True)
     else:
         raise FileNotFoundError(f'{allelesFile} does not exist')
 

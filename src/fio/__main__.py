@@ -16,7 +16,7 @@ from commonLib.lib.munge import get_timestamp
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('pipeline', type=str, default=package_file_path(nextflow, 'main.nf'),
-        choices=['all', 'tme', 'process_exprs'], help='Pipeline to run')
+        choices=['all', 'tme', 'process_exprs', 'hlacn'], help='Pipeline to run')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
     parser.add_argument('-m' ,'--manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('-o', '--output_dir', default='output', help='Output directory')
@@ -28,6 +28,7 @@ def parse_args(args=None):
     parser.add_argument('--resume', action='store_true', help='Nextflow resume last job')
     parser.add_argument('--email', help='Email address for pipeline messaging')
     parser.add_argument('--extra', help='Comma separated list of extra args')
+    parser.add_argument('--genome_fasta', help='Genome FASTA file')
     
     return parser.parse_args(args)
 
@@ -129,6 +130,11 @@ def main():
         args_nf = subset_args(args, keep)
         cmd = nextflow_cmd(**vars(args_nf))
         cmd.extend(['--tcga_gtex_map', package_file_path(pe_data, 'tcga_gtex.tsv')])
+    if args.pipeline == 'hlacn':
+        args.script = package_file_path(nextflow, 'pactescape/hlacn/main.nf')
+        args_nf = subset_args(args, keep)
+        cmd = nextflow_cmd(**vars(args_nf))
+        cmd.extend(['--genome_fasta', args.genome_fasta])
     if args.email:
         cmd.extend(['--email', args.email])
 

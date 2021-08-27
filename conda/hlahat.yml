@@ -1,0 +1,27 @@
+name: hlahat
+
+channels:
+  - bioconda
+  - conda-forge
+  - r
+  - nodefaults
+dependencies:
+  - bioconductor-biostrings
+  - bioconductor-msa
+  - hisat2=2.2.0
+  - htslib
+  - ipykernel
+  - nextflow=21.04
+  - pandas
+  - pip
+  - picard
+  - pyaml
+  - python=2.7
+  - r-base=4.0.3
+  - r-devtools
+  - r-DT
+  - r-seqinr
+  - r-tidyverse
+  - rclone
+  - pip:
+    - -e .

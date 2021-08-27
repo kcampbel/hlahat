@@ -1,14 +1,14 @@
 /*
-    HLA typing compare tool
+    HLACN stage input
 */
 
 include { saveFiles; getSoftwareName } from '../lib/functions'
 
 params.options = [:]
 
-process HLATYPE_COMPARE {
+process STAGE_INPUT {
  //   label 'process_medium'
-    tag "${meta.id}"
+    tag "${meta}"
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: {
@@ -17,15 +17,14 @@ process HLATYPE_COMPARE {
     conda params.conda_basedir + params.conda_envt
 
     input:
-    tuple val(meta), val(data), file(hisat2_hlatypes)
-        
+    tuple val(meta), path(manifest), path(input_folder)
+
     output:
-    tuple val(meta), val(data), file('*hlatypes_merged.tsv'), emit: hlatypes
-    path ".command*"
+    path '*.tsv', emit: tsv
+    path '.command*'
 
     script:
-    hlatypes_merged = meta.id + "_hlatypes_merged.tsv"
     """
-    compare_hla_typing.py ${data.epic_hlatypes} ${hisat2_hlatypes} -o ${hlatypes_merged}
+    stage_input_hlacn.py ${manifest} ${input_folder}
     """
 }
