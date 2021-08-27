@@ -6,6 +6,7 @@ import urllib.request
 import pandas as pd
 import time
 import re
+from commonLib.lib.search import locate
 
 def check_paths_exist(paths):
     exists = dict()
@@ -91,4 +92,23 @@ def write_exprs(df, filename:str, compression:str='gzip'):
     else:
         exprs = df.to_csv(filename, sep='\t')
     return(filename)
+
+def find_file(input_folder:str, filename:str, pattern:str = None, n:int = 1):
+    """ Find a file
+        Args:
+            input_folder(str): folder to search
+            filename(str): file name
+            pattern(str): second pass pattern to search for within file name
+            n(int): number of files with fn and pattern allowed
+        Returns:
+            list files matching filenames with pattern
+    """
+    hits = list(locate(filename, input_folder))
+    if pattern:
+        hits = [x for x in hits if re.search(pattern, x)]
+    if len(hits) != n:
+        raise ValueError(f'{n} file(s) not found searching {input_folder} for {filename}, ' + 
+            f'pattern {pattern}\nhits: {hits}')
+    else:
+        return hits[0]
 

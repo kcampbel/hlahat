@@ -6,17 +6,17 @@ import subprocess as sb
 import yaml
 import logging
 from importlib.resources import files
-from fio import nextflow
+import nextflow 
 from process_exprs import data as pe_data
 from tme import R as tme_R
-from commonLib.lib.fileio import check_paths_exist, package_file_path
+from commonLib.lib.fileio import check_paths_exist, package_file_path, find_file
 from commonLib.lib.search import locate
 from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     parser.add_argument('pipeline', type=str, default=package_file_path(nextflow, 'main.nf'),
-        choices=['fio', 'tme', 'process_exprs'], help='Pipeline to run')
+        choices=['all', 'tme', 'process_exprs'], help='Pipeline to run')
     parser.add_argument('input_dir', help='EPIC pipeline input path')
     parser.add_argument('-m' ,'--manifest', help='EPIC pipeline sample manifest')
     parser.add_argument('-o', '--output_dir', default='output', help='Output directory')
@@ -54,18 +54,9 @@ def nextflow_cmd(script:str, tsv:str, params:str, tracing:bool, background:bool,
     return cmd
 
 def fio_config(input_folder:str):
-    def _find_file(input_folder, fn, pattern:str = None):
-        hits = list(locate(fn, input_folder))
-        if pattern:
-            hits = [x for x in hits if re.search(pattern, x)]
-        if len(hits) != 1:
-            raise ValueError(f'!= 1 input file:\n{fn} {hits}')
-        else:
-            return hits[0]
-
     # Manifest
     fn = f'manifest*.yml'
-    manifest_f = _find_file(input_folder, fn)
+    manifest_f = find_file(input_folder, fn)
  
     config = {
         'manifest_f': manifest_f
@@ -78,17 +69,18 @@ def subset_args(args, keep:list):
 def main():
     args = parse_args()
 #    args = parse_args([
-#        'fio',
+#        'all',
 ##        'tme',
 ##        'process_exprs',
-#        './test_data/PACT056_T_196454',
+#        '/tmp/nomf',
+#        #'./test_data/PACT056_T_196454',
 #        '--tsv', '/tmp/input.tsv',
 #        '--tracing',
 #        '--resume',
 #        '-bg',
 #        '--resume',
 #        '-n',
-#        '--manifest', './test_data/manifest_for_testing.yml',
+#        #'--manifest', './test_data/manifest_for_testing.yml',
 #    ])
     timestamp = get_timestamp().split('+')[0]
     # Check inputs exist
@@ -117,7 +109,9 @@ def main():
 
     ## Nextflow command
     keep = ['script', 'tsv', 'params', 'tracing', 'background', 'resume', 'extra', 'output_dir']
-    if args.pipeline == 'fio':
+    if not args.params:
+        args.params = package_file_path(nextflow, 'pipeline.yml')
+    if args.pipeline == 'all':
         args.script = package_file_path(nextflow, 'main.nf')
         args_nf = subset_args(args, keep)
         cmd = nextflow_cmd(**vars(args_nf))

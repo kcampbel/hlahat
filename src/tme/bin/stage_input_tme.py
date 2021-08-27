@@ -9,8 +9,8 @@ import yaml
 import logging
 from importlib.resources import files
 from tme import R, data
-from tme.fileio import package_file_path
-from tme.search import locate
+from commonLib.lib.fileio import package_file_path, find_file
+from commonLib.lib.search import locate
 from commonLib.lib.munge import get_timestamp
 
 def parse_args(args=None):
@@ -23,15 +23,6 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 def tme_config(specimen_id:str, input_folder:str, threads:int):
-    def _find_file(input_folder, fn, pattern:str = None):
-        hits = list(locate(fn, input_folder))
-        if pattern:
-            hits = [x for x in hits if re.search(pattern, x)]
-        if len(hits) != 1:
-            raise ValueError(f'{specimen_id} has != 1 input file:\n{fn} {hits}')
-        else:
-            return hits[0]
-
     # Pipeline datafiles and parameters
     config = {
     'goi_f': package_file_path(data, 'pact_goi.tsv'),
@@ -50,11 +41,11 @@ def tme_config(specimen_id:str, input_folder:str, threads:int):
     # Sequenza copy number segments file
     fn = f'{specimen_id}_segments.txt'
     # Exclude segments files in the alt directories
-    cn_f = _find_file(input_folder, fn, pattern='^((?!alt).)*$')
+    cn_f = find_file(input_folder, fn, pattern='^((?!alt).)*$')
 
     # Epipope annotator
     fn = f'{specimen_id}*_oncotator_results_Annotated.tsv'
-    vars_f = _find_file(input_folder, fn)
+    vars_f = find_file(input_folder, fn)
 
     config.update(
         {

@@ -25,7 +25,8 @@ setup(
     python_requires='>=3.9, <4',
     entry_points={  # Optional
         'console_scripts': [
-            'run_fio.py=fio.bin.run_fio:main',
+            'fio=fio.__main__:main',
+            #'run_fio.py=fio.bin.run_fio:main',
             'batch_correct.py=process_exprs.bin.batch_correct:main',
             'counts2mat.py=process_exprs.bin.counts2mat:main',
             'timestamp_exprs.py=process_exprs.bin.timestamp_exprs:main',

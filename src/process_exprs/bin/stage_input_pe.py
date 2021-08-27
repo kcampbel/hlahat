@@ -9,7 +9,7 @@ import yaml
 import logging
 from importlib.resources import files
 from process_exprs import data 
-from commonLib.lib.fileio import check_paths_exist, package_file_path
+from commonLib.lib.fileio import check_paths_exist, package_file_path, find_file
 from commonLib.lib.search import locate
 from commonLib.lib.munge import get_timestamp
 
@@ -41,15 +41,6 @@ def nextflow_cmd(script:str, input_tsv:str, params_file:str, tracing:bool, extra
     return cmd
 
 def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str):
-    def _find_file(input_folder, fn, pattern:str = None):
-        hits = list(locate(fn, input_folder))
-        if pattern:
-            hits = [x for x in hits if re.search(pattern, x)]
-        if len(hits) != 1:
-            raise ValueError(f'{specimen_id} has != 1 input file:\n{fn} {hits}')
-        else:
-            return hits[0]
-
     # Pipeline datafiles and parameters
     config = {
     'tcga_gtex_map': package_file_path(data, 'tcga_gtex.tsv'),
@@ -58,7 +49,7 @@ def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str)
     # EPIC inputs
     # Counts for sample
     fn = f'*{specimen_id}*.genes.tsv'
-    counts_f = _find_file(input_folder, fn)
+    counts_f = find_file(input_folder, fn)
     
     # Xena primary site
     tg = pd.read_csv(config['tcga_gtex_map'], sep='\t')
@@ -66,7 +57,7 @@ def process_exprs_config(specimen_id:str, tcga_study_code:str, input_folder:str)
 
     # Multiqc
     fn = 'multiqc_data.json'
-    multiqc_f = _find_file(input_folder, fn)
+    multiqc_f = find_file(input_folder, fn)
 
     config.update(
         {
