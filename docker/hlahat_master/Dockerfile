@@ -57,6 +57,11 @@ ENV PATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta:/opt/hisat2/hisat2-hisat2_v2.2.0_
 ENV PYTHONPATH=/opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules:$PYTHONPATH
 ENV PATH=$PATH:/opt/samtools/bin
 
+## Picard
+RUN mkdir /opt/picard/ && \
+    wget https://github.com/broadinstitute/picard/releases/download/2.25.7/picard.jar    
+
+
 ## Copy files
 RUN mkdir -p /code/
 COPY r_scripts /code/
@@ -69,3 +74,5 @@ COPY scripts/hisatgenotype_typing_common_v_KC.py /opt/hisat2/hisat2-hisat2_v2.2.
 COPY scripts/hisatgenotype_typing_common_v_KC.pyc /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_modules/hisatgenotype_typing_common_v_KC.pyc
 COPY scripts/hisatgenotype_extract_reads_v_KC.py /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_extract_reads_v_KC.py
 COPY scripts/hisatgenotype_locus_v_KC.py /opt/hisat2/hisat2-hisat2_v2.2.0_beta/hisatgenotype_locus_v_KC.py
+
+
