@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(dplyr)
 library(tidyr)
 library(Biostrings)
