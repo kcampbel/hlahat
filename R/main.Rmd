@@ -1,0 +1,128 @@
+---
+title: "HLAHAT"
+date: "`r Sys.Date()`"
+version: 0.1
+output:
+  rmdformats::readthedown:
+    highlight: tango
+    lightbox: true
+    gallery: false
+    toc_depth: 3
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+params:
+  input_dir: "NAMESPACE"
+  config_yaml_f: "NAMESPACE"
+---
+
+```{r main_libs, echo=FALSE, results='hide', include=FALSE}
+library(knitr)
+library(rmdformats)
+library(here)
+library(yaml)
+library(sessioninfo)
+```
+
+```{r main_chunkopts, echo=FALSE, results='hide', include=FALSE}
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+	             #cache=TRUE,
+	             cache=FALSE,
+               cache_rebuild=TRUE,
+               cache.path='hlahat_report_cache/html/',
+               fig.path='hlahat_report_files/figure-html/'
+               )
+opts_knit$set(width=125)
+
+here::i_am("main.Rmd")
+
+find_files <- function(path, pattern, hits=1) {
+  fls <- list.files(path, pattern, full.names=TRUE, recursive=TRUE)
+  if(is.null(hits)) {
+    return(fls)
+  } else if(length(fls) != hits) {
+    message(paste(pattern, 'did not have', hits, 'hit in', path, ':'))
+    message(fls)
+    return(NULL)
+  } else {
+    return(fls)
+  } 
+}
+  
+```
+
+```{r test_local, eval=FALSE}
+input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT056_T_196454'
+
+params <- list(
+  config_yml = config_yml_f,
+  input_dir = input_dir,
+  sequenza_solution = sequenza_solution
+)
+
+```
+
+```{r main_parameters}
+config_pipe <- read_yaml(params$config_yml)
+for(ii in seq_along(config_pipe)){
+  message(paste0(names(config_pipe)[[ii]], ':', config_pipe[[ii]]))
+  assign(names(config_pipe)[ii], config_pipe[[ii]])
+}
+
+for(ii in seq_along(params)){
+  message(paste0(names(params)[[ii]], ':', params[[ii]]))
+  assign(names(params)[ii], params[[ii]])
+}
+
+fls_l = list(
+  hlahat_types_f = find_files(input_dir, 'top_hlatypes.tsv'),
+  dna_snpld_f = find_files(input_dir, 'tumor_dna_snpLD.tsv'),
+  dna_alleleld_f = find_files(input_dir, 'tumor_dna_alleleLD.tsv'),
+  dna_locusld_f = find_files(input_dir, 'tumor_dna_locusLD.tsv'),
+  rna_snpld_f = find_files(input_dir, 'tumor_rna_snpLD.tsv'),
+  rna_alleleld_f = find_files(input_dir, 'tumor_rna_alleleLD.tsv')
+)
+fls_l$sequenza_segments_f <- fls_l$sequenza_segments_f[grepl(paste0('alt', sequenza_solution), fls_l$sequenza_segments_f)]
+
+for(ii in seq_along(fls_l)){
+  message(paste0(names(fls_l)[[ii]], ':', fls_l[[ii]]))
+  assign(names(fls_l)[ii], fls_l[[ii]])
+}
+  
+```
+
+```{r test_render, eval=FALSE}
+input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT056_T_196454'
+rmarkdown::render(input='hlahat.Rmd', output_dir="/tmp/hlahat", params=list(
+  config_yml = config_yml_f
+ # input_dir = input_dir
+  )
+)
+
+```
+
+```{r hlahat, child=here('hlahat.Rmd')}
+```
+
+```{r make_title}
+report_title <- paste0("hlahat Report: ", sid)
+```
+
+---
+title: "`r report_title`"
+---
+
+```{r sessioninfo, include=FALSE}
+sink('sessionInfo.txt')
+session_info()
+sink()
+```
+
+hlahat report version v0.1
