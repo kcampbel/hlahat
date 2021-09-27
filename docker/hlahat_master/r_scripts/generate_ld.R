@@ -101,11 +101,17 @@ if(normal_pileups != "NA") {
              as.numeric(REF_count.ref_NORMAL) > 0 & as.numeric(REF_count.alt_NORMAL)>0) %>%
     group_by(Gene, CHROM, END, alt_gen, alt_pos, ld) %>% select()
   allele_ratios <- snp_ratios %>% group_by(Gene, CHROM, alt_gen) %>%
-    summarise(min_ld = min(ld, na.rm = T), median_ld = median(ld, na.rm = T), max_ld = max(ld, na.rm = T),
-              n_snps = n())
-  locus_ratio <- allele_ratios %>% filter(median_ld > 0) %>% ungroup %>%
-    summarize(min_ld = min(median_ld), median_ld = median(median_ld), max_ld = max(median_ld),
-              n_snps = sum(n_snps))
+    summarise(#min_ld = min(ld, na.rm = T), median_ld = median(ld, na.rm = T), max_ld = max(ld, na.rm = T),
+      value = quantile(ld, c(0, 0.25, 0.5, 0.75, 1)), metric = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"),
+              n_snps = n()) %>%
+    mutate(metric = factor(metric, levels = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"))) %>%
+    spread(metric, value)
+  locus_ratio <- allele_ratios %>% filter(ld_median > 0) %>% ungroup %>%
+    summarise(#min_ld = min(median_ld), median_ld = median(median_ld), max_ld = max(median_ld),
+      value = quantile(ld_median, c(0, 0.25, 0.5, 0.75, 1)), metric = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"),
+              n_snps = sum(n_snps)) %>%
+    mutate(metric = factor(metric, levels = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"))) %>%
+    spread(metric, value)
 } else {
   ##### Otherwise just normalize to tumor only values #####
   snpcomp_tn <- snpcomp_t %>%
@@ -115,11 +121,17 @@ if(normal_pileups != "NA") {
     filter(as.numeric(REF_count.ref) + as.numeric(REF_count.alt) >= tumor_depth_cutoff) %>%
     group_by(Gene, CHROM, END, alt_gen, alt_pos, ld) %>% select()
   allele_ratios <- snp_ratios %>% group_by(Gene, CHROM, alt_gen) %>%
-    summarise(min_ld = min(ld, na.rm = T), median_ld = median(ld, na.rm = T), max_ld = max(ld, na.rm = T),
-              n_snps = n())
-  locus_ratio <- allele_ratios %>% filter(median_ld > 0) %>% ungroup %>%
-    summarize(min_ld = min(median_ld), median_ld = median(median_ld), max_ld = max(median_ld),
-              n_snps = sum(n_snps))
+    summarise(#min_ld = min(ld, na.rm = T), median_ld = median(ld, na.rm = T), max_ld = max(ld, na.rm = T),
+      value = quantile(ld, c(0, 0.25, 0.5, 0.75, 1)), metric = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"),
+              n_snps = n()) %>%
+    mutate(metric = factor(metric, levels = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"))) %>%
+    spread(metric, value)
+  locus_ratio <- allele_ratios %>% filter(ld_median > 0) %>% ungroup %>%
+    summarise(#min_ld = min(median_ld), median_ld = median(median_ld), max_ld = max(median_ld),
+      value = quantile(ld_median, c(0, 0.25, 0.5, 0.75, 1)), metric = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"),
+              n_snps = sum(n_snps)) %>%
+    mutate(metric = factor(metric, levels = c("ld_min", "ld_25", "ld_median", "ld_75", "ld_max"))) %>%
+    spread(metric, value)
 }
 
 # Table outputs #

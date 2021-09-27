@@ -1451,7 +1451,7 @@ def typing(simulation,
                         break
             for f_ in [sys.stderr, report_file]:
                 print >> f_
-            print Gene_exons_cmpt
+            # print Gene_exons_cmpt
 
             # Calculate the abundance of representative alleles on exonic sequences
             if base_fname == "hla":
