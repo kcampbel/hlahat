@@ -4,34 +4,27 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE, warning=FALSE, message=FALSE}
-#library(tidyverse)
-library(dplyr)
+```{r hlahat_setup, include=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
 library(data.table)
 library(plotly)
 library(DT)
+
 ```
 
-## HLA-HAT Results 
+## HLA-HAT
+The HLA Haplotype Analysis Toolkit assesses differences in allelic imbalance at the DNA and RNA level in Class I and II HLA loci.
 
+-  For tumor DNA, allelic imbalance indicates a putative copy number aberration or loss-of-heterozygosity event at the gene or chromosomal level. 
+-  For tumor RNA, allelic imbalance indicates differential expression between alleles.
 ```{r hlahat_stageinput}
-### File information
-sid <- "PACT056_T_196454"
-types <- fread(hlahat_types_f)
-
-#norm_flag <- fread("~/hlahat/int_data/cell_lines/M485/PT0461-PBMC-DNA.flagstat.txt")
-#norm_snpld <- fread("~/hlahat/int_data/cell_lines/M485/UPDATED_PT0461-PBMC_unmatched_snpLD.tsv")
-#norm_alleleld <- fread("~/hlahat/int_data/cell_lines/M485/UPDATED_PT0461-PBMC_unmatched_alleleLD.tsv")
-#norm_locusld <- fread("~/hlahat/int_data/cell_lines/M485/UPDATED_PT0461-PBMC_unmatched_locusLD.tsv")
-
+types <- fread(find_types_f)
 dna_snpld <- fread(dna_snpld_f)
 dna_alleleld <- fread(dna_alleleld_f)
 dna_locusld <- fread(dna_locusld_f)
 
 rna_snpld <- fread(rna_snpld_f)
 rna_alleleld <- fread(rna_alleleld_f)
-
-purity = 1
 
 classical_types <- c('A','B','C','DRA','DRB1','DQA1','DQB1','DPA1','DPB1')
 sorted_hla_genes <- c('HFE','F','V','G','H',
@@ -40,66 +33,58 @@ sorted_hla_genes <- c('HFE','F','V','G','H',
                     'DQA1','DQB1','DOB','TAP2','TAP1',
                     'DMB','DMA','DOA','DPA1','DPB1',
                     'DPB2')
+
+purity <- allSols[sequenza_solution, ]$cellularity
 ```
 
 ### Summary
-The Log-fold Difference (LD) in depth of coverage at heterozygous SNPs are used to summarize the degree of allelic imbalance. If there are equal copies of allele 1 and 2 (e.g. normal diploid), the LD value is 0. If there is LOH in the gene, the expected LD is Infinity (unadjusted for tumor purity). The higher the LD magnitude, the larger the difference in coverage between the two alleles, indicating increased imbalance or LOH. #### CHANGE DESCRIPTION
-### FINISH
+The differences in sequencing coverage of alleles are summarized using their ratio, the log-fold difference (LD). In DNA, we report the Copy Number Ratio (CNR), since the genetic imbalance reflects copy number differences at the DNA level. In the RNA, an imbalance represents differential expression of alleles. 
 
-```{r hlahat_allele_ld}
-dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & median_ld > 0) %>% 
+```{r hlahat_summary}
+#Symbol | Category | Imbalance 
+#-------|---------------------------
+#__~__  | Equal | 0-1.5
+#__<__  | Low imbalance | 1.5-2.5
+#__<<__ | Medium imbalance | 2.5-3.5
+#__<<__ | High imbalance | 3.5-Inf
+
+alleleld_tab <- dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & median_ld>0) %>% 
   mutate(`Allele 1` = CHROM, `Allele 2` = alt_gen) %>% 
   left_join(rna_alleleld, by = c('Gene','CHROM','alt_gen'), suffix = c('.dna','.rna')) %>% 
-  mutate(degree_dna = case_when(2^abs(median_ld.dna) < 1.5 ~ "~", 2^abs(median_ld.dna) < 2.5 ~ ">", 2^abs(median_ld.dna) < 3.5 ~ ">>", TRUE ~ ">>>"),
-         degree_rna = case_when(2^abs(median_ld.rna) < 1.5 ~ "~", 2^abs(median_ld.rna) < 2.5 ~ ">", 2^abs(median_ld.rna) < 3.5 ~ ">>", TRUE ~ ">>>"),
-         degree_rna = ifelse()) %>%
+  mutate(degree_dna = case_when(2^abs(median_ld.dna) < 1.5 ~ "~", 
+                                2^abs(median_ld.dna) < 2.5 ~ "<", 
+                                2^abs(median_ld.dna) < 3.5 ~ "<<", 
+                                TRUE ~ "<<<"),
+         degree_rna = case_when(2^abs(median_ld.rna) < 1.5 ~ "~", 
+                                2^abs(median_ld.rna) < 2.5 ~ "<", 
+                                2^abs(median_ld.rna) < 3.5 ~ "<<", 
+                                TRUE ~ "<<<"),
+         degree_rna = ifelse(median_ld.rna > 0, degree_rna, gsub("<", ">", degree_rna))) %>%
   group_by(Gene) %>% 
-  summarise(#`LD- DNA` = signif(median_ld.dna, 2), LD IQR- DNA` = paste0(signif(ld_25.dna, 2), "-", signif(ld_75.dna, 2)), 
-            #`LD- RNA` = signif(median_ld.rna, 2), LD IQR- RNA` = paste0(signif(ld_25.rna, 2), "-", signif(ld_75.rna, 2)), 
-    `DNA (CNR)` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " (", signif(2^median_ld.dna, 2), ")"),
-    `RNA (CNR)` = case_when(median_ld.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " (", signif(2^median_ld.rna, 2), ")"),
-                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " (", signif(2^median_ld.rna, 2), ")"))
-            # Note = case_when(median_ld.dna > 0 & median_ld.rna > 0 ~ paste0(`Allele 1`, " has higher coverage and more highly expressed than ", `Allele 2`, "."),
-            #                  median_ld.dna > 0 & median_ld.rna > 0 ~ paste0(`Allele 1`, " has increased coverage, but ", `Allele 2`, " is more highly expressed."), TRUE ~ as.character(NA))
-            ) %>%
-  datatable(rownames = FALSE)
-```
+  summarise(
+    `DNA (CNR)` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.dna, 2), ")"),
+    `RNA (Ratio)` = case_when(median_ld.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"),
+                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"))
+            ) 
 
+title = dt_caption("Allelic imbalance for DNA and RNA. Values indicate the CNR (2^LD) for each locus.")
+alleleld_tab %>%
+  datatable(
+    caption=title,
+    extensions = dt_ext,
+    options = dt_opts,
+    rownames=FALSE,
+    escape = FALSE
+)
+```
 
 ### Plots {.tabset}
 
-#### DNA- Locus
-The Log-fold difference for each allele was calculated. Positive values for an allele indicate that the coverage was higher than its corresponding allele for that gene. The locus-level LD (median across all genes) is indicated by the dashed line. Each point represents a heterozygous SNP between allele 1 and allele 2, and the red lines indicate the median LD across all SNPs for the corresponding gene/allele. Genes are sorted by their position within the genome. Note that homozygous genes will not have any SNPs.
+#### DNA: CNR vs Purity
+The median copy number ratio (CNR) was calculated across all 26 HLA genes on Chromosome 6p and is summarized as a single value for the patient (shown by the red dot). The lines represent expected values of CNR based upon tumor purity.
 
-```{r hlahat_dna_imb}
-sort.dna_alleleld <- dna_alleleld %>% arrange(-median_ld) %>%
-        mutate(CHROM = factor(CHROM, levels = CHROM),
-               Gene = factor(Gene, levels = sorted_hla_genes)) %>% 
-  group_by(Gene) %>% mutate(alleleN = 1:n())
-sort.dna_snpld <- dna_snpld %>% 
-        mutate(CHROM = factor(CHROM, levels = levels(sort.dna_alleleld$CHROM)),
-               Gene = factor(Gene, levels = sorted_hla_genes)) %>%
-  left_join(sort.dna_alleleld)
-gene_colors <- data.frame(Gene = sorted_hla_genes) %>% 
-  mutate(color = case_when(Gene %in% classical_types ~ "red", TRUE ~ "grey50"))
-
-dna_imb <- ggplot(data = NULL, aes(x = Gene, colour = factor(alleleN), label = CHROM)) +
-  geom_hline(yintercept = 0) +
-        geom_hline(yintercept = c(-dna_locusld$median_ld, dna_locusld$median_ld), linetype = 'dashed', colour = 'black', alpha = 0.5) +
-        geom_jitter(data = filter(sort.dna_snpld, !is.na(CHROM)), aes(y = ld), width = 0.2, alpha = 0.5) +
-        geom_point(data = filter(sort.dna_alleleld, !is.na(CHROM)), aes(y = median_ld), shape = 95, colour = 'red', size = 4) +
-        scale_y_continuous(sec.axis = sec_axis(~ 2 ^ ., name = "Copy Number Ratio", breaks = c(1,2,4,8)), breaks = seq(-20, 20, 1)) +
-        scale_x_discrete(drop = FALSE) +
-        scale_colour_viridis_d() +
-        labs(x = "Allele", y = "Log-fold Difference in coverage", title = "Genetic Imbalance of HLA Alleles",
-        colour = "Allele N") +
-        theme_bw() +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, color = gene_colors$color),
-              plot.title = element_text(hjust = 0.5))
-ggplotly(dna_imb)
-```
-
-```{r hlahat_comp_topur}
+Intersection between the point and the *Inf (LOH)* line indicates an extreme degree of imbalance and thus putative LOH.
+```{r hlahat_dna_fulllocus}
 genotypes2 <- c("1","12","112","1112","11112",
                 "111112", "1111112", "11111112","11122")
 purities2 <- seq(0, 1, 0.01)
@@ -119,41 +104,88 @@ exp_ald <- list(gen = genotypes2,
 comp_topur <- ggplot(exp_ald, aes(y = pur_cnr, x = pur, group = gen, colour = factor(cnr))) +
   geom_line() +
   geom_point(data = dna_locusld, aes(x = purity, y = 2^median_ld, group = NA, fill = sid), colour = 'black', shape = 21, size = 3) +
-  scale_colour_brewer(palette = 'Paired') +
+  scale_colour_viridis_d(option = 'plasma') +
   scale_fill_manual(values = "Red") +
-  # geom_line(data = ap, aes(x = tumorPurity, y = 2^median, group = individual), fill = NA, colour = 'black', shape = 1) +
-  # geom_text_repel(data = ap, aes(x = tumorPurity, y = 2^median, label = label, group = NULL), colour = 'black', size = 3) +
-  # scale_colour_manual(values = c(onceUponATimeInHollywood$RGB.Hex, 'red')) +
   coord_cartesian(ylim = c(1,10)) +
   scale_x_reverse() +
   scale_y_continuous(trans = 'log10') +
-  labs(x = "Purity", y = "CNR", colour = "Actual CNR", fill = "Sample")  +
-  theme_bw()
+  labs(x = "Purity", y = "CNR", colour = "Expected CNR", fill = "Sample", title = "Observed CNR vs. Tumor Purity")  +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 ggplotly(comp_topur)
 
 ```
 
-#### DNA- Class I
-```{r hlahat_dna_imbC}
+#### DNA LD
+The Log-fold Difference (LD) in depth of coverage at heterozygous SNPs are used to summarize the degree of allelic imbalance. 
+
+- If there are equal copies of allele 1 and 2 (e.g. normal diploid), the LD value is 0. 
+- The higher the LD, the larger the difference in coverage between the two alleles, indicating increased imbalance or LOH. 
+- If there is LOH in the gene, the expected LD is infinity (unadjusted for tumor purity). 
+
+Positive values for an allele indicate that the coverage was higher than its corresponding allele for that gene. The locus-level LD (median across all genes) is indicated by the grey dashed line. Each point represents a heterozygous SNP between allele 1 and allele 2, and the red lines indicate the median LD across all SNPs for the corresponding gene/allele. Genes are sorted by their position within the genome. 
+
+Note that homozygous genes will not have any SNPs.
+```{r hlahat_dna_allgenes_strip}
+sort.dna_alleleld <- dna_alleleld %>% arrange(-median_ld) %>%
+        mutate(CHROM = factor(CHROM, levels = CHROM),
+               Gene = factor(Gene, levels = sorted_hla_genes)) %>% 
+  group_by(Gene) %>% mutate(alleleN = 1:n())
+sort.dna_snpld <- dna_snpld %>% 
+        mutate(CHROM = factor(CHROM, levels = levels(sort.dna_alleleld$CHROM)),
+               Gene = factor(Gene, levels = sorted_hla_genes)) %>%
+  left_join(sort.dna_alleleld)
+gene_colors <- data.frame(Gene = sorted_hla_genes) %>% 
+  mutate(color = case_when(Gene %in% classical_types ~ "red", TRUE ~ "grey50"))
+
+dna_imb <- ggplot(data = NULL, aes(x = Gene, colour = factor(alleleN), label = CHROM)) +
+  geom_hline(yintercept = 0) +
+        geom_hline(yintercept = c(-dna_locusld$median_ld, dna_locusld$median_ld), linetype = 'dashed', colour = 'black', alpha = 0.5) +
+        geom_jitter(data = filter(sort.dna_snpld, !is.na(CHROM)), aes(y = ld), width = 0.2, alpha = 0.5) +
+        geom_point(data = filter(sort.dna_alleleld, !is.na(CHROM)), aes(y = median_ld), shape = 95, colour = 'red', size = 4) +
+        scale_y_continuous(sec.axis = sec_axis(~ 2 ^ ., name = "Copy Number Ratio", breaks = c(1,2,4,8)), breaks = seq(-20, 20, 1)) +
+        scale_x_discrete(drop = FALSE) +
+        scale_colour_viridis_d() +
+        labs(x = "Gene", y = "Log-fold Difference in Coverage", title = "Genetic Imbalance of HLA Alleles",
+        colour = "Allele N") +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, color = gene_colors$color),
+              plot.title = element_text(hjust = 0.5))
+ggplotly(dna_imb)
+```
+
+#### DNA LD Class I
+The LD value per SNP (each point) is shown for each allele for the 3 classical Class I alleles, according to their genomic position.
+```{r hlahat_dnaclassI_strip}
 genes <- c('A','B','C')
 dna_imbC <- ggplot(data = NULL) +
   geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = median_ld, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
-  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_25, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
-  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_75, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
+#  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_25, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
+#  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_75, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
   geom_point(data = filter(sort.dna_snpld, Gene %in% genes & alleleN == 1), aes(x = END, y = ld, colour = factor(CHROM), label = CHROM)) +
   geom_point(data = filter(sort.dna_snpld, Gene %in% genes & alleleN == 2), aes(x = alt_pos, y = ld, colour = factor(CHROM), label = CHROM)) +
   scale_colour_viridis_d() +
   facet_grid(. ~ Gene, scales = 'free_x', space = 'free_x') +
-  labs(x = "Position within Gene", colour = "Alelle") +
-  theme_bw()
+  labs(x = "Position within Gene", colour = "Alelle", title = "Genetic Imbalance of Class I Alleles",
+       y = "Log-fold Difference in Coverage") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 ggplotly(dna_imbC)
 ```
 
-#### RNA- All Genes
-The LD for each allele was calculated in the RNAseq data. Positive values for an allele indicate that the coverage was higher than its corresponding allele for that gene, suggesting that the allele is selectively expressed, compared to the other allele. The locus-level LD (median across all genes) for the DNA is indicated by the dashed line. Each point represents a heterozygous SNP between allele 1 and allele 2, and the red lines indicate the median LD across all SNPs for the corresponding gene/allele. Genes are sorted by their position within the genome. Note that homozygous genes will not have any SNPs.
+#### RNA LD
+The Log-fold Difference (LD) in depth of coverage at heterozygous SNPs are used to summarize the degree of allelic imbalance. 
 
-```{r hlahat_rna_imb}
+- If there are equal copies of allele 1 and 2 (e.g. normal diploid), the LD value is 0. 
+- The higher the LD, the larger the difference in coverage between the two alleles, indicating increased imbalance or LOH. 
+- If there is LOH in the gene, the expected LD is infinity (unadjusted for tumor purity). 
+
+Positive values for an allele indicate that the coverage was higher than its corresponding allele for that gene. The locus-level LD (median across all genes) is indicated by the dashed line. Each point represents a heterozygous SNP between allele 1 and allele 2, and the red lines indicate the median LD across all SNPs for the corresponding gene/allele. Genes are sorted by their position within the genome. 
+
+Note that homozygous genes will not have any SNPs.
+```{r hlahat_rna_allgenes_scatter}
 sort.rna_alleleld <- rna_alleleld %>% arrange(median_ld) %>%
          mutate(CHROM = factor(CHROM, levels = CHROM),
                Gene = factor(Gene, levels = sorted_hla_genes)) %>%
@@ -172,33 +204,39 @@ rna_imb <- ggplot(data = NULL, aes(x = Gene, colour = factor(alleleN), label = C
                            breaks = seq(-20, 20, 1)) +
         scale_x_discrete(drop = FALSE) +
         scale_colour_viridis_d(drop = TRUE) +
-        labs(x = "Allele", y = "Log-fold Difference", title = "Expression Imbalance of HLA Alleles",
+        labs(x = "Gene", y = "Log-fold Difference in Coverage", title = "Expression Imbalance of HLA Alleles",
              colour = "Allele N") +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, color = gene_colors$color),
               plot.title = element_text(hjust = 0.5))
+
 ggplotly(rna_imb)
 ```
 
-#### RNA- Class I
+#### RNA LD Class I
+The LD value per SNP (each point) is shown for each allele for the 3 classical Class I alleles, according to their genomic position.
 ```{r hlahat_rna_imbC}
 rna_imbC <- ggplot(data = NULL) +
   geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = median_ld.rna, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
-  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_25.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
-  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_75.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
+#  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_25.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
+#  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_75.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
   geom_point(data = filter(sort.rna_snpld, Gene %in% genes & alleleN == 1), aes(x = END, y = ld, colour = factor(CHROM), label = CHROM)) +
   geom_point(data = filter(sort.rna_snpld, Gene %in% genes & alleleN == 2), aes(x = alt_pos, y = ld, colour = factor(CHROM), label = CHROM)) +
   scale_colour_viridis_d() +
   facet_grid(. ~ Gene, scales = 'free_x', space = 'free_x') +
-  labs(x = "Position within Gene", colour = "Allele") +
-  theme_bw()
+  labs(x = "Position within Gene", colour = "Allele", y = "Log-fold Difference in Coverage",
+       title = "Expression Imbalance of Class I Alleles") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 ggplotly(rna_imbC)
 ```
 
 #### DNA v. RNA
-The RNA (expression) LD for each allele is indicated on the y-axis, with the DNA (genetic) LD on the x-axis. The diagonal lines represent positive or negative correlation between the differential allele expression with respect to the genetic imbalance. Genes that fall along the positive diagonal line suggest that differential allele expression is strongly associated with the number of copies of the allele at the genetic level.
+Alleic imbalance in RNA expression may be associated with allelic imbalance at the DNA level (i.e. copy number variation). 
 
-```{r hlahat_comp_dnaRna}
+Genes that fall along the positive diagonal line indicate differential allele expression is strongly associated with the number of copies of the allele at the DNA level.
+```{r hlahat_dnavrna_scatter}
 comp_dnaRna <- ggplot(sort.rna_alleleld, 
        aes(x = median_ld.dna, y = median_ld.rna, colour = Gene, label = CHROM)) +
   geom_abline(linetype = 'dotted', colour = 'grey80') +
@@ -207,32 +245,75 @@ comp_dnaRna <- ggplot(sort.rna_alleleld,
   scale_colour_viridis_d() +
   coord_cartesian(xlim = c(min(sort.dna_alleleld$median_ld), max(sort.dna_alleleld$median_ld)),
                   ylim = c(min(filter(sort.rna_alleleld, median_ld.rna>-Inf)$median_ld.rna), max(filter(sort.rna_alleleld, median_ld.rna<Inf)$median_ld.rna))) +
-  labs(x = "Log-fold Difference- DNA", y = "Log-fold Difference- RNA", colour = "Gene") +
-  theme_bw()
+  labs(x = "Log-fold Difference in Coverage- DNA", y = "Log-fold Difference in Coverage- RNA", colour = "Gene",
+       title = "Allele Coverage in RNA v. DNA") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 ggplotly(comp_dnaRna)
 ```
 
-### Tables {.tabset}
-
-#### Haplotype
-These are the HLA types identified using HISAT-genotype.
-```{r hlahat_hlatypes}
-types %>% 
+### HLA types
+```{r hlahat_haplotypes_tab}
+hlahat_types_tab <- types %>% 
   mutate(Classical = case_when(gene %in% classical_types ~ "Classical", TRUE ~ "Other"),
                  Classical = factor(Classical, levels = c('Classical','Other')),
                  gene = factor(gene, levels = sorted_hla_genes)) %>% 
         arrange(Classical, gene) %>%
-        dplyr::select(gene, hla_call, alleleN, Classical) %>% 
-        spread(alleleN, hla_call) %>% 
-        datatable()
+        dplyr::select(Gene=gene, hla_call, alleleN, Classical) %>% 
+        spread(alleleN, hla_call) 
+
+title = dt_caption("HLA types for HLA Class I and II loci")
+hlahat_types_tab %>%
+  datatable(
+    caption=title,
+    extensions = dt_ext,
+    options = dt_opts,
+    rownames=FALSE,
+    escape = FALSE
+)
 ```
 
-#### DNA- LD
-```{r hlahat_dna_ld}
-dna_alleleld %>% datatable()
+### Descriptive statistics {.tabset}
+
+#### DNA LD
+```{r hlahat_dnald_tab}
+dna_alleleld_tab <- dna_alleleld
+colnames(dna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'Min LD', 'Median LD', 'Max LD', 'SNPs')
+dna_alleleld_tab <- dna_alleleld_tab %>%
+  relocate(SNPs, .after = `Allele 2`) %>%
+  dplyr::filter(`Median LD` > 0) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  mutate(SNPs = as.integer((SNPs)))
+  
+title = dt_caption("DNA log fold difference (LD) descriptive statistics")
+dna_alleleld_tab %>%
+  datatable(
+    caption=title,
+    extensions = dt_ext,
+    options = dt_opts,
+    rownames=FALSE,
+    escape = FALSE
+) 
 ```
 
-#### RNA- LD
-```{r hlahat_rna_ld}
-rna_alleleld %>% datatable()
+#### RNA LD
+```{r hlahat_rnald_tab}
+rna_alleleld_tab <- rna_alleleld
+colnames(rna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'Min LD', 'Median LD', 'Max LD', 'SNPs')
+rna_alleleld_tab <- rna_alleleld_tab %>%
+  relocate(SNPs, .after = `Allele 2`) %>%
+  dplyr::filter(`Median LD` > 0) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  mutate(SNPs = as.integer(SNPs))
+
+title = dt_caption("RNA log fold difference (LD) descriptive statistics")
+rna_alleleld_tab %>%
+  datatable(
+    caption=title,
+    extensions = dt_ext,
+    options = dt_opts,
+    rownames=FALSE,
+    escape = FALSE
+) 
 ```
