@@ -237,12 +237,17 @@ types %>%
         arrange(Classical, gene) %>%
         dplyr::select(gene, hla_call, alleleN, Classical) %>% 
         spread(alleleN, hla_call) %>% 
+        rename("Gene" = "gene",
+               "Allele 1" = "1", "Allele 2" = "2") %>%
         datatable()
 ```
 
 #### DNA- LD
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 dna_alleleld %>% 
+  filter(ld_median>0) %>%
+  rename("Allele 1" = "CHROM", "Allele 2" = "alt_gen", "N SNPs" = "n_snps",
+         "Min LD" = "ld_min", "Q1 LD" = "ld_25", "Median LD" = "ld_median", "Q3 LD" = "ld_75", "Max LD" = "ld_max") %>%
   datatable() %>%
   formatRound(columns = grep("ld_", colnames(dna_alleleld)), digits = 2)
 ```
@@ -250,6 +255,9 @@ dna_alleleld %>%
 #### RNA- LD
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 rna_alleleld %>% 
+  filter(ld_median>0) %>%
+  rename("Allele 1" = "CHROM", "Allele 2" = "alt_gen", "N SNPs" = "n_snps",
+         "Min LD" = "ld_min", "Q1 LD" = "ld_25", "Median LD" = "ld_median", "Q3 LD" = "ld_75", "Max LD" = "ld_max") %>%
   datatable() %>%
   formatRound(columns = grep("ld_", colnames(rna_alleleld)), digits = 2)
 ```
