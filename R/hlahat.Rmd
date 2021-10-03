@@ -52,23 +52,23 @@ Allelic imbalance is measured using the using the 2^(log-fold difference (LD)) i
 #__<<__ | Medium imbalance | 2.5-3.5
 #__<<<__ | High imbalance | 3.5-Inf
 
-alleleld_tab <- dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & median_ld>0) %>% 
+alleleld_tab <- dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & ld_median>0) %>% 
   mutate(`Allele 1` = CHROM, `Allele 2` = alt_gen) %>% 
   left_join(rna_alleleld, by = c('Gene','CHROM','alt_gen'), suffix = c('.dna','.rna')) %>% 
-  mutate(degree_dna = case_when(2^abs(median_ld.dna) < 1.5 ~ "~", 
-                                2^abs(median_ld.dna) < 2.5 ~ "<", 
-                                2^abs(median_ld.dna) < 3.5 ~ "<<", 
+  mutate(degree_dna = case_when(2^abs(ld_median.dna) < 1.5 ~ "~", 
+                                2^abs(ld_median.dna) < 2.5 ~ "<", 
+                                2^abs(ld_median.dna) < 3.5 ~ "<<", 
                                 TRUE ~ "<<<"),
-         degree_rna = case_when(2^abs(median_ld.rna) < 1.5 ~ "~", 
-                                2^abs(median_ld.rna) < 2.5 ~ "<", 
-                                2^abs(median_ld.rna) < 3.5 ~ "<<", 
+         degree_rna = case_when(2^abs(ld_median.rna) < 1.5 ~ "~", 
+                                2^abs(ld_median.rna) < 2.5 ~ "<", 
+                                2^abs(ld_median.rna) < 3.5 ~ "<<", 
                                 TRUE ~ "<<<"),
-         degree_rna = ifelse(median_ld.rna > 0, degree_rna, gsub("<", ">", degree_rna))) %>%
+         degree_rna = ifelse(ld_median.rna > 0, degree_rna, gsub("<", ">", degree_rna))) %>%
   group_by(Gene) %>% 
   summarise(
-    `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.dna, 2), ")"),
-    `RNA` = case_when(median_ld.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"),
-                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"))
+    `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.dna, 2), ")"),
+    `RNA` = case_when(ld_median.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")"),
+                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")"))
             ) 
 
 title = dt_caption("Allelic imbalance for DNA and RNA")
@@ -108,7 +108,7 @@ exp_ald <- list(gen = genotypes2,
 
 comp_topur <- ggplot(exp_ald, aes(y = pur_cnr, x = pur, group = gen, colour = factor(cnr))) +
   geom_line() +
-  geom_point(data = dna_locusld, aes(x = purity, y = 2^median_ld, group = NA, fill = sid), colour = 'black', shape = 21, size = 3) +
+  geom_point(data = dna_locusld, aes(x = purity, y = 2^ld_median, group = NA, fill = sid), colour = 'black', shape = 21, size = 3) +
   scale_colour_viridis_d(option = 'plasma') +
   scale_fill_manual(values = "Red") +
   coord_cartesian(ylim = c(1,10)) +
@@ -133,7 +133,7 @@ Positive values for an allele indicate that the coverage was higher than its cor
 
 Note that homozygous genes will not have any SNPs.
 ```{r hlahat_dna_allgenes_strip}
-sort.dna_alleleld <- dna_alleleld %>% arrange(-median_ld) %>%
+sort.dna_alleleld <- dna_alleleld %>% arrange(-ld_median) %>%
         mutate(CHROM = factor(CHROM, levels = CHROM),
                Gene = factor(Gene, levels = sorted_hla_genes)) %>% 
   group_by(Gene) %>% mutate(alleleN = 1:n())
@@ -146,9 +146,9 @@ gene_colors <- data.frame(Gene = sorted_hla_genes) %>%
 
 dna_imb <- ggplot(data = NULL, aes(x = Gene, colour = factor(alleleN), label = CHROM)) +
   geom_hline(yintercept = 0) +
-        geom_hline(yintercept = c(-dna_locusld$median_ld, dna_locusld$median_ld), linetype = 'dashed', colour = 'black', alpha = 0.5) +
+        geom_hline(yintercept = c(-dna_locusld$ld_median, dna_locusld$ld_median), linetype = 'dashed', colour = 'black', alpha = 0.5) +
         geom_jitter(data = filter(sort.dna_snpld, !is.na(CHROM)), aes(y = ld), width = 0.2, alpha = 0.5) +
-        geom_point(data = filter(sort.dna_alleleld, !is.na(CHROM)), aes(y = median_ld), shape = 95, colour = 'red', size = 4) +
+        geom_point(data = filter(sort.dna_alleleld, !is.na(CHROM)), aes(y = ld_median), shape = 95, colour = 'red', size = 4) +
         scale_y_continuous(sec.axis = sec_axis(~ 2 ^ ., name = "Copy Number Ratio", breaks = c(1,2,4,8)), breaks = seq(-20, 20, 1)) +
         scale_x_discrete(drop = FALSE) +
         scale_colour_viridis_d() +
@@ -165,7 +165,7 @@ The LD value per SNP (each point) is shown for each allele for the 3 classical C
 ```{r hlahat_dnaclassI_strip}
 genes <- c('A','B','C')
 dna_imbC <- ggplot(data = NULL) +
-  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = median_ld, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
+  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_median, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
 #  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_25, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
 #  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_75, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
   geom_point(data = filter(sort.dna_snpld, Gene %in% genes & alleleN == 1), aes(x = END, y = ld, colour = factor(CHROM), label = CHROM)) +
@@ -191,7 +191,7 @@ Positive values for an allele indicate that the coverage was higher than its cor
 
 Note that homozygous genes will not have any SNPs.
 ```{r hlahat_rna_allgenes_scatter}
-sort.rna_alleleld <- rna_alleleld %>% arrange(median_ld) %>%
+sort.rna_alleleld <- rna_alleleld %>% arrange(ld_median) %>%
          mutate(CHROM = factor(CHROM, levels = CHROM),
                Gene = factor(Gene, levels = sorted_hla_genes)) %>%
   left_join(sort.dna_alleleld, by = c("Gene", "CHROM", "alt_gen"), suffix = c(".rna", ".dna"))
@@ -202,9 +202,9 @@ sort.rna_snpld <- rna_snpld %>%
 gene_colors <- data.frame(Gene = sort.rna_alleleld$Gene) %>% mutate(color = case_when(Gene %in% classical_types ~ "red", TRUE ~ "grey50"))
 
 rna_imb <- ggplot(data = NULL, aes(x = Gene, colour = factor(alleleN), label = CHROM)) +
-        geom_hline(yintercept = c(-dna_locusld$median_ld, dna_locusld$median_ld), linetype = 'dashed', colour = 'black', alpha = 0.5) +
+        geom_hline(yintercept = c(-dna_locusld$ld_median, dna_locusld$ld_median), linetype = 'dashed', colour = 'black', alpha = 0.5) +
         geom_jitter(data = filter(sort.rna_snpld, !is.na(alleleN)), aes(y = ld), width = 0.2, alpha = 0.5) +
-        geom_point(data = filter(sort.rna_alleleld, !is.na(alleleN)), aes(y = median_ld.rna), shape = 95, colour = 'red', size = 4) +
+        geom_point(data = filter(sort.rna_alleleld, !is.na(alleleN)), aes(y = ld_median.rna), shape = 95, colour = 'red', size = 4) +
         scale_y_continuous(#sec.axis = sec_axis(~ 2 ^ ., name = "Copy Number Ratio", breaks = c(1,2,4,8)), 
                            breaks = seq(-20, 20, 1)) +
         scale_x_discrete(drop = FALSE) +
@@ -222,7 +222,7 @@ ggplotly(rna_imb)
 The LD value per SNP (each point) is shown for each allele for the 3 classical Class I alleles, according to their genomic position.
 ```{r hlahat_rna_imbC}
 rna_imbC <- ggplot(data = NULL) +
-  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = median_ld.rna, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
+  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_median.rna, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
 #  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_25.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
 #  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_75.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
   geom_point(data = filter(sort.rna_snpld, Gene %in% genes & alleleN == 1), aes(x = END, y = ld, colour = factor(CHROM), label = CHROM)) +
@@ -243,13 +243,13 @@ Alleic imbalance in RNA expression may be associated with allelic imbalance at t
 Genes that fall along the positive diagonal line indicate differential allele expression is strongly associated with the number of copies of the allele at the DNA level.
 ```{r hlahat_dnavrna_scatter}
 comp_dnaRna <- ggplot(sort.rna_alleleld, 
-       aes(x = median_ld.dna, y = median_ld.rna, colour = Gene, label = CHROM)) +
+       aes(x = ld_median.dna, y = ld_median.rna, colour = Gene, label = CHROM)) +
   geom_abline(linetype = 'dotted', colour = 'grey80') +
   geom_abline(slope = -1, linetype = 'dotted', alpha = 0.5) +
   geom_point() +
   scale_colour_viridis_d() +
-  coord_cartesian(xlim = c(min(sort.dna_alleleld$median_ld), max(sort.dna_alleleld$median_ld)),
-                  ylim = c(min(filter(sort.rna_alleleld, median_ld.rna>-Inf)$median_ld.rna), max(filter(sort.rna_alleleld, median_ld.rna<Inf)$median_ld.rna))) +
+  coord_cartesian(xlim = c(min(sort.dna_alleleld$ld_median), max(sort.dna_alleleld$ld_median)),
+                  ylim = c(min(filter(sort.rna_alleleld, ld_median.rna>-Inf)$ld_median.rna), max(filter(sort.rna_alleleld, ld_median.rna<Inf)$ld_median.rna))) +
   labs(x = "Log-fold Difference in Coverage- DNA", y = "Log-fold Difference in Coverage- RNA", colour = "Gene",
        title = "Allele Coverage in RNA v. DNA") +
   theme_bw() +
@@ -284,10 +284,10 @@ hlahat_types_tab %>%
 #### DNA LD
 ```{r hlahat_dnald_tab}
 dna_alleleld_tab <- dna_alleleld
-colnames(dna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'Min LD', 'Median LD', 'Max LD', 'SNPs')
+colnames(dna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'SNPs', 'Min LD', '25%', 'Median', '75%', 'Max LD')
 dna_alleleld_tab <- dna_alleleld_tab %>%
   relocate(SNPs, .after = `Allele 2`) %>%
-  dplyr::filter(`Median LD` > 0) %>%
+  dplyr::filter(`Median` > 0) %>%
   mutate_if(is.numeric, round, 2) %>%
   mutate(SNPs = as.integer((SNPs)))
   
@@ -305,10 +305,10 @@ dna_alleleld_tab %>%
 #### RNA LD
 ```{r hlahat_rnald_tab}
 rna_alleleld_tab <- rna_alleleld
-colnames(rna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'Min LD', 'Median LD', 'Max LD', 'SNPs')
+colnames(rna_alleleld_tab) <- c('Gene', 'Allele 1', 'Allele 2', 'SNPs', 'Min LD', '25%', 'Median', '75%', 'Max LD')
 rna_alleleld_tab <- rna_alleleld_tab %>%
   relocate(SNPs, .after = `Allele 2`) %>%
-  dplyr::filter(`Median LD` > 0) %>%
+  dplyr::filter(`Median` > 0) %>%
   mutate_if(is.numeric, round, 2) %>%
   mutate(SNPs = as.integer(SNPs))
 
