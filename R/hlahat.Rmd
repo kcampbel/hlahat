@@ -35,6 +35,7 @@ sorted_hla_genes <- c('HFE','F','V','G','H',
                     'DPB2')
 
 purity <- allSols[sequenza_solution, ]$cellularity
+hla_abc <- c('A','B','C')
 ```
 
 ### Summary
@@ -84,6 +85,24 @@ alleleld_tab %>%
 <font size="2"> * ~ equal, < low (1.5-25), << medium (2.5-3.5), <<< high (3.5-Inf)</font>
 
 ### Plots {.tabset}
+
+#### DNA and RNA
+```{r hlahat_dnarna_bar, fig.width=8, fig.height=4, eval=any(hla_abc %in% dna_alleleld$Gene)}
+genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
+rna <- rna_alleleld$`Type` <- 'RNA'
+dna <- dna_alleleld %>%
+  dplyr::filter(ld_median > 0, Gene %in% genes)
+rna <- rna_alleleld %>%
+  dplyr::filter(ld_median > 0, Gene %in% genes)
+
+plot_ly() %>%
+  add_trace(data=dna, x=~Gene, y=~2^ld_median, type='bar', name='DNA',  marker = list(color = 'rgb(49,130,189)')) %>%
+  add_trace(data=rna, x=~Gene, y=~2^ld_median, type='bar', name='RNA', marker = list(color = 'rgb(204,204,204)')) %>%
+      layout(
+             yaxis = list(title='Allelic imbalance')
+      )
+
+```
 
 #### DNA: AI vs Purity
 The median allelic imbalance (AI) was calculated across all 26 HLA genes on Chromosome 6p and is summarized as a single value for the patient (shown by the red dot). The lines represent expected values of CNR based upon tumor purity.
@@ -162,8 +181,8 @@ ggplotly(dna_imb)
 
 #### DNA LD Class I
 The LD value per SNP (each point) is shown for each allele for the 3 classical Class I alleles, according to their genomic position.
-```{r hlahat_dnaclassI_strip}
-genes <- c('A','B','C')
+```{r hlahat_dnaclassI_strip, eval=any(hla_abc %in% sort.dna_alleleld$Gene)}
+genes <- hla_abc[hla_abc %in% sort.dna_alleleld$Gene]
 dna_imbC <- ggplot(data = NULL) +
   geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_median, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
 #  geom_hline(data = filter(sort.dna_alleleld, Gene %in% genes), aes(yintercept = ld_25, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
@@ -220,7 +239,8 @@ ggplotly(rna_imb)
 
 #### RNA LD Class I
 The LD value per SNP (each point) is shown for each allele for the 3 classical Class I alleles, according to their genomic position.
-```{r hlahat_rna_imbC}
+```{r hlahat_rna_imbC, eval=any(hla_abc %in% sort.rna_alleleld$Gene)}
+genes <- hla_abc[hla_abc %in% sort.rna_alleleld$Gene]
 rna_imbC <- ggplot(data = NULL) +
   geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_median.rna, colour = factor(CHROM), label = CHROM), alpha = 0.5) +
 #  geom_hline(data = filter(sort.rna_alleleld, Gene %in% genes), aes(yintercept = ld_25.rna, colour = factor(CHROM), label = CHROM), linetype = 'dashed', alpha = 0.5) +
