@@ -87,19 +87,61 @@ alleleld_tab %>%
 ### Plots {.tabset}
 
 #### DNA and RNA
+
 ```{r hlahat_dnarna_bar, fig.width=8, fig.height=4, eval=any(hla_abc %in% dna_alleleld$Gene)}
 genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
-rna <- rna_alleleld$`Type` <- 'RNA'
-dna <- dna_alleleld %>%
-  dplyr::filter(ld_median > 0, Gene %in% genes)
-rna <- rna_alleleld %>%
-  dplyr::filter(ld_median > 0, Gene %in% genes)
+#rna <- rna_alleleld$`Type` <- 'RNA'
+dna <- dna_snpld %>%
+  dplyr::filter(ld > 0, Gene %in% genes) %>%
+  group_by(Gene, CHROM) %>% 
+  summarize(mean=mean(ld), sd=sd(ld), n=n()) %>% 
+  mutate(se=sd/sqrt(n))
+
+rna <- rna_snpld %>%
+  dplyr::filter(ld > 0, Gene %in% genes) %>%
+  group_by(Gene, CHROM) %>% 
+  summarize(mean=mean(ld), sd=sd(ld), n=n()) %>% 
+  mutate(se=sd/sqrt(n))
+
+range_df <- rbind(dna, rna) %>% 
+  mutate(max = mean + se) 
+ylim <- c(0, 2^max(range_df$max) + 0.1)
 
 plot_ly() %>%
-  add_trace(data=dna, x=~Gene, y=~2^ld_median, type='bar', name='DNA',  marker = list(color = 'rgb(49,130,189)')) %>%
-  add_trace(data=rna, x=~Gene, y=~2^ld_median, type='bar', name='RNA', marker = list(color = 'rgb(204,204,204)')) %>%
+  add_trace(data=dna, x=~Gene, y=~2^mean, type='bar', name='DNA',
+    marker = list(color = 'rgb(49,130,189)'),
+    error_y = ~list(array=se, color = 'rgb(49,130,189)')) %>%
+  add_trace(data=rna, x=~Gene, y=~2^mean, type='bar', name='RNA',
+    marker = list(color = 'rgb(204,204,204)'),
+    error_y = ~list(array=se, color = 'rgb(204,204,204')) %>%
       layout(
-             yaxis = list(title='Allelic imbalance')
+             yaxis = list(title='Allelic imbalance', range=ylim),
+             shapes=list(type='line', x0=0, x1=1, y0=0.16, y1=0.16, xref='paper', yref='paper', 
+               line=list(dash='dot', width=1))
+      )
+
+```
+
+```{r hlahat_dnarna_box, fig.width=8, fig.height=4, eval=FALSE}
+genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
+dna <- dna_snpld %>%
+  dplyr::filter(ld > 0, Gene %in% genes)
+rna <- rna_snpld %>%
+  dplyr::filter(ld > 0, Gene %in% genes)
+dna$Type <- 'DNA'
+rna$Type <- 'RNA'
+
+df <- bind_rows(dna, rna)
+plot_ly() %>%
+  add_trace(data=dna, x=~Gene, y=~ld, type='box', notched=TRUE, name='DNA', boxpoints='all', jitter=0.3, pointpos=0, 
+    color = list(color = 'rgb(49,130,189)'), 
+    marker = list(color = 'rgb(49,130,189)')) %>%
+  add_trace(data=rna, x=~Gene, y=~ld, type='box', notched=TRUE, name='RNA', boxpoints='all', jitter=0.3, pointpos=0,
+    color = list(color = 'grey'),
+    marker = list(color = 'grey')) %>%
+      layout(
+             boxmode = 'group',
+             yaxis = list(title='Allelic imbalance (log2)', range=c(0, max(df$ld) + 0.25))
       )
 
 ```
