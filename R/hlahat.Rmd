@@ -88,13 +88,18 @@ alleleld_tab %>%
 
 #### DNA and RNA
 
-```{r hlahat_dnarna_bar, fig.width=8, fig.height=4, eval=any(hla_abc %in% dna_alleleld$Gene)}
+Allelic imbalance for DNA and RNA at each HLA locus. 
+
+- Allelic imbalance for the locus is given by the median, with a value of 1 = no imbalance between alleles
+- Points are the allelic imbalance for each SNP
+```{r hlahat_dnarna_bar, fig.width=8, fig.height=4, eval=FALSE} 
+#eval=any(hla_abc %in% dna_alleleld$Gene)}
 genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
 #rna <- rna_alleleld$`Type` <- 'RNA'
 dna <- dna_snpld %>%
   dplyr::filter(ld > 0, Gene %in% genes) %>%
   group_by(Gene, CHROM) %>% 
-  summarize(mean=mean(ld), sd=sd(ld), n=n()) %>% 
+  summarize(median=median(ld), mean=mean(ld), sd=sd(ld), n=n()) %>% 
   mutate(se=sd/sqrt(n))
 
 rna <- rna_snpld %>%
@@ -122,7 +127,7 @@ plot_ly() %>%
 
 ```
 
-```{r hlahat_dnarna_box, fig.width=8, fig.height=4, eval=FALSE}
+```{r hlahat_dnarna_box, fig.width=8, fig.height=4, eval=any(hla_abc %in% dna_alleleld$Gene)}
 genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
 dna <- dna_snpld %>%
   dplyr::filter(ld > 0, Gene %in% genes)
@@ -132,16 +137,17 @@ dna$Type <- 'DNA'
 rna$Type <- 'RNA'
 
 df <- bind_rows(dna, rna)
+ylim <- c(log(1, 10), log(2^max(df$ld), 10) + 0.1)
 plot_ly() %>%
-  add_trace(data=dna, x=~Gene, y=~ld, type='box', notched=TRUE, name='DNA', boxpoints='all', jitter=0.3, pointpos=0, 
+  add_trace(data=dna, x=~Gene, y=~2^ld, type='box', notched=TRUE, name='DNA', boxpoints='all', jitter=0.3, pointpos=0, 
     color = list(color = 'rgb(49,130,189)'), 
     marker = list(color = 'rgb(49,130,189)')) %>%
-  add_trace(data=rna, x=~Gene, y=~ld, type='box', notched=TRUE, name='RNA', boxpoints='all', jitter=0.3, pointpos=0,
+  add_trace(data=rna, x=~Gene, y=~2^ld, type='box', notched=TRUE, name='RNA', boxpoints='all', jitter=0.3, pointpos=0,
     color = list(color = 'grey'),
     marker = list(color = 'grey')) %>%
       layout(
              boxmode = 'group',
-             yaxis = list(title='Allelic imbalance (log2)', range=c(0, max(df$ld) + 0.25))
+             yaxis = list(title='Allelic imbalance', type='log', dtick=0.30102999566, range=ylim)
       )
 
 ```
