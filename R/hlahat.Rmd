@@ -67,15 +67,9 @@ alleleld_tab <- dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & ld_median>0) %>
          degree_rna = ifelse(ld_median.rna > 0, degree_rna, gsub("<", ">", degree_rna))) %>%
   group_by(Gene) %>% 
   summarise(
-<<<<<<< HEAD
     `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.dna, 2), ")"),
     `RNA` = case_when(ld_median.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")"),
                     TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")"))
-=======
-    `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.dna, 2), ")"),
-    `RNA` = case_when(median_ld.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"),
-                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^median_ld.rna, 2), ")"))
->>>>>>> 62a58d10d5b1530e1e4d24db145867c87b5e8f5d
             ) 
 
 title = dt_caption("Allelic imbalance for DNA and RNA")
@@ -92,7 +86,6 @@ alleleld_tab %>%
 
 ### Plots {.tabset}
 
-<<<<<<< HEAD
 #### DNA and RNA
 
 Allelic imbalance for DNA and RNA at each HLA locus. 
@@ -159,8 +152,6 @@ plot_ly() %>%
 
 ```
 
-=======
->>>>>>> 62a58d10d5b1530e1e4d24db145867c87b5e8f5d
 #### DNA: AI vs Purity
 The median allelic imbalance (AI) was calculated across all 26 HLA genes on Chromosome 6p and is summarized as a single value for the patient (shown by the red dot). The lines represent expected values of CNR based upon tumor purity.
 
