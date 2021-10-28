@@ -72,9 +72,9 @@ def main():
         tmp = pd.concat([row, pd.DataFrame([cfg])], axis=1)
         df = pd.concat([df, tmp])
     
-    logging.info(f'Writing {args.outfile}')
     if not args.outfile:
-        args.outfile = f'hlahat_{timestamp}.tsv'
+        args.outfile = f'{specimen_id}_hlahat_{timestamp}.tsv'
+    logging.info(f'Writing {args.outfile}')
     df.to_csv(args.outfile, sep='\t', index=False)
 
     logging.info(f'{os.path.basename(__file__)} finished')
