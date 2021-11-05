@@ -26,11 +26,22 @@ names(nuc_msf) <- gsub(".*/([A-Z]+\\d*)_gen.msf", "\\1", list_nuc)
 ##### Read in haplotypes #####
 summarize_hlatypes <- function(hlatypes_file, name) {
   read <- read.delim(hlatypes_file, sep = '\t', header = FALSE) %>% unlist %>% grep("ranked", ., value = T)
-  summ_hlatypes <- data.frame(name = name,
-                              ranks = gsub("(\\d+) ranked .+", "\\1", read) %>% as.numeric,
-                              alleles = gsub(".+ ranked (.+) \\(abundance.+", "\\1", read) %>% as.character,
-                              gene = gsub(".+ ranked (\\w+\\d*)\\*\\d+.+ \\(abundance.+", "\\1", read) %>% as.character,
-                              perc_abundance = gsub(".+ ranked .+ \\(abundance: (\\d+\\.*\\d*)\\%\\)", "\\1", read) %>% as.numeric)
+  if(nrow(read)>0){
+    summ_hlatypes <- data.frame(name = name,
+                                ranks = gsub("(\\d+) ranked .+", "\\1", read) %>% as.numeric,
+                                alleles = gsub(".+ ranked (.+) \\(abundance.+", "\\1", read) %>% as.character,
+                                gene = gsub(".+ ranked (\\w+\\d*)\\*\\d+.+ \\(abundance.+", "\\1", read) %>% as.character,
+                                perc_abundance = gsub(".+ ranked .+ \\(abundance: (\\d+\\.*\\d*)\\%\\)", "\\1", read) %>% as.numeric)
+  } else {
+    read <- fread(hlatypes_file, header = FALSE, col.names = c("input"))
+    summ_hlatypes <- read %>%
+      mutate(name = name,
+             alleles = gsub("HLA-", "", input),
+             gene = gsub("(\\w+\\d*)\\*\\d+.+", "\\1", alleles),
+             perc_abundance = 100) %>%
+      group_by(gene) %>%
+      mutate(ranks = 1:n()) %>% ungroup
+  }
   return(summ_hlatypes)
 }
 read_hlatypes <- summarize_hlatypes(hlatypes_file, name)
