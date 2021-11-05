@@ -18,7 +18,7 @@ The HLA Haplotype Analysis Toolkit uses the ratio of sequencing coverage between
 -  For tumor DNA, an allelic imbalance indicates a putative copy number aberration or loss-of-heterozygosity event at the gene or chromosomal level (see [HLA Copy Number][HLA Copy Number] for copy number and LOH assessment). 
 -  For tumor RNA, an allelic imbalance indicates one HLA allele is expressed __relatively__ higher than the other.
 ```{r hlahat_stageinput}
-types <- fread("PT0461.find_hlatypes.tsv")#fread(find_types_f)
+types <- fread(find_types_f)
 dna_snpld <- fread(dna_snpld_f)
 dna_alleleld <- fread(dna_alleleld_f)
 dna_locusld <- fread(dna_locusld_f)
