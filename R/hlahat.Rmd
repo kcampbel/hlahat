@@ -129,20 +129,25 @@ plot_ly() %>%
 
 ```{r hlahat_dnarna_box, fig.width=8, fig.height=4, eval=any(hla_abc %in% dna_alleleld$Gene)}
 genes <- hla_abc[hla_abc %in% dna_alleleld$Gene]
-dna <- dna_snpld %>%
-  dplyr::filter(ld > 0, Gene %in% genes)
-rna <- rna_snpld %>%
-  dplyr::filter(ld > 0, Gene %in% genes)
+finite_values <- bind_rows(dna_snpld, rna_snpld) %>% filter(ld<Inf & Gene %in% genes)
+dna <- dna_snpld %>% 
+  dplyr::filter(ld > 0, Gene %in% genes) %>%
+  mutate(is_inf = ifelse(is.finite(ld), FALSE, TRUE),
+         plot_ld = case_when(is_inf == TRUE ~ max(finite_values$ld), TRUE ~ ld))
+rna <- rna_snpld %>% 
+  dplyr::filter(ld > 0, Gene %in% genes) %>%
+  mutate(is_inf = ifelse(is.finite(ld), FALSE, TRUE),
+         plot_ld = case_when(is_inf == TRUE ~ max(finite_values$ld), TRUE ~ ld))
 dna$Type <- 'DNA'
 rna$Type <- 'RNA'
 
 df <- bind_rows(dna, rna)
 ylim <- c(log(1, 10), log(2^max(df$ld), 10) + 0.1)
 plot_ly() %>%
-  add_trace(data=dna, x=~Gene, y=~2^ld, type='box', notched=TRUE, name='DNA', boxpoints='all', jitter=0.3, pointpos=0, 
+  add_trace(data=dna, x=~Gene, y=~2^plot_ld, type='box', notched=TRUE, name='DNA', boxpoints='all', jitter=0.3, pointpos=0, 
     color = list(color = 'rgb(49,130,189)'), 
     marker = list(color = 'rgb(49,130,189)')) %>%
-  add_trace(data=rna, x=~Gene, y=~2^ld, type='box', notched=TRUE, name='RNA', boxpoints='all', jitter=0.3, pointpos=0,
+  add_trace(data=rna, x=~Gene, y=~2^plot_ld, type='box', notched=TRUE, name='RNA', boxpoints='all', jitter=0.3, pointpos=0,
     color = list(color = 'grey'),
     marker = list(color = 'grey')) %>%
       layout(
@@ -204,9 +209,12 @@ sort.dna_alleleld <- dna_alleleld %>% arrange(-ld_median) %>%
         mutate(CHROM = factor(CHROM, levels = CHROM),
                Gene = factor(Gene, levels = sorted_hla_genes)) %>% 
   group_by(Gene) %>% mutate(alleleN = 1:n())
+finite_values <- dna_snpld %>% filter(is.finite(ld))
 sort.dna_snpld <- dna_snpld %>% 
         mutate(CHROM = factor(CHROM, levels = levels(sort.dna_alleleld$CHROM)),
-               Gene = factor(Gene, levels = sorted_hla_genes)) %>%
+               Gene = factor(Gene, levels = sorted_hla_genes),
+               is_inf = ifelse(is.finite(ld), FALSE, TRUE),
+               ld = case_when(ld == Inf ~ max(finite_values$ld), ld == -Inf ~ min(finite_values$ld), TRUE ~ ld)) %>%
   left_join(sort.dna_alleleld)
 gene_colors <- data.frame(Gene = sorted_hla_genes) %>% 
   mutate(color = case_when(Gene %in% classical_types ~ "red", TRUE ~ "grey50"))
@@ -262,9 +270,12 @@ sort.rna_alleleld <- rna_alleleld %>% arrange(ld_median) %>%
          mutate(CHROM = factor(CHROM, levels = CHROM),
                Gene = factor(Gene, levels = sorted_hla_genes)) %>%
   left_join(sort.dna_alleleld, by = c("Gene", "CHROM", "alt_gen"), suffix = c(".rna", ".dna"))
+finite_values <- rna_snpld %>% filter(is.finite(ld))
 sort.rna_snpld <- rna_snpld %>%
          mutate(CHROM = factor(CHROM, levels = levels(sort.rna_alleleld$CHROM)),
-               Gene = factor(Gene, levels = sorted_hla_genes)) %>%
+               Gene = factor(Gene, levels = sorted_hla_genes),
+               is_inf = ifelse(is.finite(ld), FALSE, TRUE),
+               ld = case_when(ld == Inf ~ max(finite_values$ld), ld == -Inf ~ min(finite_values$ld), TRUE ~ ld)) %>%
   left_join(sort.dna_alleleld)
 gene_colors <- data.frame(Gene = sort.rna_alleleld$Gene) %>% mutate(color = case_when(Gene %in% classical_types ~ "red", TRUE ~ "grey50"))
 
@@ -345,7 +356,7 @@ hlahat_types_tab <- types %>%
         mutate(hla_call = sapply(hla_call, function(x) hla_subset_digits(x, 3))) %>%
         spread(alleleN, hla_call) %>%
         rename(`Allele 1` = `1`, `Allele 2` = `2`) %>%
-        arrange(Category, gene) 
+        arrange(Category, Gene) 
 
 ```
 
