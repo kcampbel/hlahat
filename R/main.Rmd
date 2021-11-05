@@ -13,7 +13,6 @@ editor_options:
   chunk_output_type: console
 params:
   input_dir: "NAMESPACE"
-  config_yaml_f: "NAMESPACE"
 ---
 
 ```{r main_libs, echo=FALSE, results='hide', include=FALSE}
@@ -36,7 +35,7 @@ opts_chunk$set(echo=FALSE,
 	             #cache=TRUE,
 	             cache=FALSE,
                cache_rebuild=TRUE,
-               cache.path='hlahat_report_cache/html/',
+               cache.path='/tmp/hlahat_report_cache/html/',
                fig.path='hlahat_report_files/figure-html/'
                )
 opts_knit$set(width=125)
@@ -59,37 +58,35 @@ find_files <- function(path, pattern, hits=1) {
 ```
 
 ```{r test_local, eval=FALSE}
-input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT056_T_196454'
-
+#input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT056_T_196454'
+input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT133_T_PT0461-M485'
+sid <- 'PACT133_T_PT0461-M485'
 params <- list(
-  config_yml = config_yml_f,
-  input_dir = input_dir,
-  sequenza_solution = sequenza_solution
+  #config_yml = config_yml_f,
+  input_dir = input_dir
 )
 
 ```
 
 ```{r main_parameters}
-config_pipe <- read_yaml(params$config_yml)
-for(ii in seq_along(config_pipe)){
-  message(paste0(names(config_pipe)[[ii]], ':', config_pipe[[ii]]))
-  assign(names(config_pipe)[ii], config_pipe[[ii]])
-}
-
+#config_pipe <- read_yaml(params$config_yml)
+#for(ii in seq_along(config_pipe)){
+#  message(paste0(names(config_pipe)[[ii]], ':', config_pipe[[ii]]))
+#  assign(names(config_pipe)[ii], config_pipe[[ii]])
+#}
 for(ii in seq_along(params)){
   message(paste0(names(params)[[ii]], ':', params[[ii]]))
   assign(names(params)[ii], params[[ii]])
 }
 
 fls_l = list(
-  hlahat_types_f = find_files(input_dir, 'top_hlatypes.tsv'),
+  find_types_f = find_files(input_dir, 'find_hlatypes.tsv'),
   dna_snpld_f = find_files(input_dir, 'tumor_dna_snpLD.tsv'),
   dna_alleleld_f = find_files(input_dir, 'tumor_dna_alleleLD.tsv'),
   dna_locusld_f = find_files(input_dir, 'tumor_dna_locusLD.tsv'),
   rna_snpld_f = find_files(input_dir, 'tumor_rna_snpLD.tsv'),
   rna_alleleld_f = find_files(input_dir, 'tumor_rna_alleleLD.tsv')
 )
-fls_l$sequenza_segments_f <- fls_l$sequenza_segments_f[grepl(paste0('alt', sequenza_solution), fls_l$sequenza_segments_f)]
 
 for(ii in seq_along(fls_l)){
   message(paste0(names(fls_l)[[ii]], ':', fls_l[[ii]]))
@@ -99,12 +96,11 @@ for(ii in seq_along(fls_l)){
 ```
 
 ```{r test_render, eval=FALSE}
-input_dir <- '/Users/csmith/git/bioinfo-fio/test_data/PACT056_T_196454'
-rmarkdown::render(input='hlahat.Rmd', output_dir="/tmp/hlahat", params=list(
-  config_yml = config_yml_f
- # input_dir = input_dir
-  )
+sid <- 'PACT133_T_PT0461-M485'
+p <- list(
+  input_dir = file.path('/Users/csmith/git/bioinfo-fio/test_data/', sid)
 )
+rmarkdown::render(input='main.Rmd', output_dir="/tmp/hlahat", params=p)
 
 ```
 
@@ -112,7 +108,7 @@ rmarkdown::render(input='hlahat.Rmd', output_dir="/tmp/hlahat", params=list(
 ```
 
 ```{r make_title}
-report_title <- paste0("hlahat Report: ", sid)
+report_title <- paste0("HLAHAT Report: ", sid)
 ```
 
 ---
