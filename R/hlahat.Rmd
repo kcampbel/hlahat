@@ -65,13 +65,13 @@ alleleld_tab <- dna_alleleld %>% filter(Gene %in% LETTERS[1:3] & ld_median>0) %>
                                 2^abs(ld_median.rna) < 3.5 ~ "<<", 
                                 TRUE ~ "<<<"),
          degree_rna = ifelse(ld_median.rna > 0, degree_rna, gsub("<", ">", degree_rna)),
-         conf_dna = ifelse(n_snps.dna < 5, "?", ""),
-         conf_rna = ifelse(n_snps.rna < 5, "?", "")) %>%
+         degree_dna = ifelse(n_snps.dna < 5, "?", degree_dna),
+         degree_rna = ifelse(n_snps.rna < 5, "?", degree_rna)) %>%
   group_by(Gene) %>% 
   summarise(
-    `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^abs(ld_median.dna), 2), ")", conf_dna),
-    `RNA` = case_when(ld_median.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")", conf_rna),
-                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^abs(ld_median.rna), 2), ")", conf_rna))
+    `DNA` = paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_dna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^abs(ld_median.dna), 2), ")"),
+    `RNA` = case_when(ld_median.rna > 0 ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^ld_median.rna, 2), ")"),
+                    TRUE ~ paste0(gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 2`), " " , degree_rna, "  ", gsub("(^\\w\\*\\d+:\\d+):*.+", "\\1", `Allele 1`), " (", signif(2^abs(ld_median.rna), 2), ")"))
             ) 
 
 title = dt_caption("Allelic imbalance for DNA and RNA")
