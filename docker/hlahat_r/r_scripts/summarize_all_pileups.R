@@ -10,7 +10,6 @@ output_prefix <- args[2]
 
 # read_bed <- fread(bed_file, sep = "\t", col.names = c("CHROM", "START", "END", "INFO"))
 read_pileups <- fread(pileups_file, col.names = c('CHROM','POS','REF','DEPTH','BASES','BQ_ASCII'))
-read_pileups <- fread("~/hlahat_final/working/tm_dev/SKCM-3N-A9WB-NB.pileups.txt", col.names = c('CHROM','POS','REF','DEPTH','BASES','BQ_ASCII'))
 
 summBases <- function(test, ref_base) {
   counts <- rep(0, 6)

@@ -53,7 +53,8 @@ if(n_fields == 3) {
     group_by(gene, allele) %>% 
     filter(perc_abundance == max(perc_abundance, na.rm = T)) %>% ungroup %>% 
     filter(perc_abundance > 5) %>%
-    filter(ranks %in% c(1,2))
+    group_by(gene) %>% mutate(new_rank = 1:n()) %>% 
+    filter(new_rank %in% c(1,2))
 } else {
   top_hlatypes <- read_hlatypes %>% 
     mutate(allele = ifelse(grepl("\\w+.*\\*\\d+:\\d+:\\d+:\\d+.*", alleles) , gsub("(\\w+.*\\*\\d+:\\d+):\\d+:\\d+.*", "\\1", alleles),
@@ -61,7 +62,8 @@ if(n_fields == 3) {
     group_by(gene, allele) %>% 
     filter(perc_abundance == max(perc_abundance, na.rm = T)) %>% ungroup %>% 
     filter(perc_abundance > 5) %>%
-    filter(ranks %in% c(1,2))
+    group_by(gene) %>% mutate(new_rank = 1:n()) %>%
+    filter(new_rank %in% c(1,2))
 }
 write.table(top_hlatypes, paste0(name, ".top_hlatypes.tsv"), row.names = F, quote = F, sep = '\t')
 
@@ -83,8 +85,12 @@ make_reference <- function(name){
     closest_nuc <- NULL
     
     # Find closest genomic DNA sequence
+    # Find closest genomic DNA sequence
     if(hla_call %in% gen_msf[[call[['gene']]]]$nam) { # If genomic DNA sequence for allele is provided
       closest_gen <- hla_call
+      gen_match = "EXACT"
+    } else if(any(grepl(paste0(hla_call, ":"), gen_msf[[call[['gene']]]]$nam, fixed = T))) { # If field is one less another that already exists
+      closest_gen <- grep(paste0(hla_call, ":"), gen_msf[[call[['gene']]]]$nam, value = T, fixed = T)[1]
       gen_match = "EXACT"
     } else {
       if(call[['n_fields']] == 1){ # If allele called only had one field
@@ -118,6 +124,9 @@ make_reference <- function(name){
       if(call[['n_fields']] == 1){ # If allele called only had one field
         closest_nuc <- nuc_msf[[call[['gene']]]]$nam[1]
         nuc_match = "FIRST AVAILABLE"
+      } else if(any(grepl(paste0(hla_call, ":"), nuc_msf[[call[['gene']]]]$nam, fixed = T))) { # If field is one less another that already exists
+        closest_nuc <- grep(paste0(hla_call, ":"), nuc_msf[[call[['gene']]]]$nam, value = T, fixed = T)[1]
+        nuc_match = "EXACT"
       } else { # Otherwise try and find closest based upon 1 less field annotation
         less_field <- as.numeric(call[['n_fields']]) - 1
         while(is.null(closest_nuc)) {
