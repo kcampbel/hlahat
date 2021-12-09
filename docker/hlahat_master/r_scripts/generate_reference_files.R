@@ -26,7 +26,7 @@ names(nuc_msf) <- gsub(".*/([A-Z]+\\d*)_gen.msf", "\\1", list_nuc)
 ##### Read in haplotypes #####
 summarize_hlatypes <- function(hlatypes_file, name) {
   read <- read.delim(hlatypes_file, sep = '\t', header = FALSE) %>% unlist %>% grep("ranked", ., value = T)
-  if(nrow(read)>0){
+  if(length(read)>0){
     summ_hlatypes <- data.frame(name = name,
                                 ranks = gsub("(\\d+) ranked .+", "\\1", read) %>% as.numeric,
                                 alleles = gsub(".+ ranked (.+) \\(abundance.+", "\\1", read) %>% as.character,
