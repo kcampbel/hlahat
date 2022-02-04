@@ -19,7 +19,7 @@ list_gen <- unlist(strsplit(as.character(gen_msf_list), split = ','))
 gen_msf <- lapply(list_gen, read.alignment, format = "msf")
 names(gen_msf) <- gsub(".*/([A-Z]+\\d*)_gen.msf", "\\1", list_gen)
 #
-list_nuc <- unlist(strsplit(as.character(gen_msf_list), split = ','))
+list_nuc <- unlist(strsplit(as.character(nuc_msf_list), split = ','))
 nuc_msf <- lapply(list_nuc, read.alignment, format = "msf")
 names(nuc_msf) <- gsub(".*/([A-Z]+\\d*)_nuc.msf", "\\1", list_nuc)
 
@@ -43,7 +43,7 @@ reftype_genXnuc_map <- reftype_gdnaXcds_map %>% group_by(gene, info.cds, strand,
   ungroup() %>% dplyr::select(gene, strand, matches("pos"))
 
 ref_gen <- lapply(reftype_gdna$info, function(type){
-  gene <- gsub("(^\\w+\\d*)\\*\\d+:.+", "\\1", type)
+  gene <- gsub("^(\\w+)\\*\\d+:.+", "\\1", type)
   alleleN = "ref"
   if( type %in% gen_msf[[gene]]$nam){
     closest_gen <- type
@@ -60,7 +60,7 @@ ref_gen <- lapply(reftype_gdna$info, function(type){
   mutate(name = NULL) %>% data.table()
 
 ref_nuc <- lapply(reftype_gdna$info, function(type){
-  gene <- gsub("(^\\w+\\d*)\\*\\d+:.+", "\\1", type)
+  gene <- gsub("^(\\w+)\\*\\d+:.+", "\\1", type)
   alleleN = "ref"
   if( type %in% nuc_msf[[gene]]$nam){
     closest_nuc <- type
